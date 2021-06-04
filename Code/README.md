@@ -7,6 +7,6 @@ Libraries used:
 - tensorflow
 - cloudmesh-common
 - numpy
-= matplotlib
+- matplotlib
 - textwrap
 - pandas
