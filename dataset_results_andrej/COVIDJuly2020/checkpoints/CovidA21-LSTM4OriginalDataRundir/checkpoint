@@ -1,0 +1,2 @@
+model_checkpoint_path: "CovidA21-LSTM4OriginalDataRunMinLoss-38"
+all_model_checkpoint_paths: "CovidA21-LSTM4OriginalDataRunMinLoss-38"
