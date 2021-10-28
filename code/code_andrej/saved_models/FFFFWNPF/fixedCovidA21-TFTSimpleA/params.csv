@@ -1,0 +1,28 @@
+,"128_True_1_[]_[('Location', 3, 4), ('Time from Start', 0, 5), ('RawLabel', 0, -1), ('0 Cases Root 2', 0, 0), ('1 Deaths Root 2', 0, 0), ('2 Age Distribution', 0, 3), ('3 Air Pollution', 0, 3), ('4 Co-morbidities', 0, 3), ('5 Demographics', 0, 3), ('6 Disease Spread', 0, 1), ('7 Health Disparities', 0, 3), ('8 Hospital Beds', 0, 3), ('9 Mobility', 0, 1), ('10 Residential Density', 0, 3), ('11 Social Distancing', 0, 1), ('12 Testing', 0, 1), ('13 Transmissible Cases', 0, 1), ('14 voting', 0, 3), ('15 LinearSpace', 0, 2), ('16 Constant', 0, 2), ('17 LinearTime', 0, 2), ('18 P2-Time', 0, 2), ('19 P3-Time', 0, 2), ('20 P4-Time', 0, 2), ('21 CosWeekly', 0, 2), ('22 SinWeekly', 0, 2)]_0.2_60_64_[1, 2]_24_[]_[3, 4, 5, 6, 8, 9, 11, 15, 16, 17, 18, 19, 20, 21, 22, 23]_0.001_0.01_64_../TFTData/saved_models/FFFFWNPF/fixedCovidA21-TFTSimpleA_5_13_60_4_2_0_['MSE']_[1.0]_1_[3, 4, 5, 6, 8, 9, 11, 15]_28"
+dropout_rate,0.2
+hidden_layer_size,64
+learning_rate,0.001
+minibatch_size,64
+max_gradient_norm,0.01
+num_heads,4
+stack_size,1
+model_folder,../TFTData/saved_models/FFFFWNPF/fixedCovidA21-TFTSimpleA
+total_time_steps,28
+num_encoder_steps,13
+num_epochs,60
+early_stopping_patience,60
+multiprocessing_workers,5
+column_definition,"[('Location', 3, 4), ('Time from Start', 0, 5), ('RawLabel', 0, -1), ('0 Cases Root 2', 0, 0), ('1 Deaths Root 2', 0, 0), ('2 Age Distribution', 0, 3), ('3 Air Pollution', 0, 3), ('4 Co-morbidities', 0, 3), ('5 Demographics', 0, 3), ('6 Disease Spread', 0, 1), ('7 Health Disparities', 0, 3), ('8 Hospital Beds', 0, 3), ('9 Mobility', 0, 1), ('10 Residential Density', 0, 3), ('11 Social Distancing', 0, 1), ('12 Testing', 0, 1), ('13 Transmissible Cases', 0, 1), ('14 voting', 0, 3), ('15 LinearSpace', 0, 2), ('16 Constant', 0, 2), ('17 LinearTime', 0, 2), ('18 P2-Time', 0, 2), ('19 P3-Time', 0, 2), ('20 P4-Time', 0, 2), ('21 CosWeekly', 0, 2), ('22 SinWeekly', 0, 2)]"
+input_size,24
+output_size,2
+category_counts,[]
+input_obs_loc,"[1, 2]"
+static_input_loc,"[3, 4, 5, 6, 8, 9, 11, 15]"
+known_regular_inputs,"[3, 4, 5, 6, 8, 9, 11, 15, 16, 17, 18, 19, 20, 21, 22, 23]"
+known_categorical_inputs,[]
+quantiles,[1.0]
+quantilenames,['MSE']
+quantileindex,0
+TFTLSTMFinalMLP,128
+TFTOption1,1
+TFTMultivariate,True

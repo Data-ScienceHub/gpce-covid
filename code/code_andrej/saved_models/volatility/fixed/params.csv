@@ -1,0 +1,22 @@
+,"[7, 31, 53, 12, 4]_[('Symbol', <DataTypes.CATEGORICAL: 1>, <InputTypes.ID: 4>), ('date', <DataTypes.DATE: 2>, <InputTypes.TIME: 5>), ('log_vol', <DataTypes.REAL_VALUED: 0>, <InputTypes.TARGET: 0>), ('open_to_close', <DataTypes.REAL_VALUED: 0>, <InputTypes.OBSERVED_INPUT: 1>), ('days_from_start', <DataTypes.REAL_VALUED: 0>, <InputTypes.KNOWN_INPUT: 2>), ('day_of_week', <DataTypes.CATEGORICAL: 1>, <InputTypes.KNOWN_INPUT: 2>), ('day_of_month', <DataTypes.CATEGORICAL: 1>, <InputTypes.KNOWN_INPUT: 2>), ('week_of_year', <DataTypes.CATEGORICAL: 1>, <InputTypes.KNOWN_INPUT: 2>), ('month', <DataTypes.CATEGORICAL: 1>, <InputTypes.KNOWN_INPUT: 2>), ('Region', <DataTypes.CATEGORICAL: 1>, <InputTypes.STATIC_INPUT: 3>)]_0.3_100_160_[0]_8_[0, 1, 2, 3, 4]_[2]_0.01_0.01_64_../TFTData/saved_models/volatility/fixed_5_252_100_1_1_1_[7]_257"
+dropout_rate,0.3
+hidden_layer_size,160
+learning_rate,0.01
+max_gradient_norm,0.01
+minibatch_size,64
+model_folder,../TFTData/saved_models/volatility/fixed
+num_heads,1
+stack_size,1
+total_time_steps,257
+num_encoder_steps,252
+num_epochs,100
+early_stopping_patience,100
+multiprocessing_workers,5
+column_definition,"[('Symbol', <DataTypes.CATEGORICAL: 1>, <InputTypes.ID: 4>), ('date', <DataTypes.DATE: 2>, <InputTypes.TIME: 5>), ('log_vol', <DataTypes.REAL_VALUED: 0>, <InputTypes.TARGET: 0>), ('open_to_close', <DataTypes.REAL_VALUED: 0>, <InputTypes.OBSERVED_INPUT: 1>), ('days_from_start', <DataTypes.REAL_VALUED: 0>, <InputTypes.KNOWN_INPUT: 2>), ('day_of_week', <DataTypes.CATEGORICAL: 1>, <InputTypes.KNOWN_INPUT: 2>), ('day_of_month', <DataTypes.CATEGORICAL: 1>, <InputTypes.KNOWN_INPUT: 2>), ('week_of_year', <DataTypes.CATEGORICAL: 1>, <InputTypes.KNOWN_INPUT: 2>), ('month', <DataTypes.CATEGORICAL: 1>, <InputTypes.KNOWN_INPUT: 2>), ('Region', <DataTypes.CATEGORICAL: 1>, <InputTypes.STATIC_INPUT: 3>)]"
+input_size,8
+output_size,1
+category_counts,"[7, 31, 53, 12, 4]"
+input_obs_loc,[0]
+static_input_loc,[7]
+known_regular_inputs,[2]
+known_categorical_inputs,"[0, 1, 2, 3, 4]"
