@@ -6,13 +6,13 @@
 In /code/code_andrej you can find an example of the derivative rurality notebook in rurality_derivate and an example of the the regular cases and deaths split by rurality in rurality_original 
 The strata are as follows:
 
-{counties |  3 <= median rurality <= 5} - This gives us 624 counties.
+{counties |  3 <= median rurality <= 5} - This gives us 702 counties.
  
-{counties subset | MAD < 1} - this is 391 counties
+{counties subset | MAD < 1} - this is 434 counties
  
-{counties subset | 1 <= MAD < 2} - 175 counties
+{counties subset | 1 <= MAD < 2} - 188 counties
  
-{counties subset | 2 <= MAD < 3} - 47 counties
+{counties subset | 2 <= MAD < 3} - 69 counties
  
 <b> This one is no longer in use as the sample is too small </b>
 {counties subset | 3 <= MAD < 4 } - 11 counties
