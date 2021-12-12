@@ -7,6 +7,16 @@ In /code/code_andrej you can find an example of the derivative rurality notebook
 The strata are as follows:
 
 {counties |  3 <= median rurality <= 5} - This gives us 702 counties.
+
+| Median Rurality | Count Counties |
+| -------------   | -------------  |
+|  3.0            | 45             |
+|  3.5            | 7              |
+|  4.0            | 397            |
+|  4.5            | 71             |
+|  5.0            | 182            |
+| --------------- | -------------- |
+| Total           | 702            |
  
 {counties subset | MAD < 1} - this is 434 counties
  
