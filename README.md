@@ -81,6 +81,28 @@ I have also added differenced and derivate data to dataset_raw/
 
 <b> Current Modeling Results </b>
 
+Features Table:
+
+| Feature     		 | Type       |  Currently in Use?      |
+|------------------------|------------|-------------------------|
+| Age Distribution       | Static     | Yes 			|
+| Air Pollution  	 | Static     | Yes 			|
+| Comorbidities          | Static     | Yes 			|
+| Demographics 		 | Static     | No 			|
+| Health Disparities     | Static     | Yes 			|
+| Hospital Beds 	 | Static     | No 			| 
+| Mobility		 | Static     | Yes 			|
+| Residential Density    | Static     | Yes                     |
+| Voting 		 | Static     | No 			| 
+| Disease Spread         | Dynamic    | Yes  			| 
+| Social Distancing      | Dynamic    | Yes 			|
+| Testing 		 | Dynamic    | Yes 		        |
+| Transmission  	 | Dynamic    | Yes 			| 
+| Vaccination >=1 Dose   | Dynamic    | Yes **Note filled zeros |
+| Vaccination Full (2)   | Dynamic    | Yes **Note filled zeros |
+
+       
+
 Stratum Definitions:
 
 	1: MADgroup [1,2) with 3.5 < MedianRUCA <= 4.5
