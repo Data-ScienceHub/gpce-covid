@@ -5,6 +5,9 @@
 
 In /code/code_andrej you can find an example of the derivative rurality notebook in rurality_derivate and an example of the the regular cases and deaths split by rurality in rurality_original 
 
+
+<!---
+
 ---
 
 The strata are as follows:
@@ -63,6 +66,8 @@ The strata are as follows:
 | Total           | 69             |
 
 ---
+
+-->
  
 <b> This one is no longer in use as the sample is too small </b>
 {counties subset | 3 <= MAD < 4 } - 11 counties
