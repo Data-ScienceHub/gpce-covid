@@ -70,3 +70,23 @@ The strata are as follows:
 I have also added differenced and derivate data to dataset_raw/
 
 <b> I am currently working on automating pdf saving in notebook code so that it is much more painless to organize all of the results. 
+
+---
+
+<b> Current Modeling Results </b>
+
+Stratum Definitions:
+
+	1: MADgroup [1,2) with 3.5 < MedianRUCA <= 4.5
+	2: MADgroup [1,2) with MedianRUCA > 4.5
+	3: MADgroup [2,3) with MedianRUCA > 3.5
+
+| Stratum | Size (Counties)|Overall Results Snapshot 		    | Link to Notebook |
+|---------|----------------|----------------------------------------|------------------|
+|   1     |       70       |![](snapshots/dec2021/stratum1_tft.png) |      Link        |
+|   2     |       79       |![](snapshots/dec2021/stratum2_tft.png) |      Link        |
+|   3     |       65       |![](snapshots/dec2021/stratum3_tft.png) |      Link        |
+
+
+
+
