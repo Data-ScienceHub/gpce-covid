@@ -66,7 +66,7 @@ def main():
         print('No other losses defined in main method')
 
     if optimizer_params['optimizer'].lower() == 'adam':
-        optimizer = tf.keras.optimizers.Adam(learning_rate=0.001, clipnorm=0.01)
+        optimizer = tf.keras.optimizers.Adam(learning_rate=optimizer_params['learning_rate'], clipnorm=optimizer_params['clipnorm'])
     else:
         print('No other optimizers defined in main method')
 

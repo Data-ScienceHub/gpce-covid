@@ -71,12 +71,13 @@
                                               "VaccinationOne",
                                               "VaccinationFull"],
                               "targets" : {
-                                "Cases" : "US_daily_cumulative_cases_Dec12.csv",
-                                "Deaths" : "US_daily_cumulative_deaths_Dec12.csv"
+                                "Cases" : "US_daily_cumulative_cases_Dec12.csv"
                               },
                               "support" : {
                                 "Population" : "Population.csv",
                                 "Rurality" : "Rurality.csv",
+                                "FirstDate": [2020,2,29],
+                                "LastDate" : [2021, 6, 30],
                                 "Nloc" : 3142,
                                 "NFIPS" : 3142,
                                 "RuralityRange" : [4.501,5],
