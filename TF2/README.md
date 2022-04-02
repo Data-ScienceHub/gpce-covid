@@ -25,7 +25,7 @@ python inference.py -p <CONFIG PATH> -c <CHECKPOINT-DIR> -d <DATH PATH> -f <DIR 
 ```
 
 Current directory structure (Note the checkpoints are my specific checkpoints, but this is what a general structure may look like):
-
+```
 ├── TFTModel.py
 ├── __pycache__
 │   ├── TFTModel.cpython-38.pyc
@@ -84,7 +84,7 @@ Current directory structure (Note the checkpoints are my specific checkpoints, b
 ├── prepareData_main.py
 └── requirements.txt
 
-
+```
 There may be issues with this code, but I have trained several runs of models on it no problem. Any issue please let me know or open an issue.
 
 The remaining pieces to address are:
