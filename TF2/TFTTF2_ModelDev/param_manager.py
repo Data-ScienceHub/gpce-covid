@@ -17,6 +17,7 @@ class ParamManager:
             self.optimizer_params = self.tft_params['optimizer']
             self.col_mappings = self.tft_params['col_mappings']
             self.data_params = self.tft_params['data']['params']
+            self.support_params = self.tft_params['data']['support']
 
     def print_params(self):
 

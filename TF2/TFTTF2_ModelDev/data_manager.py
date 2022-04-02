@@ -22,6 +22,7 @@ class DataManager:
         self.num_samples = None
         self.inference_data = None
         self.training_data = None
+        self.np_inference = None
 
     def batch_data(self, data):
 
@@ -86,4 +87,5 @@ class DataManager:
             return ds.cache().shuffle(self.buffer_size).batch(self.batch_size)
 
         self.inference_data = make_inference_batches(tf_data)
+        self.np_inference = batched_data
         self.training_data = make_train_batches(tf_data)

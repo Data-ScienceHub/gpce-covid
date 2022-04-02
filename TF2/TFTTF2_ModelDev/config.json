@@ -13,7 +13,7 @@
                   "target_sequence_length" : 15,
                   "output_size" : 1,
                   "loss" : "MSE",
-                  "epochs" : 60,
+                  "epochs" : 80,
                   "attn" :
                             {
                               "num_heads" : 4,
@@ -27,14 +27,14 @@
                                   },
                   "col_mappings" :
                                     {
-                                      "Static" :["2 Age Distribution","3 Air Pollution","4 Comorbidities","5 Health Disparities","6 Mobility","7 Residential Density"],
-                                      "ID":["Location"],
-                                      "Time": ["Time from Start"],
-                                      "Target":["0 Cases Root 2"],
-                                      "Future":["14 LinearSpace", "15 Constant", "16 LinearTime","17 P2-Time", "18 P3-Time", "19 P4-Time", "20 CosWeekly","21 SinWeekly"],
-                                      "Known Regular":["2 Age Distribution","3 Air Pollution","4 Comorbidities","5 Health Disparities",
-                                                       "6 Mobility","7 Residential Density","8 Disease Spread", "9 Social Distancing", "10 Testing",
-                                                       "11 Transmissible Cases", "12 VaccinationOneDose", "13 Vaccination"]
+                                      "Static" :["AgeDist","AirPollution","Comorbidities","HealthDisp","Mobility","ResidentialDense"],
+                                      "ID":["Name"],
+                                      "Time": ["TimeFromStart"],
+                                      "Target":["Cases"],
+                                      "Future":["LinearSpace", "Constant", "LinearTime","P2Time", "P3Time", "P4Time", "CosWeekly","SinWeekly"],
+                                      "Known Regular":["AgeDist","AirPollution","Comorbidities","HealthDisp",
+                                                       "Mobility", "ResidentialDense","DiseaseSpread", "SocialDist", "Testing",
+                                                       "Transmission", "VaccinationOne", "VaccinationFull"]
                                     },
                   "data" :
                             {
@@ -81,7 +81,8 @@
                                 "Nloc" : 3142,
                                 "NFIPS" : 3142,
                                 "RuralityRange" : [4.501,5],
-                                "MADRange" :  [1,2]
+                                "MADRange" :  [1,2],
+                                "RunName" :  "CovidA21-TFT2-Feb2020toJuly2021"
                               }
 
                             }

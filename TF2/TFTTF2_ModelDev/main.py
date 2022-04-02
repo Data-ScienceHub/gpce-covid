@@ -13,7 +13,6 @@ from param_manager import ParamManager
 from TFTModel import TemporalFusionTransformer
 from data_manager import DataManager
 
-
 def main():
 
     parser = argparse.ArgumentParser(description='Run TFT', formatter_class=argparse.RawTextHelpFormatter)
