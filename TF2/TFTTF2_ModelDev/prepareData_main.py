@@ -31,7 +31,7 @@ def main():
     print('Final Columns in prepared data')
     print(TOTALDF.columns)
 
-    TOTALDF.to_csv(args.outputPath)
+    TOTALDF.to_csv(args.outputPath, index=False)
 
 if __name__ =='__main__':
     main()

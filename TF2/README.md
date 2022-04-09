@@ -6,14 +6,21 @@ All changes to model must be made withing `config.json`
 + <b> Categorical Features currently NOT supported </b>
 
 
-```
+```python
 # to process and save data
 python prepareData_main.py -p <CONFIG PATH> -f <RAW CSV FILE DIR PATH> -o <OUTPUT DATA DIR AND NAME>
+
+# for example
+python prepareData_main.py -p 'config.json' -f '../../dataset_raw/CovidDecember12-2021' -o 'data/TFTdfNew.csv'
 ```
 
-```
+```python
 # to train TFT
 python main.py -p <PATH-TO-CONFIG.JSON> -c <CHECKPOINT-DIR> -d <PATH-TO-DATA>
+
+
+# for example
+python main.py -p config.json -c checkpoints -d data/TFTdfNew.csv
 ```
 
 <b> Inference: </b>

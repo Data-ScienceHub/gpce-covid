@@ -7,15 +7,15 @@ import math
 
 
 class CustomScaler:
-    def __init__(self, targ=False, **kwargs):
+    def __init__(self, target=False, **kwargs):
 
-        self.targ = targ
+        self.target = target
 
     def fit(self, X):
 
         X = X.copy()
         X = X.astype(np.float32)
-        if self.targ:
+        if self.target:
             X = np.sqrt(X)
         self.max = np.nanmax(X, axis=0)
         self.min = np.nanmin(X, axis=0)
@@ -30,7 +30,7 @@ class CustomScaler:
     def transform(self, X):
 
         X = X.astype(np.float32)
-        if self.targ:
+        if self.target:
             X = np.sqrt(X, dtype=np.float32)
             X[np.isnan(X)] = 0
         return np.multiply(X - self.min, self.rec)
@@ -38,7 +38,7 @@ class CustomScaler:
     def inverse_transform(self, X):
 
         X = X / self.rec + self.min
-        if self.targ:
+        if self.target:
             return np.square(X)
         else:
             return X
@@ -55,8 +55,8 @@ class DataPrep:
 
         self.DATADIR = datadir
 
-        self.first_date = datetime.datetime(config['support']['FirstDate'][0],config['support']['FirstDate'][1],config['support']['FirstDate'][2])
-        self.last_date = datetime.datetime(config['support']['LastDate'][0],config['support']['LastDate'][1],config['support']['LastDate'][2])
+        self.first_date = pd.to_datetime(config['support']['FirstDate'])
+        self.last_date = pd.to_datetime(config['support']['LastDate'])
 
         self.inputs = config['inputs_use']
         self.input_files = [config['input_files'][file] for file in config['input_files'] if file in self.inputs]
@@ -68,7 +68,7 @@ class DataPrep:
         #self.support_files = [config['support'][file] for file in config['support'] if isinstance(config['support'][file],str)]
 
         self.feature_scaler = CustomScaler()
-        self.target_scaler = CustomScaler(targ=True)
+        self.target_scaler = CustomScaler(target=True)
 
         self.MADRANGE = config['support']['MADRange']
         self.RURRANGE = config['support']['RuralityRange']
@@ -86,7 +86,10 @@ class DataPrep:
         if len(locs) != nfips:
             raise ValueError('Number of locations in target file does not match number of locations parameter:' + str(
                 locs) + ' in file vs. ' + str(nfips))
-
+        
+        # drop unnamed index column
+        base_data = base_data.loc[:, ~base_data.columns.str.contains('^Unnamed')]
+        
         base_data = base_data.T
         head = base_data.iloc[0]
         base_data = base_data.iloc[1:]
@@ -97,6 +100,8 @@ class DataPrep:
         base_data = base_data.melt('FIPS', var_name='Date', value_name=self.target)
         base_data['Date'] = pd.to_datetime(base_data['Date'])
 
+        base_data.loc[base_data[self.target]<0, self.target] = 0
+
         base_data = base_data[(base_data['Date'] >= self.first_date) & (base_data['Date'] <= self.last_date)]
 
         if (base_data.groupby('FIPS').count()['Date'] == base_data.groupby('FIPS').count()['Date'].iloc[0]).all():
@@ -105,7 +110,6 @@ class DataPrep:
             # Add more lines in here to debug potential mismatch
             print('All series do not have the same length')
 
-        base_data.to_csv('casesonly.csv')
         return base_data
 
     def prepare_features(self):
@@ -114,6 +118,9 @@ class DataPrep:
         for idx, i in enumerate(self.inputs):
 
             feature_df = pd.read_csv(os.path.join(self.DATADIR, self.input_files[idx]))
+
+            # some csv files had index columns when they were dumped, now the appear as Unnamed when read
+            feature_df = feature_df.loc[:, ~feature_df.columns.str.contains('^Unnamed')]
 
             if 'Name' in feature_df.columns:
                 feature_df = feature_df.melt(['Name', 'FIPS'], var_name='Date', value_name=i)
@@ -136,7 +143,7 @@ class DataPrep:
 
     def make_cut(self):
 
-        rur = pd.read_csv(os.path.join(self.DATADIR, self.config['support']['Rurality']))
+        rur = pd.read_csv(os.path.join(self.DATADIR, self.config['support']['Rurality']), encoding = 'latin1')
 
         locs = rur.FIPS
 
@@ -276,7 +283,7 @@ class DataPrep:
         targ, feat = self.prepare_data()
 
         self.target_scaler = self.target_scaler.fit(targ[self.target].values)
-        targ[self.target] = self.target_scaler.transform(targ[self.target])
+        targ[self.target] = self.target_scaler.transform(targ.loc[:,self.target])
 
         self.feature_scaler = self.feature_scaler.fit(feat[self.inputs])
         feat[self.inputs] = self.feature_scaler.transform(feat[self.inputs])
