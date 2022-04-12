@@ -12,9 +12,6 @@ class DataManager:
         # Temporary overwrite
         # self.training = self.training.dropna()
 
-        # fill na values 0 instead of dropping them
-        self.training = self.training.fillna(0)
-
         if self.training.isna().sum().any():
             raise ValueError('Null values found in your training dataset')
 
