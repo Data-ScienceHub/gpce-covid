@@ -10,17 +10,21 @@ All changes to model must be made withing `config.json`
 # to process and save data
 python prepareData_main.py -p <CONFIG PATH> -f <RAW CSV FILE DIR PATH> -o <OUTPUT DATA DIR AND NAME>
 
-# for example
-python prepareData_main.py -p 'config.json' -f '../../dataset_raw/CovidDecember12-2021' -o 'data/TFTdfNew.csv'
+# for example to process old raw data
+python prepareData_main.py -p 'config.json' -f '../../dataset_raw/CovidDecember12-2021' -o 'data/TFTdfCurrent.csv'
+
+# to process new raw data use the Data merger notebook in dataset_new folder
 ```
 
 ```python
 # to train TFT
 python main.py -p <PATH-TO-CONFIG.JSON> -c <CHECKPOINT-DIR> -d <PATH-TO-DATA>
 
+# for example to run old data.
+python main.py -p config.json -c checkpoints -d data/TFTdfCurrent.csv
 
-# for example
-python main.py -p config.json -c checkpoints -d data/TFTdfNew.csv
+# to run on new data
+python main.py -p "../../dataset_new/config.json" -c checkpoints -d "../../dataset_new/TFTdfCurrent.csv"
 ```
 
 <b> Inference: </b>

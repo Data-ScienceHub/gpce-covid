@@ -294,6 +294,9 @@ class DataPrep:
 
         TotDF = self.add_embeddings(TotDF)
 
+        # replace any remaining null values with 0
+        TotDF = TotDF.fillna(0)
+
         return TotDF
 
 
