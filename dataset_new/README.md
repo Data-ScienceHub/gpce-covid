@@ -10,9 +10,10 @@ Download the raw dataset folder from [Google Drive](https://drive.google.com/dri
 
 ## Dataset Description
 
-Each of the following features are collected at county level. Source links are added for the raw dataset. Which needs to be processed to get the clean dataset here.
+Each of the following features are collected at county level. Source links are added for the raw dataset. Which needs to be processed to get the clean dataset here. Note that, the `config.json` may use only a subset of the features listed here.
 
-* `Cases`: Cumulative covid cases collected from [USAFacts](https://usafacts.org/visualizations/coronavirus-covid-19-spread-map). Download from [here](https://static.usafacts.org/public/data/covid-19/covid_confirmed_usafacts.csv?_ga=2.171350432.1090772774.1649722578-318392369.1648433378).
+* `Cases`: Daily covid cases by County. This file is preprocessed from cumulative covid cases collected from [USAFacts](https://usafacts.org/visualizations/coronavirus-covid-19-spread-map). Download from [here](https://static.usafacts.org/public/data/covid-19/covid_confirmed_usafacts.csv?_ga=2.171350432.1090772774.1649722578-318392369.1648433378).
+* `Deaths`: Daily covid deaths by County. This file is preprocessed from cumulative covid deaths collected from [USAFacts](https://usafacts.org/visualizations/coronavirus-covid-19-spread-map). Download from [here](https://static.usafacts.org/public/data/covid-19/covid_deaths_usafacts.csv?_ga=2.116740742.1090772774.1649722578-318392369.1648433378).
 * `Testing`: From [US Covid Atlas](https://theuscovidatlas.org/). Download the [County - Testing Counts - CDC](https://theuscovidatlas.org/download) file.
 * `Health rank measure`: Health measures and rankings data from CHR updated in 2021. Link to [data](https://www.countyhealthrankings.org/sites/default/files/media/document/analytic_data2021.csv) and [data dictionary](https://www.countyhealthrankings.org/sites/default/files/media/document/DataDictionary_2021.pdf). The cleaned data has the following columns. The comorbidity columns are the percent of the population belonging to that comorbidity.
   * % Fair or Poor Health
