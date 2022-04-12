@@ -1,2 +1,6 @@
 __pycache__/
 .idea/
+*.pyc
+.DS_Store
+# Jupyter Notebook
+.ipynb_checkpoints

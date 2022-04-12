@@ -44,18 +44,20 @@ def main():
 
     unk_inputs = tft_params['total_inputs'] - len(tft_params['static_locs']) - len(tft_params['future_locs'])
 
-    transformer = TemporalFusionTransformer(input_seq_len=tft_params['input_sequence_length'],
-                                            target_seq_len=tft_params['target_sequence_length'],
-                                            output_size=tft_params['output_size'],
-                                            static_inputs=tft_params['static_locs'],
-                                            target_inputs=tft_params['target_loc'],
-                                            future_inputs=tft_params['future_locs'],
-                                            known_reg_inputs=tft_params['static_locs'] + tft_params['future_locs'],
-                                            attn_hls=attn_params['hidden_layer_size'],
-                                            num_heads=attn_params['num_heads'],
-                                            final_mlp_hls=tft_params['final_mlp_hidden_layer'],
-                                            unknown_inputs=unk_inputs,
-                                            cat_inputs=None, rate=tft_params['dropout_rate'])
+    transformer = TemporalFusionTransformer(
+        input_seq_len=tft_params['input_sequence_length'],
+        target_seq_len=tft_params['target_sequence_length'],
+        output_size=tft_params['output_size'],
+        static_inputs=tft_params['static_locs'],
+        target_inputs=tft_params['target_loc'],
+        future_inputs=tft_params['future_locs'],
+        known_reg_inputs=tft_params['static_locs'] + tft_params['future_locs'],
+        attn_hls=attn_params['hidden_layer_size'],
+        num_heads=attn_params['num_heads'],
+        final_mlp_hls=tft_params['final_mlp_hidden_layer'],
+        unknown_inputs=unk_inputs,
+        cat_inputs=tft_params["categorical_loc"], rate=tft_params['dropout_rate']
+        )
 
     train_loss = tf.keras.metrics.Mean(name='train_loss')
 

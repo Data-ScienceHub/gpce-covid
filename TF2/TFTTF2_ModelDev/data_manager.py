@@ -8,8 +8,10 @@ class DataManager:
     def __init__(self, data_path, total_seq_len, col_mappings, data_params):
 
         self.training = pd.read_csv(data_path)
+        
         # Temporary overwrite
-        self.training = self.training.dropna()
+        # self.training = self.training.dropna()
+
         if self.training.isna().sum().any():
             raise ValueError('Null values found in your training dataset')
 

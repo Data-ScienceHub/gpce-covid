@@ -76,13 +76,13 @@
                               "support" : {
                                 "Population" : "Population.csv",
                                 "Rurality" : "Rurality_Median_Mad.csv",
-                                "FirstDate": "2020-2-29",
+                                "FirstDate": "2020-3-1",
                                 "LastDate" : "2021-11-22",
                                 "Nloc" : 3142,
                                 "NFIPS" : 3142,
                                 "RuralityRange" : [4.501,5],
                                 "MADRange" :  [1,2],
-                                "RunName" :  "CovidA21-TFT2-Feb2020toJuly2021"
+                                "RunName" :  "CovidA21-TFT2-Feb2020toNov2021"
                               }
 
                             }
