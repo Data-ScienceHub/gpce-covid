@@ -98,7 +98,7 @@ class InterpretableMultiHeadAttention(tf.keras.layers.Layer):
 
 class HiD_EmbeddingLayer(tf.keras.layers.Layer):
     def __init__(self, time_steps, known_reg_inputs,
-                 future_inputs, static_inputs, target_loc, unknown_len=7, hls=64, cat_inputs=None):
+                 future_inputs, static_inputs, target_loc, unknown_len, hls=64, cat_inputs=None):
         super(HiD_EmbeddingLayer, self).__init__()
 
         self.time_steps = time_steps
@@ -492,13 +492,16 @@ class TemporalFusionTransformer(tf.keras.Model):
 
         self.FinalLoopSize = 1
 
-        self.embedding = HiD_EmbeddingLayer(time_steps=target_seq_len + input_seq_len,
-                                            known_reg_inputs=known_reg_inputs, future_inputs=future_inputs,
-                                            static_inputs=static_inputs, target_loc=target_inputs)
+        # HiD_EmbeddingLayer should take all the parameters it can from TFT model
+        self.embedding = HiD_EmbeddingLayer(
+            time_steps=target_seq_len + input_seq_len, known_reg_inputs=known_reg_inputs, 
+            future_inputs=future_inputs, static_inputs=static_inputs, target_loc=target_inputs,
+            unknown_len=unknown_inputs, hls=hls, cat_inputs=cat_inputs
+        )
 
         # add static VSN
 
-        self.static_vsn = StaticVSN(hls=hls, dropout_rate=rate)
+        self.static_vsn = StaticVSN(hls=hls, dropout_rate=rate, num_static=len(static_inputs))
 
         # add Temporal VSN
         self.temporal_vsn1 = TemporalVSN(hls=hls, dropout_rate=rate,

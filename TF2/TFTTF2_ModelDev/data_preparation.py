@@ -282,11 +282,11 @@ class DataPrep:
 
         targ, feat = self.prepare_data()
 
-        self.target_scaler = self.target_scaler.fit(targ[self.target].values)
-        targ[self.target] = self.target_scaler.transform(targ.loc[:,self.target])
+        # self.target_scaler = self.target_scaler.fit(targ[self.target].values)
+        # targ[self.target] = self.target_scaler.transform(targ.loc[:,self.target])
 
-        self.feature_scaler = self.feature_scaler.fit(feat[self.inputs])
-        feat[self.inputs] = self.feature_scaler.transform(feat[self.inputs])
+        # self.feature_scaler = self.feature_scaler.fit(feat[self.inputs])
+        # feat[self.inputs] = self.feature_scaler.transform(feat[self.inputs])
 
         TotDF = pd.merge(targ, feat, how='left', on=['FIPS', 'Date'])
 
