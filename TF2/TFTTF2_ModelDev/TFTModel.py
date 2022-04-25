@@ -2,6 +2,7 @@ import tensorflow as tf
 import numpy as np
 import pandas as pd
 
+import time
 
 class ScaledDotProductAttention(tf.keras.layers.Layer):
     """Defines scaled dot product attention layer.
@@ -71,6 +72,7 @@ class InterpretableMultiHeadAttention(tf.keras.layers.Layer):
         self.w_o = tf.keras.layers.Dense(d_model, use_bias=False)
 
     def call(self, q, k, v, mask=None):
+
         n_head = self.n_head
 
         heads = tf.TensorArray(tf.float32, n_head)
@@ -559,7 +561,7 @@ class TemporalFusionTransformer(tf.keras.Model):
 
         len_s = tf.shape(attn_inputs)[1]
         bs = tf.shape(attn_inputs)[:1]
-        mask = tf.math.cumsum(tf.eye(len_s, batch_shape=bs), 1)
+        mask = 1 - tf.math.cumsum(tf.eye(len_s, batch_shape=bs), 1)
         return mask
 
     def process_inputs(self, inputs):

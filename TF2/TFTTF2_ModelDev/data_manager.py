@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import tensorflow as tf
 
+import time
 
 class DataManager:
 
@@ -74,7 +75,6 @@ class DataManager:
     def createTFData(self):
 
         batched_data = self.batch_data(self.training)
-
         # TODO fix this line below
         self.num_samples = batched_data['Future'].shape[0]
 
