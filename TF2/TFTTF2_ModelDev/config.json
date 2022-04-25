@@ -82,7 +82,9 @@
                                 "NFIPS" : 3142,
                                 "RuralityRange" : [4.501,5],
                                 "MADRange" :  [1,2],
-                                "RunName" :  "CovidA21-TFT2-Feb2020toNov2021"
+                                "RunName" :  "CovidA21-TFT2-Feb2020toNov2021",
+                                "LocationBasedRandomSample" : 0.2,
+                                "SpecificLocation" : []
                               }
 
                             }

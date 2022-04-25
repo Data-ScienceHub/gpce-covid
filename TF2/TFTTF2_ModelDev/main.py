@@ -18,7 +18,7 @@ def main():
     parser = argparse.ArgumentParser(description='Run TFT', formatter_class=argparse.RawTextHelpFormatter)
 
     parser.add_argument('-p', '--configPath',
-                        help='Path the the .config file to read in paremeters for TFT', type=str, default=None)
+                        help='Path the the .config file to read in parameters for TFT', type=str, default=None)
     parser.add_argument('-c', '--checkpointPath',
                         help='Path to store model checkpoints and weights', type=str, default=None)
     parser.add_argument('-d', '--dataPath',
