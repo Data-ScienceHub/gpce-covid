@@ -1,2 +1,0 @@
-model_checkpoint_path: "CovidA21-LSTM4PositiveOutliersRemoved2MinLoss-29"
-all_model_checkpoint_paths: "CovidA21-LSTM4PositiveOutliersRemoved2MinLoss-29"
