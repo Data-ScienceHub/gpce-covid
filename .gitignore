@@ -4,3 +4,8 @@ __pycache__/
 .DS_Store
 # Jupyter Notebook
 .ipynb_checkpoints
+
+# checkpoint and data folders
+TF2/TFTTF2_ModelDev/checkpoints
+TF2/Notebooks/2021_Nov
+TF2/Notebooks/2022_May
