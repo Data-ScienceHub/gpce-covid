@@ -1,6 +1,6 @@
-# New Datasets
+# New Datasets (Not used in current model yet)
 
-Newly collected dataset on 2020-4-4.
+Newly collected dataset on 2022-4-4. This contains the data we intend to replace the old data with. But this folder isn't yet fully merged with the TFT models. However they are fully compatible and ready to merge. We can do the replacement after stabilizing the models.
 
 ## Steps to Reproduce
 
