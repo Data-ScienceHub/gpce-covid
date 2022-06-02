@@ -27,10 +27,11 @@ COLABROOTDIR
 The file structure is shown above. The notebook can be setup with the following steps:
 
 1. Organize the files with the structure shown above. The COLABROOTDIR is the root dir of the notebook. The GPCE folder contains the code of TFT model and can be downloaded here:
-
 2. In the 'Setup File Systems' code block, change COLABROOTDIR to your root dir of the notebook.
-
+```
+COLABROOTDIR="/content/drive/MyDrive/UVA_Research/COVID_Research
+```
 3. In the 'Start Training' code block, change the directory here to your directory of GPCE/TFToriginal/.
-'''
+```
 %cd "/content/drive/MyDrive/UVA_Research/COVID_Research/GPCE/TFToriginal/"
-'''
+```
