@@ -3,7 +3,8 @@
 The data is located in /CovidDecember12-2021. Details about the data can be found here: https://github.com/Data-ScienceHub/gpce-covid
 
 ## Temporal Fusion Transformer v1
-The TFT1 v1 notebook is TFT1_v1.ipynb
+**TFT1_v1_Train.ipynb:** minimal TFT1 notebook which only supports model training and inferencing \
+**TFT1_v1_Morris_PCA.ipynb:** TFT1 + Sensitivity Analysis (Morris and PCA)
 
 ### Notebook Setup
 ```
@@ -34,4 +35,8 @@ COLABROOTDIR="/content/drive/MyDrive/UVA_Research/COVID_Research
 3. In the 'Start Training' code block, change the directory here to your directory of GPCE/TFToriginal/.
 ```
 %cd "/content/drive/MyDrive/UVA_Research/COVID_Research/GPCE/TFToriginal/"
+```
+4. To train the model, set TFTMode to 1. To do inferencing, set TFTMode to 0.
+```
+TFTMode = 1
 ```
