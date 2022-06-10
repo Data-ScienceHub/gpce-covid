@@ -2,6 +2,25 @@
 ## Data
 The data is located in /CovidDecember12-2021. Details about the data can be found here: https://github.com/Data-ScienceHub/gpce-covid
 
+## Features
+| Feature        | Type       |  Currently in Use?      |
+|------------------------|------------|-------------------------|
+| Age Distribution       | Static     | Yes    |
+| Air Pollution    | Static     | No    |
+| Comorbidities          | Static     | No    |
+| Demographics    | Static     | No    |
+| Health Disparities     | Static     | Yes    |
+| Hospital Beds   | Static     | No    |
+| Mobility   | Static     | No    |
+| Residential Density    | Static     | No                     |
+| Voting    | Static     | No    |
+| Disease Spread         | Dynamic    | Yes     |
+| Social Distancing      | Dynamic    | Yes    |
+| Testing    | Dynamic    | No           |
+| Transmission    | Dynamic    | Yes    |
+| Vaccination >=1 Dose   | Dynamic    | No |
+| Vaccination Full (2)   | Dynamic    | Yes |
+
 ## Temporal Fusion Transformer v1
 **TFT1_v1_Train.ipynb:** minimal TFT1 notebook which only supports model training and inferencing \
 **TFT1_v1_Morris_PCA.ipynb:** TFT1 + Sensitivity Analysis (Morris and PCA)
@@ -36,7 +55,11 @@ COLABROOTDIR="/content/drive/MyDrive/UVA_Research/COVID_Research
 ```
 %cd "/content/drive/MyDrive/UVA_Research/COVID_Research/GPCE/TFToriginal/"
 ```
-4. To train the model, set TFTMode to 1. To do inferencing, set TFTMode to 0.
+4. Feature selection settings are in 'Science Data Arrays' code block. To use a feature, set the boolean value to True.
+```
+AgeDist = (True, ['Age Distribution.csv'])
+```
+5. To train the model, set TFTMode to 1. To do inferencing, set TFTMode to 0.
 ```
 TFTMode = 1
 ```
