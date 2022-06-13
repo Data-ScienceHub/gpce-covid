@@ -154,3 +154,25 @@ Most of the features are results from the [COVID-19 Pandemic Vulnerability Index
 
 </tbody>
 </table>
+
+## Results
+### Training history
+![](results/figures/history.png)
+
+### Train performance
+![](results/figures/Summed%20plot%20-%20train.png)
+
+### Validation performance
+![](results/figures/Summed%20plot%20-%20validation.png)
+
+### Test performance
+![](results/figures/Summed%20plot%20-%20test.png)
+
+### Importance of static features
+![](results/figures/Static%20input%20selection%20weights%20by%20variable.png)
+
+### Importance of dynamic features
+![](results/figures/Observed%20input%20selection%20weights%20by%20variable.png)
+
+### Importance of known future features
+![](results/figures/Future%20known%20input%20selection%20weights%20by%20variable.png)

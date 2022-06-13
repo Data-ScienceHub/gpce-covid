@@ -1,7 +1,8 @@
+from turtle import position
 import tensorflow as tf
 from tqdm.auto import tqdm
 import numpy as np
-import gc
+import gc, sys
 
 from time import process_time
 from datetime import timedelta
@@ -11,9 +12,10 @@ from Class.TemporalFusionTransformer import TemporalFusionTransformer
 
 ### TF functions
 class Trainer:
-    def __init__(self, parameterManager:ParameterManager) -> None:
+    def __init__(self, parameterManager:ParameterManager, disable_progress=True) -> None:
         self.batch_size = parameterManager.batch_size
         self.parameterManager = parameterManager
+        self.disable_progress = disable_progress
         
         self.metric_object = tf.keras.metrics.MeanSquaredError()
         self.loss_object = tf.keras.losses.MeanSquaredError()
@@ -51,7 +53,8 @@ class Trainer:
 
     def run_train(self, model, data):
         self.metric_object.reset_states()
-        progress_bar = tqdm(range(len(data)), desc=f'Train: ')
+        progress_bar = tqdm(range(len(data)), desc=f'Train: ', file=sys.stdout, disable=self.disable_progress)
+        
         for (_, (input, target)) in enumerate(data):
             self.train_step(model, input, target)
 
@@ -67,7 +70,8 @@ class Trainer:
     def run_validation(self, model: TemporalFusionTransformer, data):
         self.metric_object.reset_states()
 
-        progress_bar = tqdm(range(len(data)), desc=f'Validation: ')
+        progress_bar = tqdm(range(len(data)), desc=f'Validation: ', file=sys.stdout, disable=self.disable_progress)
+            
         for (_, (input, target)) in enumerate(data):
             prediction, _ = self.test_step(model, input, target)
             self.metric_object.update_state(target, prediction)
@@ -106,14 +110,14 @@ class Trainer:
             validation_loss = self.run_validation(model, validation_batch)
 
             train_time, validation_time = timedelta(seconds=train_end_time - train_start_time), timedelta(seconds=process_time()-train_end_time)
-            print(f'Train loss {train_loss:0.3f}, time {train_time}. Validation loss {validation_loss:0.3f}, time {validation_time}')
+            print(f'Train loss {train_loss:g}, time {train_time}. Validation loss {validation_loss:g}, time {validation_time}')
 
             history['train_loss'].append(train_loss)
             history['validation_loss'].append(validation_loss)
 
             if validation_loss < best_loss:
                 ckpt_save_path = checkpointManager.save()
-                print(f'Loss improved from {best_loss} to {validation_loss}')
+                print(f'Loss improved from {best_loss:g} to {validation_loss:g}')
 
                 best_loss = validation_loss
                 patience_counter = 0
@@ -146,7 +150,8 @@ class Trainer:
         actuals = []
 
         weight_dict = {'static_flags': [], 'historical_flags': [], 'future_flags': [], 'decoder_self_attn': []}
-        progress_bar = tqdm(range(len(data)))
+        progress_bar = tqdm(range(len(data)), file=sys.stdout, disable=self.disable_progress)
+
         for (_, (input, target)) in enumerate(data):
             prediction, attention_weights = self.test_step(model, input, target)
 
