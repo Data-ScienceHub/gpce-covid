@@ -11,7 +11,7 @@ python prepare_data.py -c '../config_2021_Nov.json' -d '../../dataset_raw/CovidD
 python prepare_data.py -c '../config_2022_May.json' -d '../../dataset_raw/CovidMay17-2022' -o '../2022_May/'
 """
 
-parser = argparse.ArgumentParser(description='Train TFT model', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+parser = argparse.ArgumentParser(description='Create merged feature file', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument(
     '-c', '--configPath',help='Path to the json config file', 
     type=str, default='../config_2022_May.json'
