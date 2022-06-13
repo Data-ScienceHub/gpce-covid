@@ -5,21 +5,21 @@ There are two datasets in provided. **CovidDecemeber12-2021** and **CovidMay17-2
 ## Features
 | Feature        | Type       |  Currently in Use?      |
 |------------------------|------------|-------------------------|
-| <mark>Age Distribution</mark>      | Static     | Yes    |
+| **Age Distribution**    | Static     | **Yes**    |
 | Air Pollution    | Static     | No    |
 | Comorbidities          | Static     | No    |
 | Demographics    | Static     | No    |
-| <mark>Health Disparities</mark>    | Static     | Yes    |
+| **Health Disparities**    | Static     | **Yes**    |
 | Hospital Beds   | Static     | No    |
 | Mobility   | Static     | No    |
 | Residential Density    | Static     | No                     |
 | Voting    | Static     | No    |
-| <mark>Disease Spread</mark>       | Dynamic    | Yes     |
-| <mark>Social Distancing</mark>    | Dynamic    | Yes    |
+| **Disease Spread**       | Dynamic    | **Yes**     |
+| **Social Distancing**    | Dynamic    | **Yes**    |
 | Testing    | Dynamic    | No           |
-| <mark>Transmission</mark>    | Dynamic    | Yes    |
+| **Transmission**    | Dynamic    | **Yes**    |
 | Vaccination >=1 Dose   | Dynamic    | No |
-| <mark>Vaccination Full</mark>  | Dynamic    | Yes |
+| **Vaccination Full**  | Dynamic    | **Yes** |
 
 ## Temporal Fusion Transformer v1
 **TFT1_v1_Train.ipynb:** minimal TFT1 notebook which only supports model training and inferencing \
