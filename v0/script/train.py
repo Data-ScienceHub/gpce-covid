@@ -118,7 +118,7 @@ def main():
 
     gc.collect()
     
-    trainer = Trainer(parameterManager)
+    trainer = Trainer(parameterManager, disable_progress=True)
     model = trainer.create_model()
     
     optimizer_params = parameterManager.optimizer_params
@@ -191,7 +191,7 @@ def main():
     targets, predictions = sumCases(train_actuals, train_preds, number_of_locations)
 
     resultPlotter = PlotResults(targets, predictions, parameterManager.train_start, locs, figure_folder)
-    plot_title = f'Summed plot (train) MAE {train_mae:0.3f}, RMSE {train_rmse:0.3f}'
+    plot_title = f'Summed plot (train) MAE {train_mae:0.3f}, RMSE {train_rmse:0.3f}, SMAPE {train_smape:0.3f}' 
 
     resultPlotter.makeSummedPlot(plot_title, figure_name='Summed plot - train', figsize=(24, 8))
 
