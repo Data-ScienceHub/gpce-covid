@@ -303,3 +303,69 @@ Most of the features are results from the [COVID-19 Pandemic Vulnerability Index
 |   1     |       70       |![](snapshots/dec2021/stratum1_tft.png) |      [Link](code/code_andrej/rurality_december_strata/CovidA21_TFTExtendedDates_Rurality_Rur3_5_4_5_MAD1_2.ipynb)        |
 |   2     |       79       |![](snapshots/dec2021/stratum2_tft.png) |      [Link](code/code_andrej/rurality_december_strata/CovidA21_TFTExtendedDates_Rurality_MED4_5_MAD1_2.ipynb )           |
 |   3     |       65       |![](snapshots/dec2021/stratum3_tft.png) |      [Link](code/code_andrej/rurality_decemver_strata/CovidA21_TFTExtendedDates_Rurality_Rur3_5_5_MAD2_3.ipynb)          |
+ 
+ 
+ ---
+ 
+ <br></br>
+ 
+## Progress Report (6/12)
+ 
+### Project Status
+ 
+ Tasks:
+ 
+ Andrej:
+ 
++ Migrate plotting to single pdf output
++ Change TF2 to support cases and deaths prediction
++ Set up demo on Colab
++ Update README.md with relevant instructions
+
+Status: 
+
+Code completed, running tests on TF2 model to make sure of the same output, full commit to Git by 6/15 before Thursday 6/16 Class.
+
+Nick:
+
++ Data review and integration of select features
++ Run TF2 or TF1 for future experimentation outline
+
+Status:
+
+<Nick to fill in>
+ 
+Khairul:
+ 
++ Set up complete experiment design
+  + Analyze the best train/val split
+  + Adjust hyperparemeters and any TFT related parameters and report findings.
++ Bring in additional related works
+ 
+Status: 
+ 
+<Khairul to fill in>
+ 
+Di:
+ 
++ Strip away unneccesary code in Colab notebook for TF1 v1.0
++ Separate training and inference notebooks and simplify parameters
+ 
+Status:
+<Di to fill in>
+ 
+ 
+### Hurdles and Roadblocks
+ 
+None as of now. Challenge will be to set up proper experimental design with the updated versions of the software.
+ 
+Most relevant features need to be chosen to maintain low dimensionality in our experimentation.
+ 
+ 
+### Next Steps
+ 
+Di, Khairul, Andrej to complete code with release before this Thursday's (6/15) team meeting.
+ 
+Team will jump into experimentation phase to confirm hypothesis that inside the box feature importance and Morris method results are parallel, and if not explain why.
+ 
+---
