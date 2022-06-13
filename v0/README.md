@@ -156,23 +156,26 @@ Most of the features are results from the [COVID-19 Pandemic Vulnerability Index
 </table>
 
 ## Results
+
+These are the results on whole 3142 counties after sqrt, min max scaling the target like old tft notebook with learning rate 0.0001 (old notebook has 0.001) and mean square error.
+
 ### Training history
-![](results/figures/history.png)
+![history](results/figures/history.png)
 
 ### Train performance
-![](results/figures/Summed%20plot%20-%20train.png)
+![summed-plot-train](results/figures/Summed%20plot%20-%20train.png)
 
 ### Validation performance
-![](results/figures/Summed%20plot%20-%20validation.png)
+![summed-plot-validation](results/figures/Summed%20plot%20-%20validation.png)
 
 ### Test performance
-![](results/figures/Summed%20plot%20-%20test.png)
+![summed-plot-test](results/figures/Summed%20plot%20-%20test.png)
 
 ### Importance of static features
-![](results/figures/Static%20input%20selection%20weights%20by%20variable.png)
+![static-importance](results/figures/Static%20input%20selection%20weights%20by%20variable.png)
 
 ### Importance of dynamic features
-![](results/figures/Observed%20input%20selection%20weights%20by%20variable.png)
+![dynamic-importance](results/figures/Observed%20input%20selection%20weights%20by%20variable.png)
 
 ### Importance of known future features
-![](results/figures/Future%20known%20input%20selection%20weights%20by%20variable.png)
+![known-future-importance](results/figures/Future%20known%20input%20selection%20weights%20by%20variable.png)

@@ -27,7 +27,9 @@ options:
 
 ## Train and interpret
 
-Use the `train.py` to train the model on merged data created from pervius data preparation script. This saves the best model based on validation loss, then early stops if validation loss doesn't improve for few epochs. After training is finished this script also checks the results on train, validation and test data. Then interprets the results. The default arguments are good to go. Run using `python train.py`.
+Use the `train.py` to train the model on merged data created from pervius data preparation script. This saves the best model based on validation loss, then early stops if validation loss doesn't improve for few epochs. After training is finished this script also checks the results on train, validation and test data. Then interprets the results. 
+
+The default arguments are good to go. Run using `python train.py`. This will train using the population cut which is easy to run on the Google colab or your local machine. For full 3142 counties, use `python train.py -d "../2022_May/Total.csv"` command.
 
 ```bash
 Train the Temporal Fusion Transformer model on covid dataset
