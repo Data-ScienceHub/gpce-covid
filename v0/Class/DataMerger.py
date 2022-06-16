@@ -1,5 +1,6 @@
 import pandas as pd
 from pandas import DataFrame
+from functools import reduce
 import numpy as np
 import os, json
 import math
@@ -24,10 +25,10 @@ class Embedding:
     Utility class to add embedding features based on time and locations
     """
     def LinearLocationEncoding(TotalLoc):
-            linear = np.empty(TotalLoc, dtype=float)
-            for i in range(0, TotalLoc):
-                linear[i] = float(i) / float(TotalLoc)
-            return linear
+        linear = np.empty(TotalLoc, dtype=float)
+        for i in range(0, TotalLoc):
+            linear[i] = float(i) / float(TotalLoc)
+        return linear
 
     def LinearTimeEncoding(Dateslisted):
         Firstdate = Dateslisted[0]
@@ -147,9 +148,18 @@ class DataMerger:
 
     @property
     def known_future_feature_list(self) -> list:
+        """
+        Dummy retrieval of embeddings to get column list.
+
+        """
         df = pd.DataFrame({'Date':[pd.to_datetime('2021-01-01'), pd.to_datetime('2021-01-02')], 'FIPS':[1001, 1001]})
         Embedding.add_embedding(df)
         return [col for col in df.columns if col not in ['Date', 'FIPS']+self.parameters.col_mappings['Time']]
+
+    @property
+    def target_feature_list(self) -> list:
+
+        return self.parameters.target_features
 
     def get_static_features(self) -> DataFrame:
         """Loads and merges the static features
@@ -257,29 +267,35 @@ class DataMerger:
             DataFrame: daily covid cases for each county
         """
 
-        target_file_name = list(self.data_config['targets'].keys())[0]
-        target_column = self.data_config['targets'][target_file_name]
-        target_df = read_feature_file(self.dataPath, target_file_name)
+        target_file_names = list(self.data_config['targets'].keys())
+        target_dfs = []
 
-        if 'Date' not in target_df.columns:
-            target_df = convert_cumulative_to_daily(target_df)
-            target_df.fillna(0, inplace=True)
+        for target in target_file_names:
+            target_column = self.data_config['targets'][target]
+            target_df = read_feature_file(self.dataPath, target)
 
-        target_df = fix_outliers(target_df, verbose=False)
+            if 'Date' not in target_df.columns:
+                target_df = convert_cumulative_to_daily(target_df)
+                target_df.fillna(0, inplace=True)
 
-        """## Melt columns"""
+            target_df = fix_outliers(target_df, verbose=False)
 
-        target_df = target_df.melt(
-            id_vars= ['FIPS'],
-            var_name='Date', value_name=target_column
-        ).reset_index(drop=True)
-        target_df = target_df.fillna(0)
-        target_df['Date'] = pd.to_datetime(target_df['Date'])
+            """## Melt columns"""
 
-        # some days had old covid cases fixed by adding neg values
-        target_df.loc[target_df[target_column]<0, target_column] = 0
+            target_df = target_df.melt(
+                id_vars= ['FIPS'],
+                var_name='Date', value_name=target_column
+            ).reset_index(drop=True)
+            target_df = target_df.fillna(0)
+            target_df['Date'] = pd.to_datetime(target_df['Date'])
 
-        target_df = target_df[(target_df['Date'] >= self.first_date) & (target_df['Date'] <= self.last_date)]
+            # some days had old covid cases fixed by adding neg values
+            target_df.loc[target_df[target_column]<0, target_column] = 0
+
+            target_df = target_df[(target_df['Date'] >= self.first_date) & (target_df['Date'] <= self.last_date)]
+            target_dfs.append(target_df)
+
+        target_df = reduce(lambda x, y: pd.merge(x, y, on=['FIPS','Date']), target_dfs)
 
         return target_df
 
@@ -412,16 +428,20 @@ class DataMerger:
         Args:
             configPath: config file path
         """
-
+        counter = 0
         static_locs = [i for i in range(len(self.static_feature_list))]
+        counter += len(static_locs)
+        #TODO:  skip explicitly labeling the dynamic feature list --> change this later
+        counter += len(self.dynamic_feature_list)
         print(f'static locs: {static_locs}')
 
-        start = len(self.static_feature_list) + len(self.dynamic_feature_list)
-        future_locs = [i for i in range(start, start + len(self.known_future_feature_list))]
+        future_locs = [i for i in range(counter, counter + len(self.known_future_feature_list))]
+        counter += len(future_locs)
         print(f'future locs: {future_locs}')
 
-        target_loc = start + len(self.known_future_feature_list)
-        print(f'target loc: {target_loc}. total input {target_loc+1}')
+        target_locs = [i for i in range(counter, counter + len(self.target_feature_list))]
+        counter += len(target_locs)
+        print(f'target loc: {target_locs}. total inputs {counter}')
 
         print(f'col_mappings: Static {self.static_feature_list}')
         print(f'col_mappings: Future {self.known_future_feature_list}')
@@ -434,14 +454,12 @@ class DataMerger:
 
         config["TFTparams"]["static_locs"] = static_locs
         config["TFTparams"]["future_locs"] = future_locs
-        config["TFTparams"]["target_loc"] = [target_loc]
-        config["TFTparams"]["total_inputs"] = target_loc + 1
+        config["TFTparams"]["target_loc"] = target_locs
+        config["TFTparams"]["total_inputs"] = counter
 
         config["col_mappings"]["Static"] = self.static_feature_list
 
-        # this notebook doesn't support multiple target columns yet
-        target_column = list(self.data_config['targets'].values())[0]
-        config["col_mappings"]["Target"] = [target_column]
+        config["col_mappings"]["Target"] = self.target_feature_list
         config["col_mappings"]["Future"] = self.known_future_feature_list
         config["col_mappings"]["Known Regular"] = self.static_feature_list + self.dynamic_feature_list
         # dump the json config

@@ -1,6 +1,6 @@
 {
     "TFTparams": {
-        "total_inputs": 16,
+        "total_inputs": 17,
         "static_locs": [
             0,
             1,
@@ -17,7 +17,8 @@
             14
         ],
         "target_loc": [
-            15
+            15,
+            16
         ],
         "categorical_loc": null,
         "hidden_layer_size": 64,
@@ -25,7 +26,7 @@
         "dropout_rate": 0.2,
         "input_sequence_length": 13,
         "target_sequence_length": 15,
-        "output_size": 1,
+        "output_size": 2,
         "loss": "MSE",
         "epochs": 20,
         "attn": {
@@ -52,7 +53,8 @@
             "TimeFromStart"
         ],
         "Target": [
-            "Cases"
+            "Cases",
+            "Deaths"
         ],
         "Future": [
             "LinearSpace",
@@ -91,7 +93,8 @@
             "Social Distancing.csv": "SocialDist"
         },
         "targets": {
-            "Cases.csv": "Cases"
+            "Cases.csv": "Cases",
+            "Deaths.csv": "Deaths"
         },
         "support": {
             "Population": "Population.csv",

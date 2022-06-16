@@ -49,6 +49,24 @@ class ParameterManager:
         return static_feature_list
 
     @property
+    def target_features(self) -> list:
+        """Generates the list of target features
+
+        Returns:
+            list: feature names
+        """
+        target_features_map = self.data_config['targets']
+        target_list = []
+        for value in target_features_map.values():
+            if type(value) == list:
+                target_list.extend(value)
+            else:
+                target_list.append(value)
+
+        return target_list
+
+
+    @property
     def dynamic_features(self) -> list:
         """Generates the list of dynamic features
 

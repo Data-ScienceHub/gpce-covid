@@ -11,8 +11,9 @@
                   "dropout_rate" : 0.2,
                   "input_sequence_length" : 13,
                   "target_sequence_length" : 15,
-                  "output_size" : 1,
+                  "output_size" : 2,
                   "loss" : "MSE",
+                  "quantiles" : null,
                   "epochs" : 80,
                   "attn" :
                             {
@@ -71,7 +72,8 @@
                                               "VaccinationOne",
                                               "VaccinationFull"],
                               "targets" : {
-                                "Cases" : "US_daily_cumulative_cases_Dec12.csv"
+                                "Cases" : "US_daily_cumulative_cases_Dec12.csv",
+                                "Deaths" : "US_daily_cumulative_deaths_Dec12.csv"
                               },
                               "support" : {
                                 "Population" : "Population.csv",
@@ -85,6 +87,12 @@
                                 "RunName" :  "CovidA21-TFT2-Feb2020toNov2021",
                                 "LocationBasedRandomSample" : 0.2,
                                 "SpecificLocation" : []
+                              },
+                              "split": {
+                                      "train_start": "2020-02-28",
+                                      "validation_start": "2021-11-23",
+                                      "test_start": "2022-02-19",
+                                      "test_end": "2022-05-17"
                               }
 
                             }

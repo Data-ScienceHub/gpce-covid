@@ -492,7 +492,12 @@ class TemporalFusionTransformer(tf.keras.Model):
         self.future_locs = future_inputs
         self.target_locs = target_inputs
 
-        self.FinalLoopSize = 1
+        # self.FinalLoopSize = 1
+        self.FinalLoopSize = len(target_inputs)
+
+        if self.FinalLoopSize > 1:
+            self.StackLayers = tf.TensorArray(tf.float32, size=self.FinalLoopSize)
+
 
         # HiD_EmbeddingLayer should take all the parameters it can from TFT model
         self.embedding = HiD_EmbeddingLayer(
@@ -549,13 +554,16 @@ class TemporalFusionTransformer(tf.keras.Model):
 
         self.final_glus = [GLU(self.hls, dropout_rate=self.dropout_rate, activation=None) for i in
                            range(self.FinalLoopSize)]
-        self.final_norm1 = tf.keras.layers.LayerNormalization()
-        self.final_add1 = tf.keras.layers.Add()
-        self.final_add2 = tf.keras.layers.Add()
 
-        self.decoder = GatedResidualNetwork(hls=self.hls, dropout_rate=self.dropout_rate, use_time_distributed=True)
-        self.decoder_glu = GLU(hls=self.hls, activation=None)
-        self.final_norm2 = tf.keras.layers.LayerNormalization()
+        #Converting to list of layers for FinalLoopSize > 1
+
+        self.final_norm1 = [tf.keras.layers.LayerNormalization() for i in range(self.FinalLoopSize)]
+        self.final_add1 = [tf.keras.layers.Add() for i in range(self.FinalLoopSize)]
+        self.final_add2 = [tf.keras.layers.Add() for i in range(self.FinalLoopSize)]
+
+        self.decoder = [GatedResidualNetwork(hls=self.hls, dropout_rate=self.dropout_rate, use_time_distributed=True) for i in range(self.FinalLoopSize)]
+        self.decoder_glu = [GLU(hls=self.hls, activation=None) for i in range(self.FinalLoopSize)]
+        self.final_norm2 = [tf.keras.layers.LayerNormalization() for i in range(self.FinalLoopSize)]
 
     def get_decoder_mask(self, attn_inputs):
 
@@ -625,19 +633,25 @@ class TemporalFusionTransformer(tf.keras.Model):
 
         xsve, attn = self.mlha(enriched, enriched, enriched, mask=mask)
 
-        if self.FinalLoopSize > 1:
-            StackLayers = tf.TensorArray(tf.float32, self.FinalLoopSize)
+        # if self.FinalLoopSize > 1:
+        #     StackLayers = tf.TensorArray(tf.float32, size=self.FinalLoopSize)
         for FinalGatingLoop in range(0, self.FinalLoopSize):
             x, _ = self.final_glus[FinalGatingLoop](xsve)
-            x = self.final_add1([x, enriched])
-            x = self.final_norm1(x)
+            x = self.final_add1[FinalGatingLoop]([x, enriched])
+            x = self.final_norm1[FinalGatingLoop](x)
 
-            decoder = self.decoder(x)
+            decoder = self.decoder[FinalGatingLoop](x)
 
-            decoder, _ = self.decoder_glu(decoder)
+            decoder, _ = self.decoder_glu[FinalGatingLoop](decoder)
 
-            transformer_layer = self.final_add2([decoder, temporal_feature_layer])
-            transformer_layer = self.final_norm2(transformer_layer)
+            transformer_layer = self.final_add2[FinalGatingLoop]([decoder, temporal_feature_layer])
+            transformer_layer = self.final_norm2[FinalGatingLoop](transformer_layer)
+
+            if self.FinalLoopSize > 1:
+                self.StackLayers.write(FinalGatingLoop, transformer_layer)
+
+        if self.FinalLoopSize > 1:
+            transformer_layer = self.StackLayers.stack(axis=-1)
 
         outputs = self.mlp(transformer_layer[Ellipsis, self.input_seq_len:, :])
 
