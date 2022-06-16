@@ -112,7 +112,6 @@ def main():
         parameterManager.total_sequence_length, parameterManager.col_mappings, parameterManager.data_params
     )
 
-
     train_batch = dataProcessor.prepare_batch(train_data, train=True)
     validation_batch = dataProcessor.prepare_batch(validation_data)
 
