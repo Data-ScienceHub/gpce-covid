@@ -1,0 +1,27 @@
+AttributeName,AttributeName,DataTypes,InputTypes
+RawLabel,RawLabel,0,-1
+Location,Location,3,4
+Time from Start,Time from Start,0,5
+0 Cases Root 2,0 Cases Root 2,0,0
+1 Deaths Root 2,1 Deaths Root 2,0,0
+2 Age Distribution,2 Age Distribution,0,3
+3 Air Pollution,3 Air Pollution,0,3
+4 Co-morbidities,4 Co-morbidities,0,3
+5 Demographics,5 Demographics,0,3
+6 Disease Spread,6 Disease Spread,0,1
+7 Health Disparities,7 Health Disparities,0,3
+8 Hospital Beds,8 Hospital Beds,0,3
+9 Mobility,9 Mobility,0,1
+10 Residential Density,10 Residential Density,0,3
+11 Social Distancing,11 Social Distancing,0,1
+12 Testing,12 Testing,0,1
+13 Transmissible Cases,13 Transmissible Cases,0,1
+14 voting,14 voting,0,3
+15 LinearSpace,15 LinearSpace,0,2
+16 Constant,16 Constant,0,2
+17 LinearTime,17 LinearTime,0,2
+18 P2-Time,18 P2-Time,0,2
+19 P3-Time,19 P3-Time,0,2
+20 P4-Time,20 P4-Time,0,2
+21 CosWeekly,21 CosWeekly,0,2
+22 SinWeekly,22 SinWeekly,0,2

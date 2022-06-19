@@ -1,0 +1,3 @@
+,"1_128_True_1_0_False_[]_[('Location', 3, 4), ('Time from Start', 0, 5), ('RawLabel', 0, -1), ('0 Cases Root 2', 0, 0), ('1 Deaths Root 2', 0, 0), ('2 Age Distribution', 0, 3), ('3 Health Disparities', 0, 3), ('4 Disease Spread', 0, 1), ('5 Social Distancing', 0, 1), ('6 Transmissible Cases', 0, 1), ('7 Vaccination', 0, 1), ('8 LinearSpace', 0, 2), ('9 CosWeekly', 0, 2), ('10 SinWeekly', 0, 2)]_0.2_60_64_[1, 2]_12_[]_[3, 4, 9, 10, 11]_0.001_0.01_64_../TFTData/saved_models/FFFFWNPF/fixedCovidA21-TFT2Extended-Di-CovidMay2022-Unpreprocessed-500TopCounties_5_13_60_4_2_0_['MSE']_[1.0]_1_[3, 4]_28"
+loss,0.00039017788846648746
+info,
