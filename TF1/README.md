@@ -1,4 +1,7 @@
 # TFT1 v1 Beta Release
+Demo video: https://drive.google.com/file/d/19GMd8ogj6zW2I9gPHzdGWnPHGgg4YIAg/view?usp=sharing
+
+
 ## Data
 There are two datasets in provided. **CovidDecemeber12-2021** and **CovidMay17-2022**. Features used in the datasets are listed below.
 
@@ -69,7 +72,12 @@ AgeDist = (True, ['Age Distribution.csv'])
 TFTMode = 1
 ```
 
-## Sample Results
+## Ground Truth and Sample Prediction Results
+### Ground Truth
+![](results/Ground_Truth_May2022.png)
+
+### Sample Prediction Results
 | Data | Size (Counties)| Preprocessed |        Overall Results Snapshot       | 
 |---------|----------------|----|-------------------------------------------------------|
-|   COVIDMay17-2022     |       500       | Yes | ![](results/COVIDMay_2022_Preprocessed_500Counties.png) |           
+|   COVIDMay17-2022     |       500       | Yes | ![](results/COVIDMay_2022_Preprocessed_500Counties.png) |
+|   COVIDMay17-2022     |       500       | No | ![](results/COVIDMay_2022_Unpreprocessed_500Counties.png) |           
