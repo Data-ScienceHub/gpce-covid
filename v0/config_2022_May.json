@@ -27,6 +27,7 @@
         "target_sequence_length": 15,
         "output_size": 1,
         "loss": "MSE",
+        "best_loss":"validation",
         "epochs": 20,
         "attn": {
             "num_heads": 4,
@@ -34,7 +35,7 @@
         },
         "optimizer": {
             "optimizer": "adam",
-            "learning_rate": 0.0001,
+            "learning_rate": 0.001,
             "clipnorm": 0.01
         },
         "early_stopping_patience": 3
@@ -100,7 +101,7 @@
             "LastDate": "2022-05-17",
             "Nloc": 3142,
             "Population cut": 100,
-            "Rurality cut": false,
+            "Rurality cut": true,
             "RuralityRange": [
                 4.501,
                 5
@@ -108,10 +109,7 @@
             "MADRange": [
                 1,
                 2
-            ],
-            "RunName": "CovidA21-TFT2-Feb2020toMay2022",
-            "LocationBasedRandomSample": 0.2,
-            "SpecificLocation": []
+            ]
         },
         "split": {
             "train_start": "2020-02-28",
