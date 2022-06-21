@@ -1,4 +1,3 @@
-from turtle import position
 import tensorflow as tf
 from tqdm.auto import tqdm
 import numpy as np
@@ -114,12 +113,13 @@ class Trainer:
 
             history['train_loss'].append(train_loss)
             history['validation_loss'].append(validation_loss)
-
-            if validation_loss < best_loss:
+            
+            loss  = train_loss if self.parameterManager.best_loss =='train' else validation_loss
+            if loss < best_loss:
                 ckpt_save_path = checkpointManager.save()
-                print(f'Loss improved from {best_loss:g} to {validation_loss:g}')
+                print(f'Loss improved from {best_loss:g} to {loss:g}')
 
-                best_loss = validation_loss
+                best_loss = loss
                 patience_counter = 0
                 print(f'\nSaving checkpoint for epoch {epoch + 1} at {ckpt_save_path}')
             else:

@@ -6,7 +6,7 @@ __pycache__/
 .ipynb_checkpoints
 
 # checkpoint and data folders
-TF2/TFTTF2_ModelDev/checkpoints
+checkpoints
 TF2/Notebooks/2021_Nov
 TF2/Notebooks/2022_May
 TF2/Notebooks/output

@@ -1,0 +1,129 @@
+{
+    "TFTparams": {
+        "total_inputs": 21,
+        "static_locs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+        ],
+        "future_locs": [
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19
+        ],
+        "target_loc": [
+            20
+        ],
+        "categorical_loc": null,
+        "hidden_layer_size": 64,
+        "final_mlp_hidden_layer": 128,
+        "dropout_rate": 0.2,
+        "input_sequence_length": 13,
+        "target_sequence_length": 15,
+        "output_size": 1,
+        "loss": "MSE",
+        "best_loss":"train",
+        "epochs": 60,
+        "attn": {
+            "num_heads": 4,
+            "hidden_layer_size": 64
+        },
+        "optimizer": {
+            "optimizer": "adam",
+            "learning_rate": 0.001,
+            "clipnorm": 0.01
+        },
+        "early_stopping_patience": 60
+    },
+    "col_mappings": {
+        "Static": [
+            "AgeDist",
+            "AirPollution",
+            "Comorbidities",
+            "HealthDisp",
+            "Mobility",
+            "ResidentialDense"
+        ],
+        "ID": [
+            "FIPS"
+        ],
+        "Time": [
+            "TimeFromStart"
+        ],
+        "Target": [
+            "Cases"
+        ],
+        "Future": [
+            "LinearSpace",
+            "Constant",
+            "LinearTime",
+            "P2Time",
+            "P3Time",
+            "P4Time",
+            "CosWeekly",
+            "SinWeekly"
+        ],
+        "Known Regular": [
+            "AgeDist",
+            "AirPollution",
+            "Comorbidities",
+            "HealthDisp",
+            "Mobility",
+            "ResidentialDense",
+            "DiseaseSpread",
+            "Transmission",
+            "VaccinationFull",
+            "VaccinationOne",
+            "SocialDist",
+            "Testing"
+        ]
+    },
+    "data": {
+        "params": {
+            "batch_size": 64,
+            "buffer_size": 1048
+        },
+        "static_features_map": {
+            "Age Distribution.csv": "AgeDist",
+            "Air Pollution.csv": "AirPollution",
+            "Co-morbidities.csv": "Comorbidities",
+            "Health Disparities.csv": "HealthDisp",
+            "Pop Mobility.csv": "Mobility",
+            "Residential Density.csv": "ResidentialDense"
+        },
+        "dynamic_features_map": {
+            "Disease Spread.csv": "DiseaseSpread",
+            "Transmissible Cases.csv": "Transmission",
+            "Vaccination.csv": "VaccinationFull",
+            "VaccinationOneDose.csv": "VaccinationOne",
+            "Social Distancing.csv": "SocialDist",
+            "Testing.csv": "Testing"
+        },
+        "targets": {
+            "Cases.csv": "Cases"
+        },
+        "support": {
+            "Population": "Population.csv",
+            "Rurality": "Rurality_Median_Mad.csv",
+            "FirstDate": "2020-02-28",
+            "LastDate": "2022-05-17",
+            "Nloc": 500,
+            "Population cut": 500,
+            "Rurality cut": false
+        },
+        "split": {
+            "train_start": "2020-02-28",
+            "validation_start": "2021-11-23",
+            "test_start": "2022-02-19",
+            "test_end": "2022-05-17"
+        }
+    }
+}

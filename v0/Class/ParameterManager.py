@@ -29,6 +29,7 @@ class ParameterManager:
         self.input_sequence_length = self.tft_params['input_sequence_length']
         self.total_sequence_length = self.target_sequence_length + self.input_sequence_length
         self.early_stopping_patience = self.tft_params['early_stopping_patience']
+        self.best_loss = self.tft_params['best_loss']
 
     @property
     def static_features(self) -> list:
