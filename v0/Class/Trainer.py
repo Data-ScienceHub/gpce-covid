@@ -145,7 +145,7 @@ class Trainer:
             ValueError(f'No valid checkpoint at {checkpoint_path}')
             return None
 
-    def predict(self, model, data) -> tuple[np.ndarray, np.ndarray, dict]:
+    def predict(self, model, data):
         predictions = []
         actuals = []
 

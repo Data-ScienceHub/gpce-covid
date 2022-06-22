@@ -28,7 +28,7 @@
         "output_size": 1,
         "loss": "MSE",
         "best_loss":"validation",
-        "epochs": 20,
+        "epochs": 5,
         "attn": {
             "num_heads": 4,
             "hidden_layer_size": 64
