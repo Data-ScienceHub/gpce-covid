@@ -39,6 +39,10 @@ This section describes how the configuration files work. The purpose of the conf
 
 **`Note that`**, old config files would not run with these scripts, but they are similar.
 
+## Demo
+
+A demo on how to run this on Google Colab or Rivanna remote servers is uploaded in [here](https://drive.google.com/file/d/1FmgQs4362TsavHZhDLCQI-RUaiQJ1XDP/view?usp=sharing).
+
 ## Environment Setup
 
 ### Google Colab
