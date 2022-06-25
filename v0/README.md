@@ -39,6 +39,48 @@ This section describes how the configuration files work. The purpose of the conf
 
 **`Note that`**, old config files would not run with these scripts, but they are similar.
 
+## Demo
+
+A demo on how to run this on Google Colab or Rivanna remote servers is uploaded in [here](https://drive.google.com/file/d/1FmgQs4362TsavHZhDLCQI-RUaiQJ1XDP/view?usp=sharing).
+
+## Environment Setup
+
+### Google Colab
+
+If you are running on **Google colab**, the libraries are already installed there. So you might not need to install anything.
+
+### Rivanna/CS server
+
+On **Rivanna**, the default python environment doesn't have all the libraries we need. The [requirements.txt](requirements.txt) file contains a list of libraries we need. However, you can directly created a python virtual environment using the [environment.yml](environment.yml) file and Anaconda. Copy this file to your home directory and run the following command,
+
+```bash
+conda create --name <env> --file <this file>
+
+# for example
+conda create --name ml --file environment.yml
+
+# then activate the environment with
+conda activate ml
+# now you should be able to run the files from your cmd line without error
+# if you are on notebook select this environment as your kernel
+
+# deactivate the environment
+conda deactivate
+```
+
+You can also create the environment is this current directory, then the virtual environment will be saved in this folder instead, not in the home directory.
+
+#### GPU 
+
+Next, you might face issues getting GPU running on Rivanna. Even on a GPU server the code might not recognize the GPU hardware if cuda and cudnn are not properly setup. Try to log into an interactive session in a GPU server, then run the following command
+
+```bash
+import tensorflow as tf
+print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
+```
+
+If this is still 0, then you'll have to install the cuda and cudnn versions that match version in `nvidia-smi` command output. Also see if you tensorflow version is for CPU or GPU.
+
 ## Usage guideline
 
 * Please do not add temporarily generated files in this repository.
