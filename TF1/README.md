@@ -27,6 +27,7 @@ There are two datasets in provided. **CovidDecemeber12-2021** and **CovidMay17-2
 ## Temporal Fusion Transformer v1
 **TFT1_v1_Train.ipynb:** minimal TFT1 notebook which only supports model training and inferencing \
 **TFT1_v1_Morris_PCA.ipynb:** TFT1 + Sensitivity Analysis (Morris and PCA)
+**tft1_v1_train_script.py:** Python script version of **TFT1_v1_Train.ipynb**. Works on Rivanna.
 
 ### Notebook Setup
 ```
@@ -72,12 +73,53 @@ AgeDist = (True, ['Age Distribution.csv'])
 TFTMode = 1
 ```
 
+## Experiment Setups
+### Training Parameters
+```
+# dropout_rate = 0.2
+# hidden_layer_size = 64
+# learning_rate = 0.001
+# minibatch_size = 64
+# max_gradient_norm = 0.01
+# num_heads = 4
+# stack_size = 1
+# total_time_steps = 28
+# num_encoder_steps = 13
+# num_epochs = 60
+# early_stopping_patience = 60
+# multiprocessing_workers = 5
+# input_size = 8
+# output_size = 2
+# category_counts = []
+# input_obs_loc = [1, 2]
+# static_input_loc = [3]
+# known_regular_inputs = [3, 5, 6, 7]
+# known_categorical_inputs = []
+# quantiles = [1.0]
+# quantilenames = ['MSE']
+# quantileindex = 0
+# TFTLSTMFinalMLP = 128
+# TFTOption1 = 1
+# TFTOption2 = 0
+# TFTMultivariate = True
+# TFTFinalGatingOption = 1
+# TFTSymbolicWindows = False
+```
+
+### Feature Selections
+ Selection Name | Features |
+|---------|----------------|
+|   Poster     |       Age Distribution, Health Disparities, Disease Spread, Social Distancing, Transmissible Cases, Vaccination, Linear Space, CosWeekly, SinWeekly       |
+|   Vaccine vs Cases     |       Age Distribution, Vaccination, Linear Space, CosWeekly, SinWeekly       |  
+
+
 ## Ground Truth and Sample Prediction Results
 ### Ground Truth
 ![](results/Ground_Truth_May2022.png)
 
 ### Sample Prediction Results
-| Data | Size (Counties)| Preprocessed |        Overall Results Snapshot       | 
+| Data | Size (Counties)| Features |        Overall Results Snapshot       | 
 |---------|----------------|----|-------------------------------------------------------|
-|   COVIDMay17-2022     |       500       | Yes | ![](results/COVIDMay_2022_Preprocessed_500Counties.png) |
-|   COVIDMay17-2022     |       500       | No | ![](results/COVIDMay_2022_Unpreprocessed_500Counties.png) |           
+|   COVIDMay17-2022-Preprocessed     |       500       | Poster | ![](results/COVIDMay_2022_Preprocessed_500Counties.png) |
+|   COVIDMay17-2022-Unpreprocessed     |       500       | Poster | ![](results/COVIDMay_2022_Unpreprocessed_500Counties.png) |
+|   COVIDMay17-2022 | 500 | Vaccine vs Cases | ![](results/COVIDMay_2022_'Vaccine%20vs%20Cases'_500Counties.png) |        
