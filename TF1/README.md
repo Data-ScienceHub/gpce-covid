@@ -6,23 +6,23 @@ Demo video: https://drive.google.com/file/d/19GMd8ogj6zW2I9gPHzdGWnPHGgg4YIAg/vi
 There are two datasets in provided. **CovidDecemeber12-2021** and **CovidMay17-2022**. Features used in the datasets are listed below.
 
 ## Features
-| Feature        | Type       |  Currently in Use?      |
-|------------------------|------------|-------------------------|
-| **Age Distribution**    | Static     | **Yes**    |
-| Air Pollution    | Static     | No    |
-| Comorbidities          | Static     | No    |
-| Demographics    | Static     | No    |
-| **Health Disparities**    | Static     | **Yes**    |
-| Hospital Beds   | Static     | No    |
-| Mobility   | Static     | No    |
-| Residential Density    | Static     | No                     |
-| Voting    | Static     | No    |
-| **Disease Spread**       | Dynamic    | **Yes**     |
-| **Social Distancing**    | Dynamic    | **Yes**    |
-| Testing    | Dynamic    | No           |
-| **Transmission**    | Dynamic    | **Yes**    |
-| Vaccination >=1 Dose   | Dynamic    | No |
-| **Vaccination Full**  | Dynamic    | **Yes** |
+| Index | Feature        | Type       |  Currently in Use?      |
+|---|------------------------|------------|-------------------------|
+| 0 | **Age Distribution**    | Static     | **Yes**    |
+| 1 | Air Pollution    | Static     | No    |
+| 2 | Comorbidities          | Static     | No    |
+| 3 | Demographics    | Static     | No    |
+| 4 | **Health Disparities**    | Static     | **Yes**    |
+| 5 | Hospital Beds   | Static     | No    |
+| 6 | Mobility   | Static     | No    |
+| 7 | Residential Density    | Static     | No                     |
+| 8 | Voting    | Static     | No    |
+| 9 | **Disease Spread**       | Dynamic    | **Yes**     |
+| 10 | **Social Distancing**    | Dynamic    | **Yes**    |
+| 11 | Testing    | Dynamic    | No           |
+| 12 | **Transmission**    | Dynamic    | **Yes**    |
+| 13 | Vaccination >=1 Dose   | Dynamic    | No |
+| 14 | **Vaccination Full**  | Dynamic    | **Yes** |
 
 ## Temporal Fusion Transformer v1
 **TFT1_v1_Train.ipynb:** minimal TFT1 notebook which only supports model training and inferencing \
