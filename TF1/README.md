@@ -26,7 +26,7 @@ There are two datasets in provided. **CovidDecemeber12-2021** and **CovidMay17-2
 
 ## Temporal Fusion Transformer v1
 **TFT1_v1_Train.ipynb:** minimal TFT1 notebook which only supports model training and inferencing \
-**TFT1_v1_Morris_PCA.ipynb:** TFT1 + Sensitivity Analysis (Morris and PCA)
+**TFT1_v1_Morris_PCA.ipynb:** TFT1 + Sensitivity Analysis (Morris and PCA) \
 **tft1_v1_train_script.py:** Python script version of **TFT1_v1_Train.ipynb**. Works on Rivanna.
 
 ### Notebook Setup
