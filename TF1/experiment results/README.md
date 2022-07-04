@@ -1,6 +1,9 @@
  
 # Experiment Results
 
+## Ground Truth
+![](images/ground_truth.png)
+
 ## Results (1 static feature + 1 dynamic feature)
 | Data | Size (Counties)| Features |        Overall Results Snapshot       | 
 |---------|----------------|----|-------------------------------------------------------|
