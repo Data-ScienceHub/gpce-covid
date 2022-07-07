@@ -4,6 +4,9 @@
 ## Ground Truth
 ![](images/ground_truth.png)
 
+## Results (all features)
+![](../results/COVIDMay_2022_Preprocessed_AllCounties.png)
+
 ## Results (1 static feature + 1 dynamic feature)
 | Data | Size (Counties)| Features |        Overall Results Snapshot       | 
 |---------|----------------|----|-------------------------------------------------------|
