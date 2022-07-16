@@ -1,0 +1,23 @@
+# conda install --file requirements.txt
+pip
+tensorflow-gpu
+pytorch
+cudatoolkit
+cudnn
+ipykernel
+ipywidgets
+joblib
+jupyter_client
+tqdm
+matplotlib
+notebook
+numpy
+pandas
+python
+requests
+scikit-learn
+# scikit-learn-intelex
+seaborn
+setuptools
+pytorch-lightning
+pytorch-forecasting
