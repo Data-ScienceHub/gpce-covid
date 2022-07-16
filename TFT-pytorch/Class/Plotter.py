@@ -5,7 +5,7 @@ https://pytorch-forecasting.readthedocs.io/en/stable/_modules/pytorch_forecastin
 
 import os, sys
 import numpy as np
-from pandas import DataFrame
+from pandas import DataFrame, to_timedelta
 from typing import List
 from typing import Dict
 
@@ -22,6 +22,7 @@ from Class.PredictionProcessor import PredictionProcessor
 from Class.Parameters import Parameters
 
 DPI = 300
+ONE_DAY = to_timedelta(1, unit='D')
 
 class PlotResults:
     def __init__(self, figpath:str, targets:List[str], figsize=(24,8), show=True) -> None:
@@ -44,9 +45,11 @@ class PlotResults:
 
         # TODO: the error line makes the plot look very messy, should remove later
         # plt.plot(df[x_column], abs(df[target] - df[f'Predicted_{target}']), color='red', label='Error')
+        plt.xlim(df[x_column].min() - ONE_DAY, df[x_column].max() + ONE_DAY)
         plt.ylim(bottom=0)
 
-        ax.xaxis.set_major_locator(ticker.MultipleLocator(base=base))
+        if base is not None:
+            ax.xaxis.set_major_locator(ticker.MultipleLocator(base=base))
         plt.xticks(rotation = 45)
 
         if unit>1:
@@ -212,23 +215,25 @@ class PlotWeights:
 
         fig, ax = plt.subplots(figsize=figsize)
         if title is not None: plt.title(title)
+        x_column = 'Date'
 
-        plt.plot(attention_mean['Date'], attention_mean.loc[:, 0], label=f'Time index {-max_encoder_length}')
-        plt.plot(attention_mean['Date'], attention_mean.loc[:, max_encoder_length//2-1], label=f'Time index {-max_encoder_length + max_encoder_length//2-1}')
-        plt.plot(attention_mean['Date'], attention_mean.loc[:, max_encoder_length-1], label=f'Time index -1')
+        plt.plot(attention_mean[x_column], attention_mean.loc[:, 0], label=f'Time index {-max_encoder_length}')
+        plt.plot(attention_mean[x_column], attention_mean.loc[:, max_encoder_length//2-1], label=f'Time index {-max_encoder_length + max_encoder_length//2-1}')
+        plt.plot(attention_mean[x_column], attention_mean.loc[:, max_encoder_length-1], label=f'Time index -1')
         
+        plt.xlim(attention_mean[x_column].min() - ONE_DAY, attention_mean[x_column].max() + ONE_DAY)
         plt.ylim(bottom=0)
-        ax.xaxis.set_major_locator(ticker.MultipleLocator(base=base))
+        if base is not None:
+            ax.xaxis.set_major_locator(ticker.MultipleLocator(base=base))
         plt.xticks(rotation = 45)
 
         plt.ylabel('Attention weight')
-        plt.xlabel('Date')
         plt.legend()
 
         fig.tight_layout()
 
         if figure_name is not None: 
-            plt.savefig(os.path.join(self.figpath, figure_name), dpi=DPI)
+            plt.savefig(os.path.join(self.figpath, f'{figure_name}.jpg'), dpi=DPI)
             
         if self.show: plt.show()
         
@@ -259,6 +264,6 @@ class PlotWeights:
         fig.tight_layout()
 
         if figure_name is not None:
-            plt.savefig(os.path.join(self.figpath, figure_name), dpi=DPI)
+            plt.savefig(os.path.join(self.figpath, f'{figure_name}.jpg'), dpi=DPI)
             
         if self.show: plt.show()

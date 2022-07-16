@@ -132,8 +132,21 @@ def train_validation_test_split(
     train_data = df[(df['Date']>=split.train_start) & (df['Date']<=split.train_end)][selected_columns]
     train_data = train_data.sample(frac=1, random_state=parameters.model_parameters.seed) # randomly shuffle the train data, not required for others
 
-    validation_data = df[(df['Date'] >= split.validation_start) & (df['Date'] <= split.validation_end)][selected_columns]
-    test_data = df[(df['Date']>= split.test_start)&(df['Date']<= split.test_end)][selected_columns]
+    input_sequence_length = parameters.model_parameters.input_sequence_length
+    
+    # at least input_sequence_length prior days data is needed to start prediction
+    # this ensures prediction starts from date validation_start. 
+    earliest_validation_start = split.validation_start - pd.to_timedelta(input_sequence_length, unit='day')
+    if earliest_validation_start in df['Date'].values:
+        validation_data = df[(df['Date'] >= earliest_validation_start) & (df['Date'] <= split.validation_end)][selected_columns]
+    else:
+        validation_data = df[(df['Date'] >= split.validation_start) & (df['Date'] <= split.validation_end)][selected_columns]
+
+    earliest_test_start = split.test_start - pd.to_timedelta(input_sequence_length, unit='day')
+    if earliest_test_start in df['Date'].values:
+        test_data = df[(df['Date'] >= earliest_test_start) & (df['Date'] <= split.test_end)][selected_columns]
+    else:
+        test_data = df[(df['Date'] >= split.test_start) & (df['Date'] <= split.test_end)][selected_columns]
 
     print(f'Train samples {train_data.shape[0]}, validation samples {validation_data.shape[0]}, test samples {test_data.shape[0]}')
 
@@ -145,10 +158,43 @@ def train_validation_test_split(
 
     return train_data, validation_data, test_data
 
+def train_test_split(
+    df:DataFrame, parameters:Parameters,
+):
+    split = parameters.data.split
+
+    selected_columns = [col for col in df.columns if col not in ['Date', 'Name']]
+
+    train_data = df[(df['Date']>=split.train_start) & (df['Date']<=split.train_end)][selected_columns]
+    train_data = train_data.sample(frac=1, random_state=parameters.model_parameters.seed) # randomly shuffle the train data, not required for others
+
+    input_sequence_length = parameters.model_parameters.input_sequence_length
+    
+    # at least input_sequence_length prior days data is needed to start prediction
+    # this ensures prediction starts from date test start. 
+    earliest_test_start = split.test_start - pd.to_timedelta(input_sequence_length, unit='day')
+    if earliest_test_start in df['Date'].values:
+        test_data = df[(df['Date'] >= earliest_test_start) & (df['Date'] <= split.test_end)][selected_columns]
+    else:
+        test_data = df[(df['Date'] >= split.test_start) & (df['Date'] <= split.test_end)][selected_columns]
+
+    print(f'Train samples {train_data.shape[0]}, test samples {test_data.shape[0]}')
+
+    train_days = (split.train_end - split.train_start).days + 1
+    test_days = (split.test_end - split.test_start).days + 1
+
+    print(f'{train_days} days of training, {test_days} days of test data.')
+
+    return train_data, test_data
+
 def scale_data(
         train_data:DataFrame, validation_data:DataFrame, test_data:DataFrame, parameters:Parameters
     ):
-    train, validation, test = train_data.copy(), validation_data.copy(), test_data.copy()
+    train, test = train_data.copy(), test_data.copy()
+    if validation_data is None:
+        validation = None
+    else:
+        validation = validation_data.copy()
 
     if parameters.preprocess.scale_input:
         scaled_features = parameters.data.static_features + parameters.data.dynamic_features
@@ -156,7 +202,8 @@ def scale_data(
         print(f'Scaling static and dynamic input features: {scaled_features}')
         feature_scaler = MinMaxScaler()
         train.loc[:, scaled_features] = feature_scaler.fit_transform(train[scaled_features])
-        validation.loc[:, scaled_features] = feature_scaler.transform(validation[scaled_features])
+        if validation is not None:
+            validation.loc[:, scaled_features] = feature_scaler.transform(validation[scaled_features])
         test.loc[:, scaled_features] = feature_scaler.transform(test[scaled_features])
         del feature_scaler
         gc.collect()
@@ -168,7 +215,8 @@ def scale_data(
 
         target_scaler = MinMaxScaler()
         train.loc[:, target_features] = target_scaler.fit_transform(train[target_features])
-        validation.loc[:, target_features] = target_scaler.transform(validation[target_features])
+        if validation is not None:
+            validation.loc[:, target_features] = target_scaler.transform(validation[target_features])
         test.loc[:, target_features] = target_scaler.transform(test[target_features])
         
     return train, validation, test, target_scaler

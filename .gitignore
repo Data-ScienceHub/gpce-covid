@@ -19,3 +19,4 @@ TF2/output
 2022_May_target_cleaned
 best_predictions_case_death.csv
 predictions_case_death.csv
+!TFT-pytorch/results/

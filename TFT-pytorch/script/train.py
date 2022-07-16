@@ -65,10 +65,12 @@ from dataclasses import dataclass
 
 @dataclass
 class args:
-    outputPath = '../top_100_early_stopped_target_unscaled'
+    outputPath = '../top_100_early_stopped_target_cleaned_unscaled'
     figPath = os.path.join(outputPath, 'figures')
     checkpoint_folder = os.path.join(outputPath, 'checkpoints')
     input_filePath = '../2022_May_target_cleaned/Top_100.csv'
+
+    # pass your intented configuration here
     configPath = '../config_2022_May.json'
 
     final_model_path = os.path.join(checkpoint_folder, "model.ckpt")
@@ -271,7 +273,7 @@ tft = TemporalFusionTransformer.from_dataset(
     dropout=tft_params.dropout_rate,
     loss=MultiLoss([RMSE() for _ in targets]),
     log_interval=1,
-    # reduce_on_plateau_patience=2
+    reduce_on_plateau_patience=2
 )
 
 print(f"Number of parameters in network: {tft.size()/1e3:.1f}k")
@@ -337,7 +339,7 @@ train_result_merged = processor.align_result_with_dataset(train_data, train_pred
 show_result(train_result_merged)
 
 # %%
-plotter.summed_plot(train_result_merged, type='Train_avg' , save=True, base=21)
+plotter.summed_plot(train_result_merged, type='Train_avg' , save=True, base=35)
 # df = processor.align_result_with_dataset(train_data, train_predictions, train_index, target_time_step = 1)
 # plotter.summed_plot(df, type='Train_day_1' , save=True)
 
@@ -350,7 +352,7 @@ for day in range(1, max_prediction_length+1):
     print(f'Day {day}')
     df = processor.align_result_with_dataset(train_data, train_predictions, train_index, target_time_step = day)
     show_result(df)
-    # plotter.summed_plot(df, type=f'Train_day_{day}', base=21)
+    # plotter.summed_plot(df, type=f'Train_day_{day}', base=35)
 
 # %% [markdown]
 # ## Validation results
@@ -367,6 +369,11 @@ show_result(validation_result_merged)
 plotter.summed_plot(validation_result_merged, type='Validation_avg', save=True)
 # df = processor.align_result_with_dataset(validation_data, validation_predictions, validation_index, target_time_step = 1)
 # plotter.summed_plot(df, type='Validation_day_1', save=True)
+
+# %%
+print('Minimum and maximum time index from validation data and its index')
+for df in [validation_data, validation_index]:
+    print(df[time_idx].min(), df[time_idx].max())
 
 # %% [markdown]
 # ## Test results
@@ -395,7 +402,7 @@ for day in range(1, max_prediction_length+1):
     print(f'Day {day}')
     df = processor.align_result_with_dataset(test_data, test_predictions, test_index, target_time_step = day)
     show_result(df)
-     # plotter.summed_plot(df, type=f'Test_day_{day}', base=21)
+     # plotter.summed_plot(df, type=f'Test_day_{day}')
 
 # %% [markdown]
 # ## Dump results
@@ -453,7 +460,7 @@ for key in train_interpretation.keys():
 attention_mean = processor.get_mean_attention(
     train_interpretation, train_index
 )
-plotWeights.plot_attention(attention_mean, figure_name='Train_attention', base=21)
+plotWeights.plot_attention(attention_mean, figure_name='Train_individual_attention', base=35)
 
 # %%
 attention_weekly = processor.get_attention_by_weekday(attention_mean)
@@ -467,7 +474,7 @@ attention_mean = processor.get_mean_attention(
     tft.interpret_output(validation_raw_predictions), 
     validation_index
 )
-plotWeights.plot_attention(attention_mean, figure_name='Validation_attention', base=3)
+plotWeights.plot_attention(attention_mean, figure_name='Validation_individual_attention', base=3)
 
 # %%
 attention_weekly = processor.get_attention_by_weekday(attention_mean)
@@ -481,7 +488,7 @@ attention_mean = processor.get_mean_attention(
     tft.interpret_output(test_raw_predictions), 
     test_index
 )
-plotWeights.plot_attention(attention_mean, figure_name='Test_attention', base=3)
+plotWeights.plot_attention(attention_mean, figure_name='Test_individual_attention', base=3)
 
 # %%
 attention_weekly = processor.get_attention_by_weekday(attention_mean)
@@ -534,7 +541,7 @@ train_result_merged = processor.align_result_with_dataset(train_data, train_pred
 show_result(train_result_merged)
 
 # %%
-plotter.summed_plot(train_result_merged, type='Train_avg' , save=True, base=21)
+plotter.summed_plot(train_result_merged, type='Train_avg' , save=True, base=35)
 
 # %% [markdown]
 # ## Validation results
@@ -563,11 +570,11 @@ print(f'\n---Test results--\n')
 test_predictions, test_index = best_tft.predict(test_dataloader, mode="prediction", return_index=True, show_progress_bar=args.show_progress_bar)
 test_predictions = upscale_prediction(targets, test_predictions, target_scaler, max_prediction_length)
 
-test_result_merged = processor.align_result_with_dataset(test_data, test_predictions, test_index)
+test_result_merged = processor.align_result_with_dataset(total_data, test_predictions, test_index)
 show_result(test_result_merged)
 
 # %%
-plotter.summed_plot(test_result_merged, 'Test_avg', save=True)
+plotter.summed_plot(test_result_merged, 'Test_avg', save=True, base=3)
 
 # %% [markdown]
 # ## Dump results
@@ -604,7 +611,7 @@ for key in train_interpretation.keys():
 attention_mean = processor.get_mean_attention(
     train_interpretation, train_index
 )
-plotWeights.plot_attention(attention_mean, figure_name='Train_attention', base=21)
+plotWeights.plot_attention(attention_mean, figure_name='Train_individual_attention', base=35)
 
 # %%
 attention_weekly = processor.get_attention_by_weekday(attention_mean)
@@ -618,7 +625,7 @@ attention_mean = processor.get_mean_attention(
     best_tft.interpret_output(validation_raw_predictions), 
     validation_index
 )
-plotWeights.plot_attention(attention_mean, figure_name='Validation_attention', base=3)
+plotWeights.plot_attention(attention_mean, figure_name='Validation_individual_attention', base=3)
 
 # %%
 attention_weekly = processor.get_attention_by_weekday(attention_mean)
@@ -632,7 +639,7 @@ attention_mean = processor.get_mean_attention(
     best_tft.interpret_output(test_raw_predictions), 
     test_index
 )
-plotWeights.plot_attention(attention_mean, figure_name='Test_attention', base=3)
+plotWeights.plot_attention(attention_mean, figure_name='Test_individual_attention', base=3)
 
 # %%
 attention_weekly = processor.get_attention_by_weekday(attention_mean)

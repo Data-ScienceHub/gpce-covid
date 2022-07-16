@@ -60,7 +60,7 @@ class args:
     model_path = os.path.join(checkpoint_folder, 'model.ckpt')
 
     # set this to false when submitting batch script, otherwise it prints a lot of lines
-    show_progress_bar = True
+    show_progress_bar = False
 
 # %%
 total_data = pd.read_csv(args.input_filePath)
@@ -225,7 +225,7 @@ train_result_merged = processor.align_result_with_dataset(train_data, train_pred
 show_result(train_result_merged)
 
 # %%
-plotter.summed_plot(train_result_merged, type='Train_avg' , save=True, base=21)
+plotter.summed_plot(train_result_merged, type='Train_avg' , save=True, base=35)
 # df = processor.align_result_with_dataset(train_data, train_predictions, train_index, target_time_step = 1)
 # plotter.summed_plot(df, type='Train_day_1' , save=True)
 
@@ -339,7 +339,7 @@ for key in train_interpretation.keys():
 attention_mean = processor.get_mean_attention(
     train_interpretation, train_index
 )
-plotWeights.plot_attention(attention_mean, figure_name='Train_attention', base=21)
+plotWeights.plot_attention(attention_mean, figure_name='Train_attention', base=35)
 
 # %%
 attention_weekly = processor.get_attention_by_weekday(attention_mean)
