@@ -6,9 +6,9 @@ __pycache__/
 .ipynb_checkpoints
 
 # checkpoint and data folders
-checkpoints
+# checkpoints
 lightning_logs
-figures
+# figures
 figures_best
 *.out
 
