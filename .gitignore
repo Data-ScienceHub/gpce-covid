@@ -6,9 +6,9 @@ __pycache__/
 .ipynb_checkpoints
 
 # checkpoint and data folders
-checkpoints
+# checkpoints
 lightning_logs
-figures
+# figures
 figures_best
 *.out
 
@@ -19,3 +19,4 @@ TF2/output
 2022_May_target_cleaned
 best_predictions_case_death.csv
 predictions_case_death.csv
+!TFT-pytorch/results/
