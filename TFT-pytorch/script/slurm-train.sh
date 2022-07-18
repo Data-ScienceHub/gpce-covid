@@ -16,4 +16,4 @@ conda deactivate
 conda activate ml
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/mi3se/.conda/envs/ml/lib
-python covid_case_and_death_overfitted.py
+python train.py
