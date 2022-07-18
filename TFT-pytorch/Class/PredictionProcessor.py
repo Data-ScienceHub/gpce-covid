@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 
+weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+
 class PredictionProcessor:
     """
     Converts the TFT output into plotable dataframe format
@@ -121,16 +123,36 @@ class PredictionProcessor:
         max_encoder_length = self.max_encoder_length
         attention_mean = attention.groupby('Date')[list(range(max_encoder_length))].aggregate('mean').reset_index()
 
+        # if you want to preserve early max_encoder_length days of attention. But not all days have attention within this time
+        # df = pd.DataFrame(
+        #     {encoder_length:[0]*max_encoder_length for encoder_length in range(max_encoder_length)}
+        # )
+        # df['Date'] = [attention_mean['Date'].min() - pd.to_timedelta(encoder_length, unit='day') for encoder_length in range(1, max_encoder_length+1)]
+        # attention_mean = pd.concat([df, attention_mean]).reset_index(drop=True).sort_values(by='Date')
+
         for i in range(max_encoder_length):
             attention_mean[i] = attention_mean[i].shift(periods=i-max_encoder_length, fill_value=0)
 
+        # comment this out if you want to preserve the last max_encoder_length days of attention. 
+        # But not all days have attention within this time
         attention_mean = attention_mean.drop(range(attention_mean.shape[0]-max_encoder_length-1, attention_mean.shape[0]), axis=0)
+
+        attention_mean['mean'] = attention_mean.drop(columns='Date').mean(axis=1)
+        attention_mean['median'] = attention_mean.drop(columns='Date').median(axis=1)
 
         return attention_mean
 
-
-    def get_attention_by_weekday(self, attention_mean):
+    def get_attention_by_weekday(self, attention_mean, verbose=True):
         attention_mean['weekday'] = attention_mean.Date.dt.weekday.astype(str)
         attention_weekly = attention_mean.groupby('weekday')[list(range(self.max_encoder_length))].aggregate('mean').reset_index(drop=True)
-        attention_weekly['weekday'] = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+    
+        attention_weekly['weekday'] = weekdays
+        attention_weekly['mean'] = attention_weekly.drop(columns='weekday').mean(axis=1)
+        attention_weekly['median'] = attention_weekly.drop(columns='weekday').median(axis=1)
+        
+        if verbose:
+            max_index = np.argmax(attention_weekly[range(self.max_encoder_length)].to_numpy(), axis=0)
+            max_days = [(-self.max_encoder_length+index, weekdays[day]) for index, day in enumerate(max_index)]
+            print(f'Weekdays when these attentions are maximum: {max_days}')
+
         return attention_weekly

@@ -50,14 +50,14 @@ from dataclasses import dataclass
 
 @dataclass
 class args:
-    outputPath = '../top_100_early_stopped_target_unscaled'
-    figPath = os.path.join(outputPath, 'figures')
+    outputPath = '../top_500_target_cleaned_scaled'
+    figPath = os.path.join(outputPath, 'figures_best')
     checkpoint_folder = os.path.join(outputPath, 'checkpoints')
-    input_filePath = '../2022_May_target_cleaned/Top_100.csv'
-    configPath = '../config_2022_May.json'
+    input_filePath = '../2022_May_target_cleaned/Top_500.csv'
+    configPath = '../configurations/top_500_target_cleaned_scaled.json'
 
     load_from_checkpoint = False
-    model_path = os.path.join(checkpoint_folder, 'model.ckpt')
+    model_path = os.path.join(checkpoint_folder, 'epoch=23-step=114360.ckpt')
 
     # set this to false when submitting batch script, otherwise it prints a lot of lines
     show_progress_bar = False
@@ -98,19 +98,6 @@ max_encoder_length = tft_params.input_sequence_length
 total_data['Date'] = pd.to_datetime(total_data['Date'].values) 
 total_data['FIPS'] = total_data['FIPS'].astype(str)
 print(f"There are {total_data['FIPS'].nunique()} unique counties in the dataset.")
-
-# %%
-## Fill missing values
-# Currently not needed as they are filled with 0 during the data preparation stage. 
-# But TFT doesn't support NULL values. So if you have any, replace them.
-
-df = missing_percentage(total_data)
-
-print(df[df>0])
-
-if df[df>0].shape[0]>0:
-    print('Filling null values with 0.')
-    total_data.fillna(0, inplace=True)
 
 # %% [markdown]
 # ## Adapt input to encoder length
@@ -163,7 +150,7 @@ def prepare_data(data: pd.DataFrame, pm: Parameters, train=False):
   return data_timeseries, dataloader
 
 # %%
-_, train_dataloader = prepare_data(train_scaled, parameters, train=True)
+_, train_dataloader = prepare_data(train_scaled, parameters)
 _, validation_dataloader = prepare_data(validation_scaled, parameters)
 _, test_dataloader = prepare_data(test_scaled, parameters)
 
@@ -180,7 +167,7 @@ def show_result(df: pd.DataFrame, targets=targets):
         y_true, y_pred = df[target].values, df[predicted_column].values
 
         mae, rmse, msle, smape, nnse = calculate_result(y_true, y_pred)
-        print(f'Target {target}, MAE {mae:5g}, RMSE {rmse:5g}, MSLE {msle:5g}, SMAPE {smape:5g}. NNSE {nnse:5g}.')
+        print(f'Target {target}, MAE {mae:.5g}, RMSE {rmse:.5g}, MSLE {msle:.5g}, SMAPE {smape:0.5g}. NNSE {nnse:0.5g}.')
     print()
 
 # %% [markdown]
@@ -205,7 +192,7 @@ processor = PredictionProcessor(
 # %%
 from Class.Plotter import *
 
-plotter = PlotResults(args.figPath, targets)
+plotter = PlotResults(args.figPath, targets, show=args.show_progress_bar)
 
 # %% [markdown]
 # # Evaluate
@@ -224,10 +211,7 @@ train_predictions = upscale_prediction(targets, train_predictions, target_scaler
 train_result_merged = processor.align_result_with_dataset(train_data, train_predictions, train_index)
 show_result(train_result_merged)
 
-# %%
-plotter.summed_plot(train_result_merged, type='Train_avg' , save=True, base=35)
-# df = processor.align_result_with_dataset(train_data, train_predictions, train_index, target_time_step = 1)
-# plotter.summed_plot(df, type='Train_day_1' , save=True)
+plotter.summed_plot(train_result_merged, type='Train', base=45)
 
 # %% [markdown]
 # ### By future days
@@ -238,6 +222,7 @@ for day in range(1, max_prediction_length+1):
     print(f'Day {day}')
     df = processor.align_result_with_dataset(train_data, train_predictions, train_index, target_time_step = day)
     show_result(df)
+    # plotter.summed_plot(df, type=f'Train_day_{day}', base=45)
 
 # %% [markdown]
 # ## Validation results
@@ -249,11 +234,7 @@ validation_predictions = upscale_prediction(targets, validation_predictions, tar
 
 validation_result_merged = processor.align_result_with_dataset(validation_data, validation_predictions, validation_index)
 show_result(validation_result_merged)
-
-# %%
-plotter.summed_plot(validation_result_merged, type='Validation_avg', save=True)
-# df = processor.align_result_with_dataset(validation_data, validation_predictions, validation_index, target_time_step = 1)
-# plotter.summed_plot(df, type='Validation_day_1', save=True)
+plotter.summed_plot(validation_result_merged, type='Validation')
 
 # %% [markdown]
 # ## Test results
@@ -268,11 +249,7 @@ test_predictions = upscale_prediction(targets, test_predictions, target_scaler, 
 
 test_result_merged = processor.align_result_with_dataset(test_data, test_predictions, test_index)
 show_result(test_result_merged)
-
-# %%
-plotter.summed_plot(test_result_merged, 'Test_avg', save=True)
-# df = processor.align_result_with_dataset(test_data, test_predictions, test_index, target_time_step = 1)
-# plotter.summed_plot(df, 'Test_day_1', save=True)
+plotter.summed_plot(test_result_merged, 'Test')
 
 # %% [markdown]
 # ### By future days
@@ -282,6 +259,7 @@ for day in range(1, max_prediction_length+1):
     print(f'Day {day}')
     df = processor.align_result_with_dataset(test_data, test_predictions, test_index, target_time_step = day)
     show_result(df)
+    # plotter.summed_plot(df, type=f'Test_day_{day}')
 
 # %% [markdown]
 # ## Dump results
@@ -303,16 +281,15 @@ fips_codes = total_data['FIPS'].unique()
 names_df = pd.read_csv('../../dataset_raw/CovidMay17-2022/Age Distribution.csv')[['FIPS','Name']]
 names_df['FIPS'] = names_df['FIPS'].astype(str)
 
-# %%
-print(f'\n---Per county training results--\n')
-count = 10
+print(f'\n---Per county test results--\n')
+count = 5
 
 for index, fips in enumerate(fips_codes):
     if index == count: break
 
     name = names_df[names_df['FIPS']==fips]['Name'].values[0]
     print(f'County {name}, FIPS {fips}')
-    df = train_result_merged[train_result_merged['FIPS']==fips]
+    df = test_result_merged[test_result_merged['FIPS']==fips]
     show_result(df, targets)
     print()
 
@@ -320,7 +297,7 @@ for index, fips in enumerate(fips_codes):
 # ## Attention weights
 
 # %%
-plotWeights = PlotWeights(args.figPath, parameters)
+plotWeights = PlotWeights(args.figPath, parameters, show=args.show_progress_bar)
 
 # %%
 # tft = TemporalFusionTransformer.load_from_checkpoint(best_model_path)
@@ -328,18 +305,17 @@ train_raw_predictions = tft.predict(train_dataloader, mode="raw", show_progress_
 validation_raw_predictions = tft.predict(validation_dataloader, mode="raw", show_progress_bar=args.show_progress_bar)
 test_raw_predictions = tft.predict(test_dataloader, mode="raw", show_progress_bar=args.show_progress_bar)
 
-train_interpretation = tft.interpret_output(train_raw_predictions)
-for key in train_interpretation.keys():
-    print(key, train_interpretation[key].shape)
-
 # %% [markdown]
 # ### Train
 
 # %%
 attention_mean = processor.get_mean_attention(
-    train_interpretation, train_index
+    tft.interpret_output(train_raw_predictions), train_index
 )
-plotWeights.plot_attention(attention_mean, figure_name='Train_attention', base=35)
+plotWeights.plot_attention(
+    attention_mean, figure_name='Train_daily_attention', base=45, 
+    limit=0, enable_markers=False, title='Attention with dates'
+)
 
 # %%
 attention_weekly = processor.get_attention_by_weekday(attention_mean)
@@ -350,10 +326,11 @@ plotWeights.plot_weekly_attention(attention_weekly, figure_name='Train_weekly_at
 
 # %%
 attention_mean = processor.get_mean_attention(
-    tft.interpret_output(validation_raw_predictions), 
-    validation_index
+    tft.interpret_output(validation_raw_predictions), validation_index
 )
-plotWeights.plot_attention(attention_mean, figure_name='Validation_attention', base=3)
+plotWeights.plot_attention(
+    attention_mean, figure_name='Validation_daily_attention', target_day=4
+)
 
 # %%
 attention_weekly = processor.get_attention_by_weekday(attention_mean)
@@ -364,10 +341,9 @@ plotWeights.plot_weekly_attention(attention_weekly, figure_name='Validation_week
 
 # %%
 attention_mean = processor.get_mean_attention(
-    tft.interpret_output(test_raw_predictions), 
-    test_index
+    tft.interpret_output(test_raw_predictions), test_index
 )
-plotWeights.plot_attention(attention_mean, figure_name='Test_attention', base=3)
+plotWeights.plot_attention(attention_mean, figure_name='Test_daily_attention', target_day=4)
 
 # %%
 attention_weekly = processor.get_attention_by_weekday(attention_mean)
