@@ -50,7 +50,7 @@ from dataclasses import dataclass
 
 @dataclass
 class args:
-    outputPath = '../top_500_target_cleaned_scaled'
+    outputPath = '../results/top_500_target_cleaned_scaled'
     figPath = os.path.join(outputPath, 'figures_best')
     checkpoint_folder = os.path.join(outputPath, 'checkpoints')
     input_filePath = '../2022_May_target_cleaned/Top_500.csv'

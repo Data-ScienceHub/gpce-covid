@@ -9,14 +9,13 @@ __pycache__/
 # checkpoints
 lightning_logs
 # figures
-figures_best
+# figures_best
 *.out
 
 TF2/2021_Nov
 TF2/output
 
-2022_May
-2022_May_target_cleaned
+Total.csv
 best_predictions_case_death.csv
 predictions_case_death.csv
 !TFT-pytorch/results/

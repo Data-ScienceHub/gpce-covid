@@ -65,13 +65,13 @@ from dataclasses import dataclass
 
 @dataclass
 class args:
-    outputPath = '../top_500_early_stopped_target_cleaned_unscaled'
+    outputPath = '../results/top_500_target_cleaned_scaled'
     figPath = os.path.join(outputPath, 'figures')
     checkpoint_folder = os.path.join(outputPath, 'checkpoints')
     input_filePath = '../2022_May_target_cleaned/Top_500.csv'
 
     # pass your intented configuration here
-    configPath = '../configurations/top_500_early_stopped_target_cleaned_unscaled.json'
+    configPath = '../configurations/top_500_target_cleaned_scaled.json'
 
     final_model_path = os.path.join(checkpoint_folder, "model.ckpt")
     # Path/URL of the checkpoint from which training is resumed
