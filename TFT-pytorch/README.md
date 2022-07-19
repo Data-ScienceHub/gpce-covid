@@ -9,14 +9,19 @@ This folder contains the `Temporal Fushion Transformer` implemented in [`Pytorch
   * DataProcessor
   * Parameters
   * Plotter
+
+* configurations: folder to save some common configurations.
 * notebooks: Notebook version of the scripts. Use these for debugging or new implementation purpose.
   * Data preparation.ipynb
   * Train.ipynb
   * Inference.ipynb
 * output
   * checkpoints
-  * figures
-  * lightning_logs: This folder is used by tensorboard to log the training and validation visualization. You can point this folder by clicking the line before `import tensorboard as tb` in the training code (both script and notebook), that says `launch tensorboard session`. VSCode will automatically suggest the extensions needed for it.
+    * epoch=X-step=X.ckpt: model checkpointed by best validation loss.
+    * model.ckpt: final model saved after finishing traning.
+  * figures: saves the figures plotted by the final model obtained after finishing the training.
+  * figures_best: figures plotted using the model with best validation loss. 
+  * lightning_logs: This folder is used by tensorboard to log the training and validation visualization. You can point this folder by clicking the line before `import tensorboard as tb` in the training code (both script and notebook), that says `launch tensorboard session`. VSCode will automatically suggest the extensions needed for it. It can also run from cmd line, using `tensorboard --logdir=lightning_logs`, then it'll show something like `TensorBoard 2.9.0 at http://localhost:6006/ (Press CTRL+C to quit)`. Copy paste the URL in your local browser. To save the images, check `show data download links in the top left`.
   
 * script: Contains scripts for submitting batch jobs. For details on how to use then, check the readme inside the folder.
   * `prepare_data.py`: Prepare merged data from raw feature files.
@@ -55,7 +60,7 @@ Currently on Rivanna with batch size 64, each epoch with
 
 ### Google Colab
 
-If you are running on **Google colab**, most libraries are already installed there. You'll only have to install the pytorch forecasting and lightning module. Uncomment those installation commands in the code.
+If you are running on **Google colab**, most libraries are already installed there. You'll only have to install the pytorch forecasting and lightning module. Uncomment those installation commands in the code. Upload the TFT-pytorch folder in your drive and set that path in the notebook colab section. If you want to run the data preparation notebook, upload the [CovidMay17-2022](../dataset_raw/CovidMay17-2022/) folder too. Modify the path accordingly in the notebook.
 
 ```python
 !pip install pytorch_lightning
@@ -105,6 +110,37 @@ print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 ```
 
 If this is still 0, then you'll have to install the cuda and cudnn versions that match version in `nvidia-smi` command output. Also see if you tensorflow version is for CPU or GPU.
+
+## How to replicate
+
+* Write down your intended configuration in the config.json file. Or reuse an existing one.
+  * Change TFT related parameters in the `"model_parameters"` section.
+  * To train all 60 epochs change `"early_stopping_patience"` to 60. Default is `5`.
+  * To add/remove new features or for different population cut use the `"data"` section.
+  * To create rurality cut set `"rurality_cut"` to  `true`. Default is `false`. Since we are not using it currently.
+  * `Data` section also has the train/validation/test split.
+  * Use the `preprocess` section to remove outliers during the data preparation.
+  * **Note**: Changing the order or spelling of the json keys will require chaning the [Parameters.py](/Class/Parameters.py) accordingly.
+  
+* Use the data prepration [notebook](/notebooks/Data_preparation.ipynb) or [script](/script/prepare_data.py) to create the merged data.
+  * Make sure to pass the correct config.json file.
+  * Check the folder paths in `args` class, whether they are consistent.
+  * Depending on your configuration it can create the merged file of all counties, based on a population cut (e.g. top 500 counties) or rurality cut. All counties are saved in `Total.csv`, population cut in `Top_X.csv` where `X` is the number of top counties by population. Rurality is saved in `Rurality_cut.csv`.
+  * Currently there is a option to either remove outliers from the input and target, or not. Removing target outliers can decrease anomalies in the learning. But changing the ground truth like this is not often desirable, so you can set it to false in the `preprocess` section in the configuration.
+  * Note that, scaling and splitting are not done here, but later during training and infering.
+  
+* Use the training [notebook](/notebooks/Train.ipynb) or [script](/script/train.py) to train and interpret the model.
+  * Make sure to pass the correct config.json file.
+  * Check the folder paths in `args` class, whether they are consistent.
+  * This file reads the merged feature file, splits it into train/validation/test, scales the input and target if needed, then passes them to the model.
+  * The interpretation is done for both the final model and the model with best validation loss.
+  * Note the path where the models are checkpointed.
+  * Using vscode you can also open the tensorboard to review the training logs.
+  * The prediction is saved as csv file for any future visualizations.
+  
+* The inference [notebook](/notebooks/Inference.ipynb) or [script](/script/inference.py) can be used to infer a previously checkpointed model and interpret it.
+  * Same as before, recheck the config.json file and `args` class. Make sure they are same as the model you are going to infer.
+  * Set the model path to the checkpoint model you want to infer.
 
 ## Usage guideline
 

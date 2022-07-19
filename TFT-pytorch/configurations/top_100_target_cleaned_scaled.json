@@ -1,0 +1,70 @@
+{
+    "model_parameters": {
+        "hidden_layer_size": 64,
+        "dropout_rate": 0.2,
+        "input_sequence_length": 13,
+        "target_sequence_length": 15,
+        "output_size": 2,
+        "epochs": 60,
+        "attention_head_size":4,
+
+        "optimizer": "adam",
+        "learning_rate": 0.001,
+        "clipnorm": 0.01,
+
+        "early_stopping_patience": 60,
+        "seed":7,
+        "batch_size": 64
+    },
+    "data": {
+        "id": [
+            "FIPS"
+        ],
+        "static_features_map": {
+            "Age Distribution.csv": "AgeDist",
+            "Health Disparities.csv": "HealthDisp"
+        },
+        "dynamic_features_map": {
+            "Disease Spread.csv": "DiseaseSpread",
+            "Transmissible Cases.csv": "Transmission",
+            "Vaccination.csv": "VaccinationFull",
+            "Social Distancing.csv": "SocialDist"
+        },
+        "known_futures": [
+            "LinearSpace",
+            "SinWeekly",
+            "CosWeekly"
+        ],
+        "target_map": {
+            "Cases.csv": "Cases",
+            "Deaths.csv": "Deaths"
+        },
+        "time_idx": "TimeFromStart",
+     
+        "population": "Population.csv",
+        "population_cut": 500,
+
+        "rurality": "Rurality_Median_Mad.csv",
+        "rurality_cut": false,
+        "rurality_range": [
+            4.501,
+            5
+        ],
+        "MAD_range": [
+            1,
+            2
+        ],
+        "split": {
+            "train_start": "2020-02-28",
+            "validation_start": "2021-11-30",
+            "test_start": "2022-02-23",
+            "test_end": "2022-05-17"
+        }
+    },
+    "preprocess": {
+        "remove_input_outliers": true,
+        "remove_target_outliers": true,
+        "scale_input": true,
+        "scale_target": true
+    }
+}

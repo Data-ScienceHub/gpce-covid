@@ -30,23 +30,24 @@ print(device)
 # %% [markdown]
 # ## Google colab
 # 
-# Uncomment the following if you are running on google colab. They don't have these libraries installed by default. 
+# Set `running_on_colab` to true if you are running on google colab. They don't have these libraries installed by default. 
 # 
-# Only uncomment the pip install part if you are on rivanna, using a default pytorch kernel.
+# Use only the pip install part if you are on rivanna, using a default tensorflow kernel.
 
 # %%
-# !pip install pytorch_lightning
-# !pip install pytorch_forecasting
+running_on_colab = False
 
-# from google.colab import drive
+if running_on_colab:
+    !pip install pytorch_lightning
+    !pip install pytorch_forecasting
 
-# drive.mount('/content/drive')
-# %cd /content/drive/My Drive/Projects/Covid/notebooks
+    from google.colab import drive
+
+    drive.mount('/content/drive')
+    %cd /content/drive/My Drive/Projects/Covid/TFT-pytorch/notebook
 
 # %% [markdown]
 # ## Pytorch lightning and forecasting
-# 
-# Pytorch forecasting has direct support for TFT https://pytorch-forecasting.readthedocs.io/en/stable/tutorials/stallion.html. 
 
 # %%
 import pytorch_lightning as pl
@@ -68,9 +69,12 @@ class args:
     outputPath = '../results/top_500_target_cleaned_scaled'
     figPath = os.path.join(outputPath, 'figures')
     checkpoint_folder = os.path.join(outputPath, 'checkpoints')
-    input_filePath = '../2022_May_target_cleaned/Top_500.csv'
+    input_filePath = '../2022_May_target_cleaned/Top_100.csv'
 
     # pass your intented configuration here
+    # input features are always normalized. But keeping the targets features unscaled improves results
+    # if you want to change some config, but not to create a new config file, just change the value
+    # of the corresponding parameter in the config section
     configPath = '../configurations/top_500_target_cleaned_scaled.json'
 
     final_model_path = os.path.join(checkpoint_folder, "model.ckpt")
@@ -104,6 +108,13 @@ parameters = Parameters(config, **config)
 targets = parameters.data.targets
 time_idx = parameters.data.time_idx
 tft_params = parameters.model_parameters
+
+# google colab doesn't utilize GPU properly for pytorch
+# so increasing batch size forces more utilization
+# not needed on rivanna or your local machine
+
+if running_on_colab: 
+    tft_params.batch_size *= 16
 
 batch_size = tft_params.batch_size
 max_prediction_length = tft_params.target_sequence_length
@@ -170,21 +181,21 @@ def prepare_data(data: pd.DataFrame, pm: Parameters, train=False):
     time_varying_known_reals = pm.data.time_varying_known_features,
     time_varying_unknown_reals = pm.data.time_varying_unknown_features,
     target_normalizer = MultiNormalizer(
-      [GroupNormalizer(groups=pm.data.id, transformation="softplus") for _ in range(len(targets))]
+      [GroupNormalizer(groups=pm.data.id) for _ in range(len(targets))]
     )
   )
 
   if train:
     dataloader = data_timeseries.to_dataloader(train=True, batch_size=batch_size)
   else:
-    dataloader = data_timeseries.to_dataloader(train=False, batch_size=batch_size*20)
+    dataloader = data_timeseries.to_dataloader(train=False, batch_size=batch_size*16)
 
   return data_timeseries, dataloader
 
 # %%
 train_timeseries, train_dataloader = prepare_data(train_scaled, parameters, train=True)
-_, validation_dataloader = prepare_data(validation_scaled, parameters, train=False)
-_, test_dataloader = prepare_data(test_scaled, parameters, train=False)
+_, validation_dataloader = prepare_data(validation_scaled, parameters)
+_, test_dataloader = prepare_data(test_scaled, parameters)
 
 del validation_scaled, test_scaled
 gc.collect()
@@ -258,7 +269,7 @@ tft = TemporalFusionTransformer.from_dataset(
     hidden_size= tft_params.hidden_layer_size,
     attention_head_size=tft_params.attention_head_size,
     dropout=tft_params.dropout_rate,
-    loss=MultiLoss([RMSE() for _ in targets]),
+    loss=MultiLoss([RMSE(reduction='mean') for _ in targets]), # RMSE(reduction='sqrt-mean')
     optimizer='adam',
     log_interval=1,
     # reduce_on_plateau_patience=2
@@ -318,7 +329,7 @@ plotter = PlotResults(args.figPath, targets, show=args.show_progress_bar)
 
 # %%
 # not a must, but increases inference speed 
-_, train_dataloader = prepare_data(train_scaled, parameters, train=False) 
+_, train_dataloader = prepare_data(train_scaled, parameters) 
 print(f'\n---Training results--\n')
 
 train_predictions, train_index = tft.predict(train_dataloader, mode="prediction", return_index=True, show_progress_bar=args.show_progress_bar)
@@ -396,21 +407,22 @@ df.head()
 # ## Evaluation by county
 
 # %%
-fips_codes = total_data['FIPS'].unique()
-names_df = pd.read_csv('../../dataset_raw/CovidMay17-2022/Age Distribution.csv')[['FIPS','Name']]
-names_df['FIPS'] = names_df['FIPS'].astype(str)
+# fips_codes = total_data['FIPS'].unique()
+# # if you uncomment this, make sure your path has this file.
+# names_df = pd.read_csv('../../dataset_raw/CovidMay17-2022/Age Distribution.csv')[['FIPS','Name']]
+# names_df['FIPS'] = names_df['FIPS'].astype(str)
 
-print(f'\n---Per county training results--\n')
-count = 5
+# print(f'\n---Per county training results--\n')
+# count = 5
 
-for index, fips in enumerate(fips_codes):
-    if index == count: break
+# for index, fips in enumerate(fips_codes):
+#     if index == count: break
 
-    name = names_df[names_df['FIPS']==fips]['Name'].values[0]
-    print(f'County {name}, FIPS {fips}')
-    df = train_result_merged[train_result_merged['FIPS']==fips]
-    show_result(df, targets)
-    print()
+#     name = names_df[names_df['FIPS']==fips]['Name'].values[0]
+#     print(f'County {name}, FIPS {fips}')
+#     df = train_result_merged[train_result_merged['FIPS']==fips]
+#     show_result(df, targets)
+#     print()
 
 # %% [markdown]
 # ## Attention weights
@@ -598,20 +610,21 @@ df.head()
 # ## Evaluation by county
 
 # %%
-fips_codes = total_data['FIPS'].unique()
-names_df = pd.read_csv('../../dataset_raw/CovidMay17-2022/Age Distribution.csv')[['FIPS','Name']]
-names_df['FIPS'] = names_df['FIPS'].astype(str)
+# fips_codes = total_data['FIPS'].unique()
+# # if you uncomment this, make sure your path has this file.
+# names_df = pd.read_csv('../../dataset_raw/CovidMay17-2022/Age Distribution.csv')[['FIPS','Name']]
+# names_df['FIPS'] = names_df['FIPS'].astype(str)
 
-print(f'\n---Per county test results--')
-count = 5
+# print(f'\n---Per county test results--')
+# count = 5
 
-for index, fips in enumerate(fips_codes):
-    if index == count: break
+# for index, fips in enumerate(fips_codes):
+#     if index == count: break
 
-    name = names_df[names_df['FIPS']==fips]['Name'].values[0]
-    print(f'\nCounty {name}, FIPS {fips}')
-    df = test_result_merged[train_result_merged['FIPS']==fips]
-    show_result(df, targets)
+#     name = names_df[names_df['FIPS']==fips]['Name'].values[0]
+#     print(f'\nCounty {name}, FIPS {fips}')
+#     df = test_result_merged[train_result_merged['FIPS']==fips]
+#     show_result(df, targets)
 
 # %% [markdown]
 # ## Attention weights
