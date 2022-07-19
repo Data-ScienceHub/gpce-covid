@@ -12,7 +12,7 @@ class ParameterManager:
         self.data_params = self.data_config['params']
         self.support_config = self.data_config['support']
 
-        self.target_column = list(self.data_config['targets'].values())[0]
+        self.target_column = list(self.data_config['targets'].values())
         self.first_date = pd.to_datetime(self.data_config['support']['FirstDate'])
         self.last_date = pd.to_datetime(self.data_config['support']['LastDate'])
 

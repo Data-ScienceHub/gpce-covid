@@ -146,7 +146,7 @@ def main():
     """
     targets, predictions = sumCases(train_actuals, train_preds, number_of_locations)
 
-    resultPlotter = PlotResults(targets, predictions, parameterManager.train_start, locs, figure_folder)
+    resultPlotter = PlotResults(targets, predictions, parameterManager.train_start, locs, figure_folder, parameterManager.target_column)
     plot_title = f'Summed plot (train) MAE {train_mae:0.3f}, RMSE {train_rmse:0.3f}'
 
     resultPlotter.makeSummedPlot(plot_title, figure_name='Summed plot - train', figsize=(24, 8))
@@ -155,7 +155,7 @@ def main():
     Validation prediction
     """
     targets, predictions = sumCases(validation_actuals, validation_preds, number_of_locations)
-    resultPlotter = PlotResults(targets, predictions, parameterManager.validation_start, locs, figure_folder)
+    resultPlotter = PlotResults(targets, predictions, parameterManager.validation_start, locs, figure_folder, parameterManager.target_column)
     plot_title = f'Summed plot (Validation) MAE {validation_mae:0.3f}, RMSE {validation_rmse:0.3f}, SMAPE {validation_smape:0.3f}'
 
     resultPlotter.makeSummedPlot(plot_title, figure_name='Summed plot - validation')
@@ -164,7 +164,7 @@ def main():
     Test prediction
     """
     targets, predictions = sumCases(test_actuals, test_preds, number_of_locations)
-    PlotC = PlotResults(targets, predictions, parameterManager.test_start, locs, figure_folder)
+    PlotC = PlotResults(targets, predictions, parameterManager.test_start, locs, figure_folder, parameterManager.target_column)
     plot_title = f'Summed plot (Validation) MAE {validation_mae:0.3f}, RMSE {validation_rmse:0.3f}, SMAPE {validation_smape:0.3f}'
 
     PlotC.makeSummedPlot(plot_title, figure_name='Summed plot - test')

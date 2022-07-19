@@ -90,7 +90,7 @@ class Trainer:
     ):
         self.optimizer = optimizer
         print(f'Running the model for {self.parameterManager.epochs} epochs.')
-
+        print(f'Early stopping patience: {early_stopping_patience}')
         # for saving the best model
         best_loss = np.inf
         # for early stopping if performance doesn't improve 
@@ -164,5 +164,15 @@ class Trainer:
             actuals.append(target)
             
             progress_bar.update(1)
+        print(predictions[0].shape)
+        print(predictions[-1].shape)
 
-        return np.concatenate(predictions), np.concatenate(actuals), weight_dict
+        print(actuals[0].shape)
+        print(actuals[-1].shape)
+
+        np.concatenate(predictions, axis=0)
+        np.concatenate(actuals, axis=0)
+        weight_dict
+
+
+        return np.concatenate(predictions, axis=0), np.concatenate(actuals, axis=0), weight_dict

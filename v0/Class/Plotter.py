@@ -9,9 +9,14 @@ sns.set(font_scale = 1.5)
 class PlotResults:
     def __init__(
         self, actuals, preds, start_date, locs, 
-        figPath, show=False, save=True
+        figPath, target_cols, show=False, save=True
     ):
         self.actuals = actuals
+        # Andrej Test
+        self.targets = target_cols
+
+        assert preds.shape[-1] == actuals.shape[-1] == len(self.targets), '-1 dimension of predictions and targets do not match.'
+
         self.Nloc = len(locs)
         self.preds = preds
         self.figPath = figPath
@@ -21,7 +26,7 @@ class PlotResults:
         self.show = show
         self.save = save
 
-    def plot(self, y_true, y_preds, title, figure_name, figsize=(24,8)):
+    def plot(self, y_true, y_preds, title, ylab, figure_name, figsize=(24,8)):
         dates = [self.start_date + np.timedelta64(days, 'D') for days in range(y_true.shape[0])]
 
         fig, ax = plt.subplots(figsize=figsize)
@@ -37,7 +42,7 @@ class PlotResults:
         ax.set_yticklabels(label_text)
 
         plt.xlabel('Date')
-        plt.ylabel('Daily Cases')
+        plt.ylabel('Daily ' + str(ylab))
         plt.legend()
         fig.tight_layout()
 
@@ -47,19 +52,27 @@ class PlotResults:
             print(f'Saving {path}')
 
         if self.show:
-            plt.show()
+            plt.show();
 
-    def makeSummedPlot(self, title, figure_name, figsize=(24,8)):
-        actuals_sum = np.sum(self.actuals, axis=0)
-        preds_sum = np.sum(self.preds, axis=0)
-        self.plot(actuals_sum, preds_sum, title, figure_name, figsize)
+    def makeSummedPlot(self, title, figure_name, figsize=(24, 8)):
 
+        actuals_sum = np.sum(self.actuals, axis=0).reshape(-1, len(self.targets))
+        preds_sum = np.sum(self.preds, axis=0).reshape(-1, len(self.targets))
+
+        for target in range(len(self.targets)):
+            self.plot(actuals_sum[Ellipsis, target], preds_sum[Ellipsis, target], title, figure_name, figsize)
     
-    def makeIndividualPlot(self, index, title, figure_name, figsize=(18,8)):
-        self.plot(self.actuals[index, :], self.preds[index, :], title, figure_name, figsize)
+    def makeIndividualPlot(self, index, title, figure_name, figsize=(18, 8)):
 
+        for target in range(len(self.targets)):
+            self.plot(self.actuals[index, Ellipsis, target], self.preds[index, Ellipsis, target],
+                      title,
+                      ylab=self.targets[target],
+                      figure_name=figure_name,
+                      figsize=figsize)
 
 class PlotWeights:
+
     def __init__(
         self, col_mappings, attention, 
         figPath, show=False, save=True

@@ -494,7 +494,8 @@ class TemporalFusionTransformer(tf.keras.Model):
         self.FinalLoopSize = len(target_inputs)
 
         if self.FinalLoopSize > 1:
-            self.StackLayers = tf.TensorArray(tf.float32, size=self.FinalLoopSize)
+            self.StackLayers = tf.TensorArray(tf.float32, size=self.FinalLoopSize, dynamic_size=True, infer_shape=False)
+            self.outputArray = tf.TensorArray(tf.float32, size=self.FinalLoopSize, dynamic_size=True, infer_shape=False)
 
 
         # HiD_EmbeddingLayer should take all the parameters it can from TFT model
@@ -547,8 +548,13 @@ class TemporalFusionTransformer(tf.keras.Model):
 
         self.lstmGLU = GLU(hls, rate, activation=None)
 
-        self.mlp = MLP(self.final_mlp_hls, output_size, output_activation=None, hidden_activation='selu',
-                       use_time_distributed=True)
+        # self.mlp = MLP(self.final_mlp_hls, output_size, output_activation=None, hidden_activation='selu',
+        #                use_time_distributed=True)
+        self.mlp = [MLP(self.final_mlp_hls,
+                        1,
+                        output_activation=None,
+                        hidden_activation='selu',
+                        use_time_distributed=True) for out_layer in range(output_size)]
 
         self.final_glus = [GLU(self.hls, dropout_rate=self.dropout_rate, activation=None) for i in
                            range(self.FinalLoopSize)]
@@ -631,6 +637,8 @@ class TemporalFusionTransformer(tf.keras.Model):
 
         xsve, attn = self.mlha(enriched, enriched, enriched, mask=mask)
 
+        tmp_test = []
+
         for FinalGatingLoop in range(0, self.FinalLoopSize):
             x, _ = self.final_glus[FinalGatingLoop](xsve)
             x = self.final_add1[FinalGatingLoop]([x, enriched])
@@ -642,21 +650,43 @@ class TemporalFusionTransformer(tf.keras.Model):
 
             transformer_layer = self.final_add2[FinalGatingLoop]([decoder, temporal_feature_layer])
             transformer_layer = self.final_norm2[FinalGatingLoop](transformer_layer)
-
+            # print('1')
+            # print(transformer_layer)
             if self.FinalLoopSize > 1:
                 self.StackLayers.write(FinalGatingLoop, transformer_layer)
 
-        if self.FinalLoopSize > 1:
-            transformer_layer = self.StackLayers.stack(axis=-1)
+        # if self.FinalLoopSize > 1:
+        #     transformer_layer = tf.stack(self.StackLayers, axis=-1)#self.StackLayers.stack()#axis=-1)
+        transf_layer = self.StackLayers.stack()
 
-        outputs = self.mlp(transformer_layer[Ellipsis, self.input_seq_len:, :])
+        for output in range(self.output_size):
+            out = tf.squeeze(transf_layer[output])
+            # print('out')
+            # print(out)
+            intm_output = self.mlp[output](out[Ellipsis, self.input_seq_len:, :])
+            # print('new out')
+            # print(intm_output)
+            self.outputArray.write(output, intm_output)
+
+
+        # print('outputs')
+        outputs = self.outputArray.stack()
+        # print(outputs)
+        # print('2')
+        # print(transf_layer)
+        # outputs = self.mlp(transf_layer[Ellipsis, self.input_seq_len:, :])
 
         attention_weights = {'decoder_self_attn': attn,
                              'static_flags': static_weights[Ellipsis, 0],
                              'historical_flags': historical_flags[Ellipsis, 0, :],
                              'future_flags': future_flags[Ellipsis, 0, :]}
+        # print('3')
+        # print(outputs)
+
+        outputs = tf.squeeze(tf.transpose(outputs, perm=[3, 1, 2, 0]))
+        # print('fin out')
+        # print(outputs)
 
         return outputs, attention_weights
-
 
 

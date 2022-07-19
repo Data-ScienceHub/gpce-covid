@@ -117,7 +117,7 @@ def main():
 
     gc.collect()
     
-    trainer = Trainer(parameterManager, disable_progress=True)
+    trainer = Trainer(parameterManager, disable_progress=False)
     model = trainer.create_model()
     
     optimizer_params = parameterManager.optimizer_params
@@ -134,7 +134,12 @@ def main():
             sys.exit(-1)
 
     history = trainer.fit(
-        model, optimizer, train_batch, validation_batch, checkpointManager, early_stopping_patience=5
+        model,
+        optimizer,
+        train_batch,
+        validation_batch,
+        checkpointManager,
+        early_stopping_patience=parameterManager.tft_params['early_stopping_patience']
     )
     
     plot_history(history, os.path.join(figure_folder, 'history.png'))

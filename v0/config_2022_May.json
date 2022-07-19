@@ -28,7 +28,7 @@
         "target_sequence_length": 15,
         "output_size": 2,
         "loss": "MSE",
-        "epochs": 20,
+        "epochs": 60,
         "attn": {
             "num_heads": 4,
             "hidden_layer_size": 64
@@ -38,7 +38,7 @@
             "learning_rate": 0.0001,
             "clipnorm": 0.01
         },
-        "early_stopping_patience": 3
+        "early_stopping_patience": 60
     },
     "col_mappings": {
         "Static": [
@@ -118,7 +118,7 @@
         },
         "split": {
             "train_start": "2020-02-28",
-            "validation_start": "2021-11-23",
+            "validation_start": "2021-11-29",
             "test_start": "2022-02-19",
             "test_end": "2022-05-17"
         }
