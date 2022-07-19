@@ -23,6 +23,9 @@ class PredictionProcessor:
         time_index = index[self.time_idx].values
         fips = index[self.group_id].values
 
+        # set negative predictions to zero
+        predictions[predictions<0] = 0
+
         results = {}
 
         # if you want result for only a specific number of days in the future

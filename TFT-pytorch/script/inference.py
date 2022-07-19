@@ -50,14 +50,14 @@ from dataclasses import dataclass
 
 @dataclass
 class args:
-    outputPath = '../results/top_500_target_cleaned_scaled'
-    figPath = os.path.join(outputPath, 'figures_best')
+    outputPath = '../top_500_target_cleaned_scaled'
+    figPath = os.path.join(outputPath, 'figures')
     checkpoint_folder = os.path.join(outputPath, 'checkpoints')
     input_filePath = '../2022_May_target_cleaned/Top_500.csv'
     configPath = '../configurations/top_500_target_cleaned_scaled.json'
 
     load_from_checkpoint = False
-    model_path = os.path.join(checkpoint_folder, 'epoch=23-step=114360.ckpt')
+    model_path = os.path.join(checkpoint_folder, 'model.ckpt')
 
     # set this to false when submitting batch script, otherwise it prints a lot of lines
     show_progress_bar = False
@@ -138,7 +138,7 @@ def prepare_data(data: pd.DataFrame, pm: Parameters, train=False):
     time_varying_known_reals = pm.data.time_varying_known_features,
     time_varying_unknown_reals = pm.data.time_varying_unknown_features,
     target_normalizer = MultiNormalizer(
-      [GroupNormalizer(groups=pm.data.id, transformation="softplus") for _ in range(len(targets))]
+      [GroupNormalizer(groups=pm.data.id) for _ in range(len(targets))]
     )
   )
 

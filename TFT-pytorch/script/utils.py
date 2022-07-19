@@ -130,8 +130,6 @@ def train_validation_test_split(
     selected_columns = [col for col in df.columns if col not in ['Date', 'Name']]
 
     train_data = df[(df['Date']>=split.train_start) & (df['Date']<=split.train_end)][selected_columns]
-    train_data = train_data.sample(frac=1, random_state=parameters.model_parameters.seed) # randomly shuffle the train data, not required for others
-
     input_sequence_length = parameters.model_parameters.input_sequence_length
     
     # at least input_sequence_length prior days data is needed to start prediction
