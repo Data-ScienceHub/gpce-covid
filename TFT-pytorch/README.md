@@ -67,6 +67,8 @@ If you are running on **Google colab**, most libraries are already installed the
 !pip install pytorch_forecasting
 ```
 
+A training notebook run on colab is shared [here](https://colab.research.google.com/drive/1yhI1PesOXYlB6iYXHre9zXMks1a4P6U2?usp=sharing). Feel free to copy and run on your colab and let me know if there are any issues.
+
 ### Rivanna/CS server
 
 On **Rivanna**, the default python environment doesn't have all the libraries we need. The [requirements.txt](requirements.txt) file contains a list of libraries we need. There are two ways you can run the training there
