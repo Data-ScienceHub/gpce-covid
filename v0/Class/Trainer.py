@@ -164,15 +164,9 @@ class Trainer:
             actuals.append(target)
             
             progress_bar.update(1)
-        print(predictions[0].shape)
-        print(predictions[-1].shape)
-
-        print(actuals[0].shape)
-        print(actuals[-1].shape)
 
         np.concatenate(predictions, axis=0)
         np.concatenate(actuals, axis=0)
         weight_dict
-
 
         return np.concatenate(predictions, axis=0), np.concatenate(actuals, axis=0), weight_dict

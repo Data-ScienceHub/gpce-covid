@@ -11,10 +11,10 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 # Apply the default theme
 sns.set_theme()
-sns.set(font_scale = 1.5)
+sns.set(font_scale=1.5)
 
 import sys
-sys.path.append( '..' )
+sys.path.append('..')
 from Class.Trainer import Trainer
 from Class.ParameterManager import ParameterManager
 from Class.DataProcessor import DataProcessor
@@ -107,8 +107,9 @@ def main():
 
     train_actuals = scale_back(train_actuals, target_scaler, parameterManager.target_sequence_length)
     train_preds = scale_back(train_preds, target_scaler, parameterManager.target_sequence_length)
-    
-    train_mae, train_rmse, train_smape = calculate_result(train_actuals, train_preds)
+
+    # TODO: Remove hard coded 'split = True' parameters
+    train_mae, train_rmse, train_smape = calculate_result(train_actuals, train_preds, split=True)
     print(f'Train MAE {train_mae}, RMSE {train_rmse}, SMAPE {train_smape}')
     gc.collect()
 
@@ -119,7 +120,7 @@ def main():
     validation_preds = scale_back(validation_preds, target_scaler, parameterManager.target_sequence_length)
     validation_actuals = scale_back(validation_actuals,  target_scaler, parameterManager.target_sequence_length)
     
-    validation_mae, validation_rmse, validation_smape = calculate_result(validation_actuals, validation_preds)
+    validation_mae, validation_rmse, validation_smape = calculate_result(validation_actuals, validation_preds, split=True)
     print(f'Validation MAE {validation_mae}, RMSE {validation_rmse}, SMAPE {validation_smape}')
 
     """### Test"""
@@ -130,7 +131,7 @@ def main():
     test_actuals = scale_back(test_actuals, target_scaler, parameterManager.target_sequence_length) 
     test_preds = scale_back(test_preds, target_scaler, parameterManager.target_sequence_length)
 
-    test_mae, test_rmse, test_smape = calculate_result(test_actuals, test_preds)
+    test_mae, test_rmse, test_smape = calculate_result(test_actuals, test_preds, split=True)
     print(f'Test MAE {test_mae}, RMSE {test_rmse}, SMAPE {test_smape}')
 
     del model
@@ -147,27 +148,39 @@ def main():
     targets, predictions = sumCases(train_actuals, train_preds, number_of_locations)
 
     resultPlotter = PlotResults(targets, predictions, parameterManager.train_start, locs, figure_folder, parameterManager.target_column)
-    plot_title = f'Summed plot (train) MAE {train_mae:0.3f}, RMSE {train_rmse:0.3f}'
 
-    resultPlotter.makeSummedPlot(plot_title, figure_name='Summed plot - train', figsize=(24, 8))
+    plot_titles = [f'Summed plot (Train) MAE {mae:0.3f}, RMSE {rmse:0.3f}, SMAPE {smape:0.3f}' for mae, rmse, smape
+                   in zip(train_mae, train_rmse, train_smape)]
+
+    figure_names = ['summed_train' + str(target) for target in parameterManager.target_column]
+
+    resultPlotter.makeSummedPlot(plot_titles=plot_titles, figure_names=figure_names, figsize=(24, 8))
 
     """
     Validation prediction
     """
     targets, predictions = sumCases(validation_actuals, validation_preds, number_of_locations)
     resultPlotter = PlotResults(targets, predictions, parameterManager.validation_start, locs, figure_folder, parameterManager.target_column)
-    plot_title = f'Summed plot (Validation) MAE {validation_mae:0.3f}, RMSE {validation_rmse:0.3f}, SMAPE {validation_smape:0.3f}'
 
-    resultPlotter.makeSummedPlot(plot_title, figure_name='Summed plot - validation')
+    plot_titles = [f'Summed plot (Validation) MAE {mae:0.3f}, RMSE {rmse:0.3f}, SMAPE {smape:0.3f}' for mae, rmse, smape
+                   in zip(validation_mae, validation_rmse, validation_smape)]
+
+    figure_names = ['summed_val' + str(target) for target in parameterManager.target_column]
+
+    resultPlotter.makeSummedPlot(plot_titles=plot_titles, figure_names=figure_names)
 
     """
     Test prediction
     """
     targets, predictions = sumCases(test_actuals, test_preds, number_of_locations)
     PlotC = PlotResults(targets, predictions, parameterManager.test_start, locs, figure_folder, parameterManager.target_column)
-    plot_title = f'Summed plot (Validation) MAE {validation_mae:0.3f}, RMSE {validation_rmse:0.3f}, SMAPE {validation_smape:0.3f}'
 
-    PlotC.makeSummedPlot(plot_title, figure_name='Summed plot - test')
+    plot_titles = [f'Summed plot (Test) MAE {mae:0.3f}, RMSE {rmse:0.3f}, SMAPE {smape:0.3f}' for mae, rmse, smape
+                   in zip(test_mae, test_rmse, test_smape)]
+
+    figure_names = ['summed_test' + str(target) for target in parameterManager.target_column]
+
+    PlotC.makeSummedPlot(plot_titles=plot_titles, figure_names=figure_names)
 
     """
     Interpret

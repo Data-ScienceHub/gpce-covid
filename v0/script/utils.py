@@ -33,19 +33,25 @@ def SMAPE(y_true, y_pred):
     value = 2*abs(y_true - y_pred) / (abs(y_true) + abs(y_pred))
     return np.mean(value)
 
-def calculate_result(y_true, y_pred):
-    mae = MAE(y_true, y_pred)
-    rmse = RMSE(y_true, y_pred)
-    smape = SMAPE(y_true, y_pred)
+def calculate_result(y_true, y_pred, split=False):
 
-    return np.round(mae, 4), np.round(rmse, 4), np.round(smape, 4)
+    mae = []
+    rmse = []
+    smape = []
+    if split:
+        for r in range(y_true.shape[-1]):
+            mae.append(np.round(MAE(y_true[Ellipsis, r], y_pred[Ellipsis, r]), 4))
+            rmse.append(np.round(RMSE(y_true[Ellipsis, r], y_pred[Ellipsis, r]), 4))
+            smape.append(np.round(SMAPE(y_true[Ellipsis, r], y_pred[Ellipsis, r]), 4))
+    else:
+        mae.append(np.round(MAE(y_true, y_pred), 4))
+        rmse.append(np.round(RMSE(y_true, y_pred), 4))
+        smape.append(np.round(SMAPE(y_true, y_pred), 4))
+
+    return mae, rmse, smape
 
 def sumCases(y_true, y_preds, number_of_locations):
-    # print('Predictions shape')
-    # print(y_preds.shape)
-
     sequence, times, feat = y_true.shape
-    print(sequence, times, feat)
     dseq = int(sequence / number_of_locations)
 
     # Construct new matrix to store averages
@@ -87,9 +93,6 @@ def sumCases(y_true, y_preds, number_of_locations):
 
     TargetMatrix = np.clip(TargetMatrix, 0, TargetMatrix.max() + 1)
     PredMatrix = np.clip(PredMatrix, 0, PredMatrix.max() + 1)
-
-    # print('Reshaped Preds')
-    # print(PredMatrix.shape)
 
     return TargetMatrix, PredMatrix
 
