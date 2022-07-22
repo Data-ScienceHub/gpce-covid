@@ -63,8 +63,8 @@
     },
     "preprocess": {
         "remove_input_outliers": true,
-        "remove_target_outliers": true,
+        "remove_target_outliers": false,
         "scale_input": true,
-        "scale_target": true
+        "scale_target": false
     }
 }

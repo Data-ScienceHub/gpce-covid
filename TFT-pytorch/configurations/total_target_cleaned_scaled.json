@@ -12,7 +12,7 @@
         "learning_rate": 0.001,
         "clipnorm": 0.01,
 
-        "early_stopping_patience": 3,
+        "early_stopping_patience": 60,
         "seed":7,
         "batch_size": 64
     },
@@ -42,7 +42,7 @@
         "time_idx": "TimeFromStart",
      
         "population": "Population.csv",
-        "population_cut": 500,
+        "population_cut": -1,
 
         "rurality": "Rurality_Median_Mad.csv",
         "rurality_cut": false,

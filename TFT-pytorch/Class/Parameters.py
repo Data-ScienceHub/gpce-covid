@@ -44,7 +44,10 @@ class DataParameters:
         self.id = id
 
         self.static_features_map = static_features_map
-        self.dynamic_features_map = dynamic_features_map 
+        self.static_features = self.get_static_real_features()
+
+        self.dynamic_features_map = dynamic_features_map
+        self.dynamic_features = self.get_dynamic_features() 
         self.target_map = target_map
 
         self.time_varying_known_features = known_futures
@@ -65,8 +68,7 @@ class DataParameters:
         
         self.split = Split(split, **split)
 
-    @property
-    def static_features(self) -> List[str]:
+    def get_static_real_features(self) -> List[str]:
         """Generates the list of static features
 
         Returns:
@@ -83,8 +85,7 @@ class DataParameters:
 
         return feature_list
 
-    @property
-    def dynamic_features(self) -> List[str]:
+    def get_dynamic_features(self) -> List[str]:
         """Generates the list of dynamic features
 
         Returns:

@@ -12,7 +12,7 @@
         "learning_rate": 0.001,
         "clipnorm": 0.01,
 
-        "early_stopping_patience": 5,
+        "early_stopping_patience": 3,
         "seed":7,
         "batch_size": 64
     },
@@ -63,7 +63,7 @@
     },
     "preprocess": {
         "remove_input_outliers": true,
-        "remove_target_outliers": false,
+        "remove_target_outliers": true,
         "scale_input": true,
         "scale_target": false
     }

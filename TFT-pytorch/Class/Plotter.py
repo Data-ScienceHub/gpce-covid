@@ -7,6 +7,7 @@ import os, sys
 import numpy as np
 from pandas import DataFrame, to_timedelta
 from typing import List, Dict, Union
+from pytorch_forecasting.models.temporal_fusion_transformer import TemporalFusionTransformer
 
 sys.path.append('..')
 from script.utils import calculate_result
@@ -20,7 +21,6 @@ import seaborn as sns
 # Apply the default theme
 sns.set_theme()
 sns.set(font_scale = 2)
-
 
 plt.rcParams['lines.linewidth'] = 2
 plt.rcParams['lines.markersize'] = 12
@@ -97,7 +97,7 @@ class PlotResults:
 
             self.plot(summed_df, target, title, unit, target_figure_name, base)
 
-    def individualPlot(self, df:DataFrame, fips:str, type:str='', save:bool=True, base:int=7):
+    def individual_plot(self, df:DataFrame, fips:str, type:str='', save:bool=True, base:int=7):
         """
         Plots the prediction and observation for this specific county
 
@@ -124,16 +124,16 @@ class PlotResults:
             self.plot(df, target, title, unit, target_figure_name, base)
 
 class PlotWeights:
-    def __init__(self, figpath:str, parameters:Parameters, show:bool=True):
+    def __init__(self, figpath:str, max_encoder_length:int, model:TemporalFusionTransformer, show:bool=True):
         self.figpath = figpath
         if not os.path.exists(figpath):
             print(f'Creating folder {figpath}')
             os.makedirs(figpath, exist_ok=True)
 
-        self.static_variables = parameters.data.static_features
-        self.encoder_variables = parameters.data.time_varying_unknown_features + parameters.data.time_varying_known_features
-        self.decoder_variables = parameters.data.time_varying_known_features
-        self.max_encoder_length = parameters.model_parameters.input_sequence_length
+        self.static_variables = model.static_variables # self.hparams.static_categoricals + self.hparams.static_reals
+        self.encoder_variables = model.encoder_variables 
+        self.decoder_variables = model.decoder_variables
+        self.max_encoder_length = max_encoder_length
         self.show = show
         self.weight_formatter = StrMethodFormatter('{x:,.2f}')
 
@@ -199,7 +199,7 @@ class PlotWeights:
         ax.plot(
             np.arange(-self.max_encoder_length, attention.size(0) - self.max_encoder_length), attention
         )
-        plt.ylim(bottom=0)
+        # plt.ylim(bottom=0)
         ax.set_xlabel("Time index")
         ax.set_ylabel("Attention weight")
 
@@ -277,7 +277,7 @@ class PlotWeights:
                 )
         
         plt.xlim(attention_mean[x_column].min() - ONE_DAY, attention_mean[x_column].max() + ONE_DAY)
-        plt.ylim(bottom=0)
+        # plt.ylim(bottom=0)
         if base is not None:
             ax.xaxis.set_major_locator(ticker.MultipleLocator(base=base))
         
@@ -330,7 +330,7 @@ class PlotWeights:
             )
             break
         
-        plt.ylim(bottom=0)
+        # plt.ylim(bottom=0)
 
         plt.ylabel('Attention weight')
         # plt.xlabel('Weekday')
