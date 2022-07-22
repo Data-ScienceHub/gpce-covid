@@ -42,7 +42,7 @@
         "time_idx": "TimeFromStart",
      
         "population": "Population.csv",
-        "population_cut": 500,
+        "population_cut": -1,
 
         "rurality": "Rurality_Median_Mad.csv",
         "rurality_cut": false,

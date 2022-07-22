@@ -31,11 +31,14 @@ def fix_dynamic_outliers(original_df, verbose=False):
         q1 = np.percentile(county_data, 25) 
         q3 = np.percentile(county_data, 75)
         county_data[county_data<0] =0
+        
+        #TODO: better to use rolling mean or median
+        # mean =county_data.rolling(window=7,center=True).mean()
 
         iqr = q3-q1
         upper_limit = q3 + 7.5*iqr
         lower_limit = q1 - 7.5*iqr
-        global_outliers = ((county_data > upper_limit) & (county_data < lower_limit))
+        global_outliers = ((county_data > upper_limit) | (county_data < lower_limit)) & (median > 0)
         
         # when no outliers found
         if sum(global_outliers) == 0:
@@ -55,14 +58,16 @@ def global_outliers(dfc, fips):
         q1 = np.percentile(df[i], 25) 
         q3 = np.percentile(df[i], 75)
 
-        extreme = (df[i] < 0)
+        negatives = (df[i] < 0)
         # print(df[i][extreme])
-        df[i][extreme] = 0
+        df[i][negatives] = 0
 
+        #TODO: better to use rolling mean or median
+        # mean =county_data.rolling(window=7,center=True).mean()
         iqr = q3-q1
         upper = q3 + 7.5*iqr
         lower = q1 - 7.5*iqr
-        glob_out = ((df[i] > upper) & (df[i] < lower))
+        glob_out = ((df[i] > upper) | (df[i] < lower)) & (median > 0)
 
         df[i][glob_out] = median
     
@@ -71,10 +76,11 @@ def global_outliers(dfc, fips):
 
 def upscale_prediction(targets:List[str], predictions, target_scaler, target_sequence_length:int):
     """
-    if target was scaled, this inverse transforms the target.
+    if target was scaled, this inverse transforms the target. Also reduces the shape from
+    (time, target_sequence_length, 1) to ((time, target_sequence_length)
     """
     if target_scaler is None:
-        return predictions
+        return [predictions[i].reshape((-1, target_sequence_length)) for i in range(len(targets))]
 
     df = pd.DataFrame({targets[i]: predictions[i].flatten() for i in range(len(targets))})
     df[targets] = target_scaler.inverse_transform(df[targets])
