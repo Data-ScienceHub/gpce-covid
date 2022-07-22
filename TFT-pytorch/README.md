@@ -4,26 +4,31 @@ This folder contains the `Temporal Fushion Transformer` implemented in [`Pytorch
 
 ## Folder structure
 
-* Class
+* `2022_May`: Contains the merged feature files. After removing outliers from inputs.
+  * `Total.csv`: All 3,142 counties.
+  * `Top_N.csv`: Subset of the features that use top N counties by population.
+* `2022_May_target_cleaned`: Contains the merged feature files. After removing outliers from both inputs and outputs.
+  * Same files as `2022_May`
+* `Class`
   * DataMerger
   * DataProcessor
   * Parameters
   * Plotter
 
-* configurations: folder to save some common configurations.
-* notebooks: Notebook version of the scripts. Use these for debugging or new implementation purpose.
+* `configurations`: Folder to save some common configurations.
+* `notebooks`: Notebook version of the scripts. Use these for debugging or new implementation purpose.
   * Data preparation.ipynb
   * Train.ipynb
   * Inference.ipynb
-* output
-  * checkpoints
+* `output`
+  * `checkpoints`
     * epoch=X-step=X.ckpt: model checkpointed by best validation loss.
     * model.ckpt: final model saved after finishing traning.
-  * figures: saves the figures plotted by the final model obtained after finishing the training.
-  * figures_best: figures plotted using the model with best validation loss. 
-  * lightning_logs: This folder is used by tensorboard to log the training and validation visualization. You can point this folder by clicking the line before `import tensorboard as tb` in the training code (both script and notebook), that says `launch tensorboard session`. VSCode will automatically suggest the extensions needed for it. It can also run from cmd line, using `tensorboard --logdir=lightning_logs`, then it'll show something like `TensorBoard 2.9.0 at http://localhost:6006/ (Press CTRL+C to quit)`. Copy paste the URL in your local browser. To save the images, check `show data download links in the top left`.
+  * `figures`: saves the figures plotted by the final model obtained after finishing the training.
+  * `figures_best`: figures plotted using the model with best validation loss. 
+  * `lightning_logs`: This folder is used by tensorboard to log the training and validation visualization. You can point this folder by clicking the line before `import tensorboard as tb` in the training code (both script and notebook), that says `launch tensorboard session`. VSCode will automatically suggest the extensions needed for it. It can also run from cmd line, using `tensorboard --logdir=lightning_logs`, then it'll show something like `TensorBoard 2.9.0 at http://localhost:6006/ (Press CTRL+C to quit)`. Copy paste the URL in your local browser. To save the images, check `show data download links in the top left`.
   
-* script: Contains scripts for submitting batch jobs. For details on how to use then, check the readme inside the folder.
+* `script`: Contains scripts for submitting batch jobs. For details on how to use then, check the readme inside the folder.
   * `prepare_data.py`: Prepare merged data from raw feature files.
   * `train.py`: Train model on merged data, then interpret using the best model by validation loss.
   * `inference.py`: Inference from a saved checkpoint.
