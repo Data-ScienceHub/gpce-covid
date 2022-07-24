@@ -1,5 +1,7 @@
 import tensorflow as tf
 
+import time
+
 class ScaledDotProductAttention(tf.keras.layers.Layer):
     """Defines scaled dot product attention layer.
 
@@ -68,6 +70,7 @@ class InterpretableMultiHeadAttention(tf.keras.layers.Layer):
         self.w_o = tf.keras.layers.Dense(d_model, use_bias=False)
 
     def call(self, q, k, v, mask=None):
+
         n_head = self.n_head
 
         heads = tf.TensorArray(tf.float32, n_head)
@@ -487,11 +490,17 @@ class TemporalFusionTransformer(tf.keras.Model):
         self.future_locs = future_inputs
         self.target_locs = target_inputs
 
-        self.FinalLoopSize = 1
+        # self.FinalLoopSize = 1
+        self.FinalLoopSize = len(target_inputs)
+
+        if self.FinalLoopSize > 1:
+            self.StackLayers = tf.TensorArray(tf.float32, size=self.FinalLoopSize, dynamic_size=True, infer_shape=False)
+            self.outputArray = tf.TensorArray(tf.float32, size=self.FinalLoopSize, dynamic_size=True, infer_shape=False)
+
 
         # HiD_EmbeddingLayer should take all the parameters it can from TFT model
         self.embedding = HiD_EmbeddingLayer(
-            time_steps=target_seq_len + input_seq_len, known_reg_inputs=known_reg_inputs, 
+            time_steps=target_seq_len + input_seq_len, known_reg_inputs=known_reg_inputs,
             future_inputs=future_inputs, static_inputs=static_inputs, target_loc=target_inputs,
             unknown_len=unknown_inputs, hls=hls, cat_inputs=cat_inputs
         )
@@ -539,24 +548,32 @@ class TemporalFusionTransformer(tf.keras.Model):
 
         self.lstmGLU = GLU(hls, rate, activation=None)
 
-        self.mlp = MLP(self.final_mlp_hls, output_size, output_activation=None, hidden_activation='selu',
-                       use_time_distributed=True)
+        # self.mlp = MLP(self.final_mlp_hls, output_size, output_activation=None, hidden_activation='selu',
+        #                use_time_distributed=True)
+        self.mlp = [MLP(self.final_mlp_hls,
+                        1,
+                        output_activation=None,
+                        hidden_activation='selu',
+                        use_time_distributed=True) for out_layer in range(output_size)]
 
         self.final_glus = [GLU(self.hls, dropout_rate=self.dropout_rate, activation=None) for i in
                            range(self.FinalLoopSize)]
-        self.final_norm1 = tf.keras.layers.LayerNormalization()
-        self.final_add1 = tf.keras.layers.Add()
-        self.final_add2 = tf.keras.layers.Add()
 
-        self.decoder = GatedResidualNetwork(hls=self.hls, dropout_rate=self.dropout_rate, use_time_distributed=True)
-        self.decoder_glu = GLU(hls=self.hls, activation=None)
-        self.final_norm2 = tf.keras.layers.LayerNormalization()
+        #Converting to list of layers for FinalLoopSize > 1
+
+        self.final_norm1 = [tf.keras.layers.LayerNormalization() for i in range(self.FinalLoopSize)]
+        self.final_add1 = [tf.keras.layers.Add() for i in range(self.FinalLoopSize)]
+        self.final_add2 = [tf.keras.layers.Add() for i in range(self.FinalLoopSize)]
+
+        self.decoder = [GatedResidualNetwork(hls=self.hls, dropout_rate=self.dropout_rate, use_time_distributed=True) for i in range(self.FinalLoopSize)]
+        self.decoder_glu = [GLU(hls=self.hls, activation=None) for i in range(self.FinalLoopSize)]
+        self.final_norm2 = [tf.keras.layers.LayerNormalization() for i in range(self.FinalLoopSize)]
 
     def get_decoder_mask(self, attn_inputs):
 
         len_s = tf.shape(attn_inputs)[1]
         bs = tf.shape(attn_inputs)[:1]
-        mask = tf.math.cumsum(tf.eye(len_s, batch_shape=bs), 1)
+        mask = 1 - tf.math.cumsum(tf.eye(len_s, batch_shape=bs), 1)
         return mask
 
     def process_inputs(self, inputs):
@@ -620,25 +637,56 @@ class TemporalFusionTransformer(tf.keras.Model):
 
         xsve, attn = self.mlha(enriched, enriched, enriched, mask=mask)
 
-        if self.FinalLoopSize > 1:
-            StackLayers = tf.TensorArray(tf.float32, self.FinalLoopSize)
+        tmp_test = []
+
         for FinalGatingLoop in range(0, self.FinalLoopSize):
             x, _ = self.final_glus[FinalGatingLoop](xsve)
-            x = self.final_add1([x, enriched])
-            x = self.final_norm1(x)
+            x = self.final_add1[FinalGatingLoop]([x, enriched])
+            x = self.final_norm1[FinalGatingLoop](x)
 
-            decoder = self.decoder(x)
+            decoder = self.decoder[FinalGatingLoop](x)
 
-            decoder, _ = self.decoder_glu(decoder)
+            decoder, _ = self.decoder_glu[FinalGatingLoop](decoder)
 
-            transformer_layer = self.final_add2([decoder, temporal_feature_layer])
-            transformer_layer = self.final_norm2(transformer_layer)
+            transformer_layer = self.final_add2[FinalGatingLoop]([decoder, temporal_feature_layer])
+            transformer_layer = self.final_norm2[FinalGatingLoop](transformer_layer)
+            # print('1')
+            # print(transformer_layer)
+            if self.FinalLoopSize > 1:
+                self.StackLayers.write(FinalGatingLoop, transformer_layer)
 
-        outputs = self.mlp(transformer_layer[Ellipsis, self.input_seq_len:, :])
+        # if self.FinalLoopSize > 1:
+        #     transformer_layer = tf.stack(self.StackLayers, axis=-1)#self.StackLayers.stack()#axis=-1)
+        transf_layer = self.StackLayers.stack()
+
+        for output in range(self.output_size):
+            out = tf.squeeze(transf_layer[output])
+            # print('out')
+            # print(out)
+            intm_output = self.mlp[output](out[Ellipsis, self.input_seq_len:, :])
+            # print('new out')
+            # print(intm_output)
+            self.outputArray.write(output, intm_output)
+
+
+        # print('outputs')
+        outputs = self.outputArray.stack()
+        # print(outputs)
+        # print('2')
+        # print(transf_layer)
+        # outputs = self.mlp(transf_layer[Ellipsis, self.input_seq_len:, :])
 
         attention_weights = {'decoder_self_attn': attn,
                              'static_flags': static_weights[Ellipsis, 0],
                              'historical_flags': historical_flags[Ellipsis, 0, :],
                              'future_flags': future_flags[Ellipsis, 0, :]}
+        # print('3')
+        # print(outputs)
+
+        outputs = tf.squeeze(tf.transpose(outputs, perm=[3, 1, 2, 0]))
+        # print('fin out')
+        # print(outputs)
 
         return outputs, attention_weights
+
+

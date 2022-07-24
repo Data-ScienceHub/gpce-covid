@@ -9,9 +9,14 @@ sns.set(font_scale = 1.5)
 class PlotResults:
     def __init__(
         self, actuals, preds, start_date, locs, 
-        figPath, show=False, save=True
+        figPath, target_cols, show=False, save=True
     ):
         self.actuals = actuals
+        # Andrej Test
+        self.targets = target_cols
+
+        assert preds.shape[-1] == actuals.shape[-1] == len(self.targets), '-1 dimension of predictions and targets do not match.'
+
         self.Nloc = len(locs)
         self.preds = preds
         self.figPath = figPath
@@ -21,9 +26,8 @@ class PlotResults:
         self.show = show
         self.save = save
 
-    def plot(self, y_true, y_preds, title, figure_name, figsize=(24,8)):
+    def plot(self, y_true, y_preds, title, ylab, figure_name, figsize=(24,8)):
         dates = [self.start_date + np.timedelta64(days, 'D') for days in range(y_true.shape[0])]
-
         fig, ax = plt.subplots(figsize=figsize)
         plt.title(title)
 
@@ -31,13 +35,10 @@ class PlotResults:
         plt.plot(dates, y_preds, color='green', label='Prediction')
         ax.set_ylim(bottom=0)
 
-        label_text = [f'{int(cases/1000)}k' for cases in plt.yticks()[0]]
-        
         ax.set_yticks(plt.yticks()[0])
-        ax.set_yticklabels(label_text)
 
         plt.xlabel('Date')
-        plt.ylabel('Daily Cases')
+        plt.ylabel('Daily ' + str(ylab))
         plt.legend()
         fig.tight_layout()
 
@@ -47,19 +48,34 @@ class PlotResults:
             print(f'Saving {path}')
 
         if self.show:
-            plt.show()
+            plt.show();
 
-    def makeSummedPlot(self, title, figure_name, figsize=(24,8)):
-        actuals_sum = np.sum(self.actuals, axis=0)
-        preds_sum = np.sum(self.preds, axis=0)
-        self.plot(actuals_sum, preds_sum, title, figure_name, figsize)
+    def makeSummedPlot(self, plot_titles, figure_names, figsize=(24, 8)):
 
-    
-    def makeIndividualPlot(self, index, title, figure_name, figsize=(18,8)):
-        self.plot(self.actuals[index, :], self.preds[index, :], title, figure_name, figsize)
+        actuals_sum = np.sum(self.actuals, axis=0).reshape(-1, len(self.targets))
+        preds_sum = np.sum(self.preds, axis=0).reshape(-1, len(self.targets))
 
+        for target in range(len(self.targets)):
+            self.plot(actuals_sum[Ellipsis, target],
+                      preds_sum[Ellipsis, target],
+                      title=plot_titles[target],
+                      ylab=self.targets[target],
+                      figure_name=figure_names[target],
+                      figsize=figsize)
+
+
+    def makeIndividualPlot(self, index, title, figure_names, figsize=(18, 8)):
+
+        for target in range(len(self.targets)):
+            self.plot(self.actuals[index, Ellipsis, target],
+                      self.preds[index, Ellipsis, target],
+                      title,
+                      ylab=self.targets[target],
+                      figure_name=figure_names[target],
+                      figsize=figsize)
 
 class PlotWeights:
+
     def __init__(
         self, col_mappings, attention, 
         figPath, show=False, save=True
@@ -108,14 +124,14 @@ class PlotWeights:
             plt.show()
 
 
-    def plot_future_weights(self, figsize=(16,8)):
-        self.plot_weights('future_flags', self.col_mappings['Future'], title='Future known input selection weights by variable', figsize=figsize)
+    def plot_future_weights(self, figsize=(16, 8)):
+        self.plot_weights('future_flags', self.col_mappings['Future'], title='future_known_input_selection_weights', figsize=figsize)
 
-    def plot_static_weights(self, figsize=(16,8)):
-        self.plot_weights('static_flags', self.col_mappings['Static'], title='Static input selection weights by variable', figsize=figsize)
+    def plot_static_weights(self, figsize=(16, 8)):
+        self.plot_weights('static_flags', self.col_mappings['Static'], title='static_input_selection_weights', figsize=figsize)
 
-    def plotObservedWeights(self, figsize=(16,8)):
+    def plotObservedWeights(self, figsize=(16, 8)):
         feature_list = self.col_mappings['Known Regular'] + self.col_mappings['Future'] + self.col_mappings['Target']
         feature_list = [f for f in feature_list if f not in self.col_mappings['Static']]
 
-        self.plot_weights('historical_flags', feature_list, title='Observed input selection weights by variable', figsize=figsize)
+        self.plot_weights('historical_flags', feature_list, title='observed_input_selection_weights', figsize=figsize)
