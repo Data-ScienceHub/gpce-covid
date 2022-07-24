@@ -1,24 +1,23 @@
 {
     "TFTparams": {
-        "total_inputs": 17,
+        "total_inputs": 16,
         "static_locs": [
             0,
-            1,
-            2
+            1
         ],
         "future_locs": [
+            6,
             7,
             8,
             9,
             10,
             11,
             12,
-            13,
-            14
+            13
         ],
         "target_loc": [
-            15,
-            16
+            14,
+            15
         ],
         "categorical_loc": null,
         "hidden_layer_size": 64,
@@ -35,7 +34,7 @@
         },
         "optimizer": {
             "optimizer": "adam",
-            "learning_rate": 0.0001,
+            "learning_rate": 0.001,
             "clipnorm": 0.01
         },
         "early_stopping_patience": 60
@@ -43,7 +42,6 @@
     "col_mappings": {
         "Static": [
             "AgeDist",
-            "AirPollution",
             "HealthDisp"
         ],
         "ID": [
@@ -68,7 +66,6 @@
         ],
         "Known Regular": [
             "AgeDist",
-            "AirPollution",
             "HealthDisp",
             "DiseaseSpread",
             "Transmission",
@@ -83,7 +80,6 @@
         },
         "static_features_map": {
             "Age Distribution.csv": "AgeDist",
-            "Air Pollution.csv": "AirPollution",
             "Health Disparities.csv": "HealthDisp"
         },
         "dynamic_features_map": {
@@ -102,7 +98,7 @@
             "FirstDate": "2020-02-28",
             "LastDate": "2022-05-17",
             "Nloc": 3142,
-            "Population cut": 100,
+            "Population cut": 500,
             "Rurality cut": false,
             "RuralityRange": [
                 4.501,

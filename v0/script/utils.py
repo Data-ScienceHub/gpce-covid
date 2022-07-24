@@ -51,6 +51,11 @@ def calculate_result(y_true, y_pred, split=False):
     return mae, rmse, smape
 
 def sumCases(y_true, y_preds, number_of_locations):
+    """
+    Sequences have overlapping days and thus there will be up to # prediction step predictions for a given day
+
+    This function returns the average prediction for a day.
+    """
     sequence, times, feat = y_true.shape
     dseq = int(sequence / number_of_locations)
 
@@ -89,7 +94,7 @@ def sumCases(y_true, y_preds, number_of_locations):
                 else:
                     divisor = min(abs(jdx+1), abs(TargetMatrix.shape[1]-jdx))
                     # TargetMatrix[idx,jdx] = np.divide(TargetMatrix[idx,jdx], divisor)
-                    PredMatrix[idx, jdx] = np.divide(PredMatrix[idx, jdx], divisor)
+                    PredMatrix[idx, jdx, f] = np.divide(PredMatrix[idx, jdx, f], divisor)
 
     TargetMatrix = np.clip(TargetMatrix, 0, TargetMatrix.max() + 1)
     PredMatrix = np.clip(PredMatrix, 0, PredMatrix.max() + 1)

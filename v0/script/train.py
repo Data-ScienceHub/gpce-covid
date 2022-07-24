@@ -105,6 +105,9 @@ def main():
     df['Date'] = to_datetime(df['Date'])
     df['FIPS'] = df['FIPS'].astype(str)
 
+    print('**ANDREJ FIPS**')
+    print(df['FIPS'].nunique())
+
     parameterManager = ParameterManager(config)
     print(f'Column mappings: {parameterManager.col_mappings}\n')
 
