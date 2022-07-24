@@ -4,17 +4,18 @@ import pandas as pd
 from pandas import to_datetime
 import argparse
 
-
 # For plotting
 import matplotlib.pyplot as plt
 import seaborn as sns
+
 # Apply the default theme
 sns.set_theme()
-sns.set(font_scale = 1.5)
+sns.set(font_scale=1.5)
 
 from utils import train_validation_test_split, scale_back, calculate_result, sumCases
 import sys
-sys.path.append( '..' )
+
+sys.path.append('..')
 from Class.Trainer import Trainer
 from Class.ParameterManager import ParameterManager
 from Class.DataProcessor import DataProcessor
@@ -22,9 +23,10 @@ from Class.Plotter import PlotResults, PlotWeights
 
 """## Plot training history"""
 
-def plot_history(history:dict,  figure_path:str=None, show=False):
+
+def plot_history(history: dict, figure_path: str = None, show=False):
     fig, ax = plt.subplots(1, 2, figsize=(18, 8), sharex=True)
-    x = range(1, len(history['train_loss'])+1)
+    x = range(1, len(history['train_loss']) + 1)
 
     # label_text   = [f'{int(loc/1000)}k' for loc in plt.yticks()[0]]
     # ax.set_yticklabels(label_text)
@@ -47,18 +49,21 @@ def plot_history(history:dict,  figure_path:str=None, show=False):
     if show:
         plt.show()
 
+
 def main():
-    parser = argparse.ArgumentParser(description='Train the Temporal Fusion Transformer model on covid dataset', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser = argparse.ArgumentParser(description='Train the Temporal Fusion Transformer model on covid dataset',
+                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument(
-        '-c', '--configPath',help='Path to the json config file', 
+        '-c', '--configPath', help='Path to the json config file',
         type=str, default='../config_2022_May.json'
     )
     parser.add_argument(
-        '-d', '--dataPath', help='Directory where input feature file is located', 
+        '-d', '--dataPath', help='Directory where input feature file is located',
         type=str, default='../2022_May/Population_cut.csv'
     )
     parser.add_argument(
-        '-o', '--outputPath', help='Directory where outputs will be saved. This path will be created if it does not exist',
+        '-o', '--outputPath',
+        help='Directory where outputs will be saved. This path will be created if it does not exist',
         type=str, default='../output'
     )
 
@@ -97,30 +102,34 @@ def main():
     df = pd.read_csv(args.dataPath)
     print(f'Input feature file shape {df.shape}')
 
-    df['Date'] = to_datetime(df['Date']) 
+    df['Date'] = to_datetime(df['Date'])
     df['FIPS'] = df['FIPS'].astype(str)
+
+    print('**ANDREJ FIPS**')
+    print(df['FIPS'].nunique())
 
     parameterManager = ParameterManager(config)
     print(f'Column mappings: {parameterManager.col_mappings}\n')
 
     """# Train validation split and Scaling"""
-    train_data, validation_data, test_data, target_scaler = train_validation_test_split(df, parameterManager, scale=True)
-    print(f'Number train data is {train_data.shape[0]}, validation {validation_data.shape[0]}, test {test_data.shape[0]}')
+    train_data, validation_data, test_data, target_scaler = train_validation_test_split(df, parameterManager,
+                                                                                        scale=True)
+    print(
+        f'Number train data is {train_data.shape[0]}, validation {validation_data.shape[0]}, test {test_data.shape[0]}')
 
     """# Create batches"""
     dataProcessor = DataProcessor(
         parameterManager.total_sequence_length, parameterManager.col_mappings, parameterManager.data_params
     )
 
-
     train_batch = dataProcessor.prepare_batch(train_data, train=True)
     validation_batch = dataProcessor.prepare_batch(validation_data)
 
     gc.collect()
-    
-    trainer = Trainer(parameterManager, disable_progress=True)
+
+    trainer = Trainer(parameterManager, disable_progress=False)
     model = trainer.create_model()
-    
+
     optimizer_params = parameterManager.optimizer_params
     optimizer = tf.keras.optimizers.Adam(
         learning_rate=optimizer_params['learning_rate'], clipnorm=optimizer_params['clipnorm']
@@ -135,9 +144,14 @@ def main():
             sys.exit(-1)
 
     history = trainer.fit(
-        model, optimizer, train_batch, validation_batch, checkpointManager, early_stopping_patience=5
+        model,
+        optimizer,
+        train_batch,
+        validation_batch,
+        checkpointManager,
+        early_stopping_patience=parameterManager.tft_params['early_stopping_patience']
     )
-    
+
     plot_history(history, os.path.join(figure_folder, 'history.png'))
     gc.collect()
 
@@ -152,8 +166,9 @@ def main():
 
     train_actuals = scale_back(train_actuals, target_scaler, parameterManager.target_sequence_length)
     train_preds = scale_back(train_preds, target_scaler, parameterManager.target_sequence_length)
-    
-    train_mae, train_rmse, train_smape = calculate_result(train_actuals, train_preds)
+
+    # TODO: Hardcoded all of the splits here for no -- fix
+    train_mae, train_rmse, train_smape = calculate_result(train_actuals, train_preds, split=True)
     print(f'Train MAE {train_mae}, RMSE {train_rmse}, SMAPE {train_smape}')
     gc.collect()
 
@@ -161,9 +176,10 @@ def main():
     validation_preds, validation_actuals, _ = trainer.predict(model, validation_batch)
 
     validation_preds = scale_back(validation_preds, target_scaler, parameterManager.target_sequence_length)
-    validation_actuals = scale_back(validation_actuals,  target_scaler, parameterManager.target_sequence_length)
-    
-    validation_mae, validation_rmse, validation_smape = calculate_result(validation_actuals, validation_preds)
+    validation_actuals = scale_back(validation_actuals, target_scaler, parameterManager.target_sequence_length)
+
+    # TODO: Hardcoded all of the splits here for no -- fix
+    validation_mae, validation_rmse, validation_smape = calculate_result(validation_actuals, validation_preds, split=True)
     print(f'Validation MAE {validation_mae}, RMSE {validation_rmse}, SMAPE {validation_smape}')
 
     """### Test"""
@@ -171,10 +187,11 @@ def main():
     test_batch = dataProcessor.prepare_batch(test_data)
     test_preds, test_actuals, _ = trainer.predict(model, test_batch)
 
-    test_actuals = scale_back(test_actuals, target_scaler, parameterManager.target_sequence_length) 
+    test_actuals = scale_back(test_actuals, target_scaler, parameterManager.target_sequence_length)
     test_preds = scale_back(test_preds, target_scaler, parameterManager.target_sequence_length)
 
-    test_mae, test_rmse, test_smape = calculate_result(test_actuals, test_preds)
+    # TODO: Hardcoded all of the splits here for no -- fix
+    test_mae, test_rmse, test_smape = calculate_result(test_actuals, test_preds, split=True)
     print(f'Test MAE {test_mae}, RMSE {test_rmse}, SMAPE {test_smape}')
 
     del model
@@ -190,28 +207,55 @@ def main():
     """
     targets, predictions = sumCases(train_actuals, train_preds, number_of_locations)
 
-    resultPlotter = PlotResults(targets, predictions, parameterManager.train_start, locs, figure_folder)
-    plot_title = f'Summed plot (train) MAE {train_mae:0.3f}, RMSE {train_rmse:0.3f}, SMAPE {train_smape:0.3f}' 
+    resultPlotter = PlotResults(targets,
+                                predictions,
+                                parameterManager.train_start,
+                                locs,
+                                figure_folder,
+                                parameterManager.target_column)
 
-    resultPlotter.makeSummedPlot(plot_title, figure_name='Summed plot - train', figsize=(24, 8))
+    plot_titles = [f'Summed plot (Train) MAE {mae:0.3f}, RMSE {rmse:0.3f}, SMAPE {smape:0.3f}' for mae, rmse, smape
+                   in zip(train_mae, train_rmse, train_smape)]
+
+    figure_names = ['summed_train' + str(target) for target in parameterManager.target_column]
+
+    resultPlotter.makeSummedPlot(plot_titles=plot_titles, figure_names=figure_names, figsize=(24, 8))
 
     """
     Validation prediction
     """
     targets, predictions = sumCases(validation_actuals, validation_preds, number_of_locations)
-    resultPlotter = PlotResults(targets, predictions, parameterManager.validation_start, locs, figure_folder)
-    plot_title = f'Summed plot (Validation) MAE {validation_mae:0.3f}, RMSE {validation_rmse:0.3f}, SMAPE {validation_smape:0.3f}'
+    resultPlotter = PlotResults(targets,
+                                predictions,
+                                parameterManager.validation_start,
+                                locs,
+                                figure_folder,
+                                parameterManager.target_column)
 
-    resultPlotter.makeSummedPlot(plot_title, figure_name='Summed plot - validation')
+    plot_titles = [f'Summed plot (Validation) MAE {mae:0.3f}, RMSE {rmse:0.3f}, SMAPE {smape:0.3f}' for mae, rmse, smape
+                   in zip(validation_mae, validation_rmse, validation_smape)]
+
+    figure_names = ['summed_val' + str(target) for target in parameterManager.target_column]
+
+    resultPlotter.makeSummedPlot(plot_titles=plot_titles, figure_names=figure_names)
 
     """
     Test prediction
     """
     targets, predictions = sumCases(test_actuals, test_preds, number_of_locations)
-    PlotC = PlotResults(targets, predictions, parameterManager.test_start, locs, figure_folder)
-    plot_title = f'Summed plot (Validation) MAE {validation_mae:0.3f}, RMSE {validation_rmse:0.3f}, SMAPE {validation_smape:0.3f}'
+    PlotC = PlotResults(targets,
+                        predictions,
+                        parameterManager.test_start,
+                        locs,
+                        figure_folder,
+                        parameterManager.target_column)
 
-    PlotC.makeSummedPlot(plot_title, figure_name='Summed plot - test')
+    plot_titles = [f'Summed plot (Test) MAE {mae:0.3f}, RMSE {rmse:0.3f}, SMAPE {smape:0.3f}' for mae, rmse, smape
+                   in zip(test_mae, test_rmse, test_smape)]
+
+    figure_names = ['summed_test' + str(target) for target in parameterManager.target_column]
+
+    PlotC.makeSummedPlot(plot_titles=plot_titles, figure_names=figure_names)
 
     """
     Interpret
@@ -228,6 +272,7 @@ def main():
     """## Observed weights"""
 
     plotter.plotObservedWeights()
+
 
 if __name__ == '__main__':
     main()

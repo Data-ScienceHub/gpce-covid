@@ -1,7 +1,10 @@
+from turtle import position
 import tensorflow as tf
 from tqdm.auto import tqdm
 import numpy as np
 import gc, sys
+
+from typing import Tuple
 
 from time import process_time
 from datetime import timedelta
@@ -87,7 +90,7 @@ class Trainer:
     ):
         self.optimizer = optimizer
         print(f'Running the model for {self.parameterManager.epochs} epochs.')
-
+        print(f'Early stopping patience: {early_stopping_patience}')
         # for saving the best model
         best_loss = np.inf
         # for early stopping if performance doesn't improve 
@@ -113,13 +116,12 @@ class Trainer:
 
             history['train_loss'].append(train_loss)
             history['validation_loss'].append(validation_loss)
-            
-            loss  = train_loss if self.parameterManager.best_loss =='train' else validation_loss
-            if loss < best_loss:
-                ckpt_save_path = checkpointManager.save()
-                print(f'Loss improved from {best_loss:g} to {loss:g}')
 
-                best_loss = loss
+            if validation_loss < best_loss:
+                ckpt_save_path = checkpointManager.save()
+                print(f'Loss improved from {best_loss:g} to {validation_loss:g}')
+
+                best_loss = validation_loss
                 patience_counter = 0
                 print(f'\nSaving checkpoint for epoch {epoch + 1} at {ckpt_save_path}')
             else:
@@ -145,7 +147,7 @@ class Trainer:
             ValueError(f'No valid checkpoint at {checkpoint_path}')
             return None
 
-    def predict(self, model, data):
+    def predict(self, model, data) -> Tuple[np.ndarray, np.ndarray, dict]:
         predictions = []
         actuals = []
 
@@ -163,4 +165,8 @@ class Trainer:
             
             progress_bar.update(1)
 
-        return np.concatenate(predictions), np.concatenate(actuals), weight_dict
+        np.concatenate(predictions, axis=0)
+        np.concatenate(actuals, axis=0)
+        weight_dict
+
+        return np.concatenate(predictions, axis=0), np.concatenate(actuals, axis=0), weight_dict
