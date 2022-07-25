@@ -141,6 +141,7 @@ def prepare_data(data: pd.DataFrame, pm: Parameters, train=False):
     max_encoder_length=max_encoder_length,
     max_prediction_length=max_prediction_length,
     static_reals=pm.data.static_features,
+    static_categoricals=['FIPS'],
     time_varying_known_reals = pm.data.time_varying_known_features,
     time_varying_unknown_reals = pm.data.time_varying_unknown_features,
     target_normalizer = MultiNormalizer(
@@ -151,7 +152,7 @@ def prepare_data(data: pd.DataFrame, pm: Parameters, train=False):
   if train:
     dataloader = data_timeseries.to_dataloader(train=True, batch_size=batch_size)
   else:
-    dataloader = data_timeseries.to_dataloader(train=False, batch_size=batch_size*16)
+    dataloader = data_timeseries.to_dataloader(train=False, batch_size=batch_size*8)
 
   return data_timeseries, dataloader
 
