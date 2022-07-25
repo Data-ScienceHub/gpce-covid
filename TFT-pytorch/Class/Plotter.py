@@ -60,8 +60,16 @@ class PlotResults:
         plt.xticks(rotation = 45)
 
         if unit>1:
-            label_text   = [f'{int(loc/unit)}k' for loc in plt.yticks()[0]]
+            label_text, values = [], []
+            for loc in ax.get_yticks():
+                if loc != 0: label_text.append(f'{int(loc/unit)}k')
+                else: label_text.append('0')
+
+                values.append(loc)
+
+            ax.set_yticks(values)
             ax.set_yticklabels(label_text)
+            
         # plt.xlabel(x_column)
         plt.ylabel(f'Daily {target}')
         plt.legend(loc='upper right')

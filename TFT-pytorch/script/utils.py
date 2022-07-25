@@ -20,10 +20,12 @@ def calculate_result(y_true, y_pred):
 
     return mae, rmse, msle, smape, nnse
 
-def fix_dynamic_outliers(original_df, verbose=False):
+def remove_outliers(original_df, use_median=True, multiplier=7.5, verbose=False):
     df = original_df.copy()
 
     date_columns = sorted([col for col in df.columns if valid_date(col)])
+    total_outliers = 0
+
     for i in range(df.shape[0]):
         county_data = df.loc[i, date_columns]
 
@@ -31,48 +33,35 @@ def fix_dynamic_outliers(original_df, verbose=False):
         q1 = np.percentile(county_data, 25) 
         q3 = np.percentile(county_data, 75)
         county_data[county_data<0] =0
-        
-        #TODO: better to use rolling mean or median
-        # mean =county_data.rolling(window=7,center=True).mean()
 
         iqr = q3-q1
-        upper_limit = q3 + 7.5*iqr
-        lower_limit = q1 - 7.5*iqr
-        global_outliers = ((county_data > upper_limit) | (county_data < lower_limit)) & (median > 0)
-        
+        upper_limit = q3 + multiplier*iqr
+        lower_limit = q1 - multiplier*iqr
+
+        # Alternatives to consider, median > 0 or no median condition at all
+        higher_outliers = (county_data > upper_limit) & (median >= 0)
+        lower_outliers = (county_data < lower_limit) & (median >= 0)
+
+        number_of_outliers = sum(higher_outliers) + sum(lower_outliers)
+        total_outliers += number_of_outliers
+
         # when no outliers found
-        if sum(global_outliers) == 0:
+        if number_of_outliers == 0:
             continue
 
         if verbose:
-            print(f'FIPS {df.iloc[i, 0]}, outliers found {county_data[global_outliers].shape[0]}.')
-        county_data[global_outliers] = median
+            print(f'FIPS {df.iloc[i, 0]}, outliers found, higher: {county_data[higher_outliers].shape[0]}, lower: {county_data[lower_outliers].shape[0]}.')
+
+        if use_median:
+            county_data[higher_outliers | lower_outliers] = median
+        else:
+            county_data[higher_outliers] = upper_limit
+            county_data[lower_outliers] = lower_limit
+        
         df.loc[i, date_columns] = county_data
     
+    print(f'Outliers found {total_outliers}, percent {total_outliers*100/(df.shape[0]*len(date_columns)):.3f}')
     return df
-
-def global_outliers(dfc, fips):
-    df = dfc.copy()
-    for i in fips:
-        median = np.percentile(df[i],50)
-        q1 = np.percentile(df[i], 25) 
-        q3 = np.percentile(df[i], 75)
-
-        negatives = (df[i] < 0)
-        # print(df[i][extreme])
-        df[i][negatives] = 0
-
-        #TODO: better to use rolling mean or median
-        # mean =county_data.rolling(window=7,center=True).mean()
-        iqr = q3-q1
-        upper = q3 + 7.5*iqr
-        lower = q1 - 7.5*iqr
-        glob_out = ((df[i] > upper) | (df[i] < lower)) & (median > 0)
-
-        df[i][glob_out] = median
-    
-    return df
-
 
 def upscale_prediction(targets:List[str], predictions, target_scaler, target_sequence_length:int):
     """

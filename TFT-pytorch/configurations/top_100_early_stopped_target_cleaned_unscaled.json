@@ -12,7 +12,7 @@
         "learning_rate": 0.001,
         "clipnorm": 0.01,
 
-        "early_stopping_patience": 5,
+        "early_stopping_patience": 3,
         "seed":7,
         "batch_size": 64
     },
@@ -31,7 +31,6 @@
             "Social Distancing.csv": "SocialDist"
         },
         "known_futures": [
-            "LinearSpace",
             "SinWeekly",
             "CosWeekly"
         ],

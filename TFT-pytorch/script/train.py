@@ -113,7 +113,7 @@ tft_params = parameters.model_parameters
 # not needed on rivanna or your local machine
 
 if running_on_colab: 
-    tft_params.batch_size *= 16
+    tft_params.batch_size *= 4
 
 max_prediction_length = tft_params.target_sequence_length
 max_encoder_length = tft_params.input_sequence_length
@@ -181,6 +181,7 @@ def prepare_data(data: pd.DataFrame, pm: Parameters, train=False):
     max_encoder_length=max_encoder_length,
     max_prediction_length=max_prediction_length,
     static_reals=pm.data.static_features,
+    static_categoricals=['FIPS'],
     time_varying_known_reals = pm.data.time_varying_known_features,
     time_varying_unknown_reals = pm.data.time_varying_unknown_features,
     target_normalizer = MultiNormalizer(

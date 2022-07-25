@@ -31,7 +31,6 @@
             "Social Distancing.csv": "SocialDist"
         },
         "known_futures": [
-            "LinearSpace",
             "SinWeekly",
             "CosWeekly"
         ],
