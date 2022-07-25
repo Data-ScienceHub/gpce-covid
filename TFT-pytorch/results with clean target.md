@@ -25,7 +25,7 @@ The loss history during the model training process shows how training loss keeps
 
 ### Test
 
-| Target | Final Model (Trained 60 epochs) | Best Model (by validation loss) |
+| Target | Final Model | Best Model (by validation loss) |
 |:---:|:---:|:---:|
 | Cases | ![daily-cases](/TFT-pytorch/results/cleaned%20target/top_500_early_stopped_target_cleaned_scaled/figures/Summed_plot_Cases_Test.jpg) | ![daily-cases](/TFT-pytorch/results/cleaned%20target/top_500_early_stopped_target_cleaned_scaled/figures_best/Summed_plot_Cases_Test.jpg) |
 | Deaths | ![daily-deaths](/TFT-pytorch/results/cleaned%20target/top_500_early_stopped_target_cleaned_scaled/figures/Summed_plot_Deaths_Test.jpg) | ![daily-deaths](/TFT-pytorch/results/cleaned%20target/top_500_early_stopped_target_cleaned_scaled/figures_best/Summed_plot_Deaths_Test.jpg) |
