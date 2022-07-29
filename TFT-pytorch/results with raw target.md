@@ -10,7 +10,7 @@ The training was kept running for 60 epochs. Outliers removed from the inputs, n
 
 The loss history during the model training process shows how training loss keeps decreasing with time. But validation loss initially keeps decreasing, then increases again and keeps osciliating. The minimum point from the validation loss is the best point to choose the model for test prediction.
 
-![train-loss](results/raw%20target/raw%20target/top_500_target_scaled/train_loss.jpg)
+![train-loss](results/raw%20target/top_500_target_scaled/train_loss.jpg)
 ![validation-loss](results/raw%20target/top_500_target_scaled/validation_loss.jpg)
 
 ### Train
