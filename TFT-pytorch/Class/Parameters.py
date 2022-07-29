@@ -43,13 +43,14 @@ class DataParameters:
         self.data = data
         self.id = id
 
+        self.target_map = target_map
+        self.targets = list(self.target_map.values())
         self.static_features_map = static_features_map
         self.static_features = self.get_static_real_features()
 
         self.dynamic_features_map = dynamic_features_map
         self.dynamic_features = self.get_dynamic_features() 
-        self.target_map = target_map
-
+        
         self.time_varying_known_features = known_futures
 
         # uses past observations to predict future observations
@@ -100,10 +101,6 @@ class DataParameters:
             else:
                 feature_list.append(value)
         return feature_list
-
-    @property
-    def targets(self) -> List[str]:
-        return list(self.target_map.values())
 
     def __str__(self) -> str:
         return json.dumps(self.data, indent=4)

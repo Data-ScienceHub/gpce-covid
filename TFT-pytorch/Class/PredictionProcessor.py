@@ -118,11 +118,14 @@ class PredictionProcessor:
         predicted_columns = [col for col in df.columns if 'Predicted' in col]
         return df.groupby(columns)[predicted_columns + targets].aggregate('sum').reset_index()
 
-    def get_mean_attention(self, interpretation, index):
+    def get_attention(self, interpretation, index):
         attention = pd.DataFrame(interpretation['attention'].numpy())
         attention['Date'] = [self.train_start + pd.to_timedelta(day, 'D') for day in index[self.time_idx].values.reshape(-1)]
         attention[self.group_id] = index[self.group_id]
+        return attention
 
+    def get_mean_attention(self, interpretation, index, return_attention=False) -> pd.DataFrame:
+        attention = self.get_attention(interpretation, index)
         max_encoder_length = self.max_encoder_length
         attention_mean = attention.groupby('Date')[list(range(max_encoder_length))].aggregate('mean').reset_index()
 
@@ -143,7 +146,10 @@ class PredictionProcessor:
         attention_mean['mean'] = attention_mean.drop(columns='Date').mean(axis=1)
         attention_mean['median'] = attention_mean.drop(columns='Date').median(axis=1)
 
-        return attention_mean
+        if return_attention:
+            return attention_mean, attention
+        else:
+            return attention_mean
 
     def get_attention_by_weekday(self, attention_mean, verbose=True):
         attention_mean['weekday'] = attention_mean.Date.dt.weekday.astype(str)

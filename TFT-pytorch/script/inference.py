@@ -28,16 +28,13 @@ print(device)
 # Uncomment the following if you are running on google colab. They don't have these libraries installed by default. Only uncomment the pip install part if you are on rivanna, using a default pytorch kernel.
 
 # %%
-running_on_colab = False
+# !pip install pytorch_lightning
+# !pip install pytorch_forecasting
 
-# if running_on_colab:
-#     !pip install pytorch_lightning
-#     !pip install pytorch_forecasting
+# from google.colab import drive
 
-#     from google.colab import drive
-
-#     drive.mount('/content/drive')
-#     %cd /content/drive/My Drive/TFT-pytorch/notebook
+# drive.mount('/content/drive')
+# %cd /content/drive/My Drive/TFT-pytorch/notebook
 
 # %% [markdown]
 # ## Pytorch lightning and forecasting
@@ -54,16 +51,20 @@ from dataclasses import dataclass
 
 @dataclass
 class args:
-    result_folder = '../results/top_500_target_cleaned_scaled'
+    result_folder = '../results/total_target_cleaned_scaled'
     figPath = os.path.join(result_folder, 'figures')
     checkpoint_folder = os.path.join(result_folder, 'checkpoints')
-    input_filePath = '../2022_May_target_cleaned/Top_500.csv'
-    configPath = '../configurations/top_500_target_cleaned_scaled.json'
+    input_filePath = '../2022_May_target_cleaned/Total.csv'
+    configPath = '../configurations/total_target_cleaned_scaled.json'
 
-    model_path = os.path.join(checkpoint_folder, 'model.ckpt')
+    model_path = os.path.join(checkpoint_folder, 'latest-epoch=59.ckpt')
 
     # set this to false when submitting batch script, otherwise it prints a lot of lines
     show_progress_bar = False
+
+    # interpret_output has high memory requirement
+    # results in out-of-memery for Total.csv and a model of hidden size 64, even with 64GB memory
+    interpret_train = 'Total.csv' not in input_filePath
 
 # %%
 start = datetime.now()
@@ -96,6 +97,10 @@ tft_params = parameters.model_parameters
 batch_size = tft_params.batch_size
 max_prediction_length = tft_params.target_sequence_length
 max_encoder_length = tft_params.input_sequence_length
+
+# only kept for comparability with TF1. 
+# Should not be used uere since LinearSpace is just a static categorical feature
+parameters.data.time_varying_known_features.append('LinearSpace')
 
 # %% [markdown]
 # # Processing
@@ -132,7 +137,6 @@ train_scaled, validation_scaled, test_scaled, target_scaler = scale_data(
 
 # %%
 def prepare_data(data: pd.DataFrame, pm: Parameters, train=False):
-
   data_timeseries = TimeSeriesDataSet(
     data,
     time_idx= time_idx,
@@ -141,7 +145,7 @@ def prepare_data(data: pd.DataFrame, pm: Parameters, train=False):
     max_encoder_length=max_encoder_length,
     max_prediction_length=max_prediction_length,
     static_reals=pm.data.static_features,
-    static_categoricals=['FIPS'],
+    # static_categoricals=['FIPS'],
     time_varying_known_reals = pm.data.time_varying_known_features,
     time_varying_unknown_reals = pm.data.time_varying_unknown_features,
     target_normalizer = MultiNormalizer(
@@ -163,19 +167,6 @@ _, test_dataloader = prepare_data(test_scaled, parameters)
 
 del validation_scaled, test_scaled
 gc.collect()
-
-# %% [markdown]
-# # Evaluation metric
-
-# %%
-def show_result(df: pd.DataFrame, targets=targets):    
-    for target in targets:
-        predicted_column = f'Predicted_{target}'
-        y_true, y_pred = df[target].values, df[predicted_column].values
-
-        mae, rmse, msle, smape, nnse = calculate_result(y_true, y_pred)
-        print(f'Target {target}, MAE {mae:.5g}, RMSE {rmse:.5g}, MSLE {msle:.5g}, SMAPE {smape:0.5g}. NNSE {nnse:0.5g}.')
-    print()
 
 # %% [markdown]
 # # Model
@@ -216,11 +207,27 @@ print(f'\n---Training results--\n')
 train_raw_predictions, train_index = tft.predict(
     train_dataloader, mode="raw", return_index=True, show_progress_bar=args.show_progress_bar
 )
+
 train_predictions = upscale_prediction(targets, train_raw_predictions['prediction'], target_scaler, max_prediction_length)
 train_result_merged = processor.align_result_with_dataset(train_data, train_predictions, train_index)
-show_result(train_result_merged)
+show_result(train_result_merged, targets)
 
 plotter.summed_plot(train_result_merged, type='Train', base=45)
+plotter.summed_plot(train_result_merged, type='Train_error', base=45, plot_error=True)
+gc.collect()
+
+# %%
+predicted_columns = [f'Predicted_{target}' for target in targets]
+if target_scaler is not None:
+    train_result_merged.loc[:, predicted_columns] = target_scaler.transform(train_result_merged[predicted_columns])
+    train_result_merged.loc[:, targets] = target_scaler.transform(train_result_merged[targets])
+else:
+    scaler = MinMaxScaler()
+    train_result_merged.loc[:, targets] = scaler.fit_transform(train_result_merged[targets])
+    train_result_merged.loc[:, predicted_columns] = scaler.transform(train_result_merged[predicted_columns])
+    
+show_result(train_result_merged, targets)
+plotter.summed_plot(train_result_merged, type='Train_scaled', base=45)
 
 # %% [markdown]
 # ### By future days
@@ -230,7 +237,7 @@ gc.collect()
 for day in range(1, max_prediction_length+1):
     print(f'Day {day}')
     df = processor.align_result_with_dataset(train_data, train_predictions, train_index, target_time_step = day)
-    show_result(df)
+    show_result(df, targets)
     plotter.summed_plot(df, type=f'Train_day_{day}', base=45)
     break
 
@@ -245,8 +252,9 @@ validation_raw_predictions, validation_index = tft.predict(
 validation_predictions = upscale_prediction(targets, validation_raw_predictions['prediction'], target_scaler, max_prediction_length)
 
 validation_result_merged = processor.align_result_with_dataset(validation_data, validation_predictions, validation_index)
-show_result(validation_result_merged)
+show_result(validation_result_merged, targets)
 plotter.summed_plot(validation_result_merged, type='Validation')
+gc.collect()
 
 # %% [markdown]
 # ## Test results
@@ -262,8 +270,10 @@ test_raw_predictions, test_index = tft.predict(
 test_predictions = upscale_prediction(targets, test_raw_predictions['prediction'], target_scaler, max_prediction_length)
 
 test_result_merged = processor.align_result_with_dataset(test_data, test_predictions, test_index)
-show_result(test_result_merged)
+show_result(test_result_merged, targets)
 plotter.summed_plot(test_result_merged, 'Test')
+plotter.summed_plot(test_result_merged, type='Test_error',  plot_error=True)
+gc.collect()
 
 # %% [markdown]
 # ### By future days
@@ -272,7 +282,7 @@ plotter.summed_plot(test_result_merged, 'Test')
 for day in range(1, max_prediction_length+1):
     print(f'Day {day}')
     df = processor.align_result_with_dataset(test_data, test_predictions, test_index, target_time_step = day)
-    show_result(df)
+    show_result(df, targets)
     # plotter.summed_plot(df, type=f'Test_day_{day}')
 
 # %% [markdown]
@@ -318,16 +328,15 @@ del train_result_merged, validation_result_merged, test_result_merged
 
 # %%
 plotWeights = PlotWeights(args.figPath, max_encoder_length, tft, show=args.show_progress_bar)
+attentions, attention_means = [], []
 
 # %% [markdown]
 # ### Train
 
 # %%
-# interpret_output has high memory requirement
-# results in out-of-memery for Total.csv even with 64GB memory
-if 'Total.csv' not in args.input_filePath:
-    attention_mean = processor.get_mean_attention(
-        tft.interpret_output(train_raw_predictions), train_index
+if args.interpret_train:
+    attention_mean, attention = processor.get_mean_attention(
+        tft.interpret_output(train_raw_predictions), train_index,return_attention=True
     )
     plotWeights.plot_attention(
         attention_mean, figure_name='Train_daily_attention', base=45, 
@@ -337,16 +346,24 @@ if 'Total.csv' not in args.input_filePath:
     attention_weekly = processor.get_attention_by_weekday(attention_mean)
     plotWeights.plot_weekly_attention(attention_weekly, figure_name='Train_weekly_attention')
 
+    attention_mean['split'], attention['split'] = 'train', 'train'
+    attention_means.append(attention_mean)
+    attentions.append(attention)
+
 # %% [markdown]
 # ### Validation
 
 # %%
-attention_mean = processor.get_mean_attention(
-    tft.interpret_output(validation_raw_predictions), validation_index
+attention_mean, attention = processor.get_mean_attention(
+    tft.interpret_output(validation_raw_predictions), validation_index, return_attention=True
 )
 plotWeights.plot_attention(
     attention_mean, figure_name='Validation_daily_attention', target_day=4
 )
+
+attention_mean['split'], attention['split'] = 'validation', 'validation'
+attention_means.append(attention_mean)
+attentions.append(attention)
 
 # %%
 attention_weekly = processor.get_attention_by_weekday(attention_mean)
@@ -356,14 +373,27 @@ plotWeights.plot_weekly_attention(attention_weekly, figure_name='Validation_week
 # ### Test
 
 # %%
-attention_mean = processor.get_mean_attention(
-    tft.interpret_output(test_raw_predictions), test_index
+attention_mean, attention = processor.get_mean_attention(
+    tft.interpret_output(test_raw_predictions), test_index, return_attention=True
 )
 plotWeights.plot_attention(attention_mean, figure_name='Test_daily_attention', target_day=4)
+attention_mean['split'], attention['split'] = 'test', 'test'
+attention_means.append(attention_mean)
+attentions.append(attention)
 
 # %%
 attention_weekly = processor.get_attention_by_weekday(attention_mean)
 plotWeights.plot_weekly_attention(attention_weekly, figure_name='Test_weekly_attention')
+
+# %% [markdown]
+# ### Dump
+
+# %%
+attention_mean_df = pd.concat(attention_means)
+attention_mean_df.round(3).to_csv(os.path.join(args.figPath, 'attention_mean.csv'), index=False)
+
+attention_df = pd.concat(attentions)
+attention_df.round(3).to_csv(os.path.join(args.figPath, 'attention.csv'), index=False)
 
 # %% [markdown]
 # ## Variable Importance
@@ -372,28 +402,28 @@ plotWeights.plot_weekly_attention(attention_weekly, figure_name='Test_weekly_att
 # ## Train
 
 # %%
-if 'Total.csv' not in args.input_filePath:
-    interpretation = tft.interpret_output(train_raw_predictions, reduction="sum")
+if args.interpret_train:
+    interpretation = tft.interpret_output(train_raw_predictions, reduction="mean")
     for key in interpretation.keys():
         print(key, interpretation[key])
         
     figures = plotWeights.plot_interpretation(interpretation)
     for key in figures.keys():
         figure = figures[key]
-        figure.savefig(os.path.join(plotter.figpath, f'Train_{key}.jpg'), dpi=DPI)
+        figure.savefig(os.path.join(plotter.figPath, f'Train_{key}.jpg'), dpi=DPI)
 
 # %% [markdown]
 # ## Test
 
 # %%
-interpretation = tft.interpret_output(test_raw_predictions, reduction="sum")
+interpretation = tft.interpret_output(test_raw_predictions, reduction="mean")
 for key in interpretation.keys():
     print(key, interpretation[key])
     
 figures = plotWeights.plot_interpretation(interpretation)
 for key in figures.keys():
     figure = figures[key]
-    figure.savefig(os.path.join(plotter.figpath, f'Test_{key}.jpg'), dpi=DPI)
+    figure.savefig(os.path.join(plotter.figPath, f'Test_{key}.jpg'), dpi=DPI)
 
 # %%
 print(f'Ended at {datetime.now()}. Elapsed time {datetime.now() - start}')

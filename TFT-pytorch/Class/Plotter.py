@@ -31,17 +31,20 @@ DPI = 300
 ONE_DAY = to_timedelta(1, unit='D')
 
 class PlotResults:
-    def __init__(self, figpath:str, targets:List[str], figsize=(18,10), show=True) -> None:
-        self.figpath = figpath
-        if not os.path.exists(figpath):
-            print(f'Creating folder {figpath}')
-            os.makedirs(figpath, exist_ok=True)
+    def __init__(self, figPath:str, targets:List[str], figsize=(18,10), show=True) -> None:
+        self.figPath = figPath
+        if not os.path.exists(figPath):
+            print(f'Creating folder {figPath}')
+            os.makedirs(figPath, exist_ok=True)
 
         self.figsize = figsize
         self.show = show
         self.targets = targets
     
-    def plot(self, df:DataFrame, target:str, title:str=None, unit=1, figure_name:str=None, base:int=7):
+    def plot(
+        self, df:DataFrame, target:str, title:str=None, unit=1, 
+        figure_name:str=None, base:int=7, plot_error:bool=False
+    ):
         fig, ax = plt.subplots(figsize=self.figsize)
         if title is not None: plt.title(title)
         x_column = 'Date'
@@ -49,8 +52,9 @@ class PlotResults:
         plt.plot(df[x_column], df[target], color='blue', label='Observation')
         plt.plot(df[x_column], df[f'Predicted_{target}'], color='green', label='Prediction')
 
-        # TODO: the error line makes the plot look very messy, should remove later
-        # plt.plot(df[x_column], abs(df[target] - df[f'Predicted_{target}']), color='red', label='Error')
+        if plot_error:
+            plt.plot(df[x_column], abs(df[target] - df[f'Predicted_{target}']), color='red', label='Error')
+
         plt.xlim(left=df[x_column].min() - ONE_DAY, right=df[x_column].max() + ONE_DAY)
         plt.ylim(bottom=0)
 
@@ -76,11 +80,14 @@ class PlotResults:
         fig.tight_layout()
 
         if figure_name is not None:
-            plt.savefig(os.path.join(self.figpath, figure_name), dpi=DPI)
+            plt.savefig(os.path.join(self.figPath, figure_name), dpi=DPI)
         if self.show:
             plt.show()
 
-    def summed_plot(self, merged_df:DataFrame, type:str='', save:bool=True, base:int=7):
+    def summed_plot(
+        self, merged_df:DataFrame, type:str='', save:bool=True, 
+        base:int=7, plot_error:bool=False
+    ):
         """
         Plots summation of prediction and observation from all counties
 
@@ -88,24 +95,29 @@ class PlotResults:
             figure_name: must contain the figure type extension. No need to add target name as 
             this method will add the target name as prefix to the figure name.
         """
-
+        summed_df = PredictionProcessor.makeSummed(merged_df, self.targets)
         for target in self.targets:
             predicted_column = f'Predicted_{target}'
             y_true, y_pred = merged_df[target].values, merged_df[predicted_column].values
             
-            mae, rmse, msle, smape, nnse = calculate_result(y_true, y_pred)
-            title = f'Summed plot: {target} {type} MAE {mae:0.4g}, RMSE {rmse:0.4g}, MSLE {msle:0.4g}, SMAPE {smape:0.4g}, NNSE {nnse:0.4g}'
+            mae, rmse, smape, nnse = calculate_result(y_true, y_pred)
+            title = f'Summed plot: {target} {type} MAE {mae:0.4g}, RMSE {rmse:0.4g}, SMAPE {smape:0.4g}, NNSE {nnse:0.4g}'
+            
             unit = 1
-            if target=='Cases':
+            if (summed_df[target].max() - summed_df[target].min())>=10000:
                 unit = 1000
-            summed_df = PredictionProcessor.makeSummed(merged_df, self.targets)
 
             target_figure_name = None
             if save: target_figure_name = f'Summed_plot_{target}_{type}.jpg'
 
-            self.plot(summed_df, target, title, unit, target_figure_name, base)
+            self.plot(
+                summed_df, target, title, unit, target_figure_name, base, plot_error
+            )
 
-    def individual_plot(self, df:DataFrame, fips:str, type:str='', save:bool=True, base:int=7):
+    def individual_plot(
+        self, df:DataFrame, fips:str, type:str='', save:bool=True, 
+        base:int=7, plot_error:bool=False
+    ):
         """
         Plots the prediction and observation for this specific county
 
@@ -122,21 +134,21 @@ class PlotResults:
             y_true, y_pred = df[target].values, df[predicted_column].values
             
             mae, rmse, msle, smape, nnse = calculate_result(y_true, y_pred)
-            if target=='Cases': unit = 1000
+            if (df[target].max() - df[target].min())>=10000: unit = 1000
             else: unit = 1
 
             target_figure_name = None
             if save: target_figure_name = f'Individual_plot_{target}_{type}_FIPS_{fips}.jpg'
             
             title = f'{target} {type} MAE {mae:0.4g}, RMSE {rmse:0.4g}, MSLE {msle:0.4g}, SMAPE {smape:0.4g}, NNSE {nnse:0.4g}'
-            self.plot(df, target, title, unit, target_figure_name, base)
+            self.plot(df, target, title, unit, target_figure_name, base, plot_error)
 
 class PlotWeights:
-    def __init__(self, figpath:str, max_encoder_length:int, model:TemporalFusionTransformer, show:bool=True):
-        self.figpath = figpath
-        if not os.path.exists(figpath):
-            print(f'Creating folder {figpath}')
-            os.makedirs(figpath, exist_ok=True)
+    def __init__(self, figPath:str, max_encoder_length:int, model:TemporalFusionTransformer, show:bool=True):
+        self.figPath = figPath
+        if not os.path.exists(figPath):
+            print(f'Creating folder {figPath}')
+            os.makedirs(figPath, exist_ok=True)
 
         self.static_variables = model.static_variables # self.hparams.static_categoricals + self.hparams.static_reals
         self.encoder_variables = model.encoder_variables 
@@ -216,7 +228,7 @@ class PlotWeights:
         ax.xaxis.set_major_locator(ticker.MultipleLocator(base=1))
 
         if figure_name is not None:
-            plt.savefig(os.path.join(self.figpath, figure_name), dpi=DPI)
+            plt.savefig(os.path.join(self.figPath, figure_name), dpi=DPI)
 
         if self.show: 
             plt.show()
@@ -274,13 +286,13 @@ class PlotWeights:
             )
             break
  
-        _, ymax = plt.gca().get_ylim()
+        ymin, ymax = plt.gca().get_ylim()
 
         weeks = attention_mean[x_column].dt.weekday.values
 
         if target_day is not None:
             plt.vlines(
-                    x=attention_mean[weeks==target_day][x_column], ymin=0,
+                    x=attention_mean[weeks==target_day][x_column], ymin=ymin,
                     ymax=ymax, label=weekdays[target_day], color='black'
                 )
         
@@ -298,7 +310,7 @@ class PlotWeights:
         fig.tight_layout()
 
         if figure_name is not None: 
-            plt.savefig(os.path.join(self.figpath, f'{figure_name}.jpg'), dpi=DPI)
+            plt.savefig(os.path.join(self.figPath, f'{figure_name}.jpg'), dpi=DPI)
             
         if self.show: plt.show()
         
@@ -349,6 +361,6 @@ class PlotWeights:
         fig.tight_layout()
 
         if figure_name is not None:
-            plt.savefig(os.path.join(self.figpath, f'{figure_name}.jpg'), dpi=DPI)
+            plt.savefig(os.path.join(self.figPath, f'{figure_name}.jpg'), dpi=DPI)
             
         if self.show: plt.show()
