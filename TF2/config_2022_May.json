@@ -3,20 +3,20 @@
         "total_inputs": 16,
         "static_locs": [
             0,
-            1,
-            2
+            1
         ],
         "future_locs": [
+            6,
             7,
             8,
             9,
             10,
             11,
             12,
-            13,
-            14
+            13
         ],
         "target_loc": [
+            14,
             15
         ],
         "categorical_loc": null,
@@ -25,10 +25,9 @@
         "dropout_rate": 0.2,
         "input_sequence_length": 13,
         "target_sequence_length": 15,
-        "output_size": 1,
+        "output_size": 2,
         "loss": "MSE",
-        "best_loss":"validation",
-        "epochs": 5,
+        "epochs": 60,
         "attn": {
             "num_heads": 4,
             "hidden_layer_size": 64
@@ -38,12 +37,11 @@
             "learning_rate": 0.001,
             "clipnorm": 0.01
         },
-        "early_stopping_patience": 3
+        "early_stopping_patience": 60
     },
     "col_mappings": {
         "Static": [
             "AgeDist",
-            "AirPollution",
             "HealthDisp"
         ],
         "ID": [
@@ -53,7 +51,8 @@
             "TimeFromStart"
         ],
         "Target": [
-            "Cases"
+            "Cases",
+            "Deaths"
         ],
         "Future": [
             "LinearSpace",
@@ -67,7 +66,6 @@
         ],
         "Known Regular": [
             "AgeDist",
-            "AirPollution",
             "HealthDisp",
             "DiseaseSpread",
             "Transmission",
@@ -82,7 +80,6 @@
         },
         "static_features_map": {
             "Age Distribution.csv": "AgeDist",
-            "Air Pollution.csv": "AirPollution",
             "Health Disparities.csv": "HealthDisp"
         },
         "dynamic_features_map": {
@@ -92,7 +89,8 @@
             "Social Distancing.csv": "SocialDist"
         },
         "targets": {
-            "Cases.csv": "Cases"
+            "Cases.csv": "Cases",
+            "Deaths.csv": "Deaths"
         },
         "support": {
             "Population": "Population.csv",
@@ -100,8 +98,8 @@
             "FirstDate": "2020-02-28",
             "LastDate": "2022-05-17",
             "Nloc": 3142,
-            "Population cut": 100,
-            "Rurality cut": true,
+            "Population cut": 500,
+            "Rurality cut": false,
             "RuralityRange": [
                 4.501,
                 5
@@ -109,11 +107,14 @@
             "MADRange": [
                 1,
                 2
-            ]
+            ],
+            "RunName": "CovidA21-TFT2-Feb2020toMay2022",
+            "LocationBasedRandomSample": 0.2,
+            "SpecificLocation": []
         },
         "split": {
             "train_start": "2020-02-28",
-            "validation_start": "2021-11-23",
+            "validation_start": "2021-11-29",
             "test_start": "2022-02-19",
             "test_end": "2022-05-17"
         }

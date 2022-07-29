@@ -11,15 +11,17 @@ from Class.ParameterManager import ParameterManager
 def scale_back(target, target_scaler, target_sequence_length):
     """
     if target was scaled, this inverse transforms the target.
-    TODO: implement for multiple targets
     """
     if target_scaler is None:
         return target
 
-    upscaled = target_scaler.inverse_transform([target.reshape(-1)])[0]
+    targets_inferred = target.shape[-1]
+    target = target.reshape(-1, targets_inferred)
+
+    upscaled = target_scaler.inverse_transform(target)
 
     # the square is done, since it was sqrt before doing the min max scaling in old code
-    return np.square(upscaled.reshape((-1, target_sequence_length, 1)))
+    return np.square(upscaled.reshape((-1, target_sequence_length, targets_inferred)))
 
 def MAE(y_true, y_pred):
     return np.mean(np.abs(y_true - y_pred))
@@ -31,59 +33,71 @@ def SMAPE(y_true, y_pred):
     value = 2*abs(y_true - y_pred) / (abs(y_true) + abs(y_pred))
     return np.mean(value)
 
-def calculate_result(y_true, y_pred):
-    mae = MAE(y_true, y_pred)
-    rmse = RMSE(y_true, y_pred)
-    smape = SMAPE(y_true, y_pred)
+def calculate_result(y_true, y_pred, split=False):
 
-    return np.round(mae, 4), np.round(rmse, 4), np.round(smape, 4)
+    mae = []
+    rmse = []
+    smape = []
+    if split:
+        for r in range(y_true.shape[-1]):
+            mae.append(np.round(MAE(y_true[Ellipsis, r], y_pred[Ellipsis, r]), 4))
+            rmse.append(np.round(RMSE(y_true[Ellipsis, r], y_pred[Ellipsis, r]), 4))
+            smape.append(np.round(SMAPE(y_true[Ellipsis, r], y_pred[Ellipsis, r]), 4))
+    else:
+        mae.append(np.round(MAE(y_true, y_pred), 4))
+        rmse.append(np.round(RMSE(y_true, y_pred), 4))
+        smape.append(np.round(SMAPE(y_true, y_pred), 4))
+
+    return mae, rmse, smape
 
 def sumCases(y_true, y_preds, number_of_locations):
-    # print('Predictions shape')
-    # print(y_preds.shape)
+    """
+    Sequences have overlapping days and thus there will be up to # prediction step predictions for a given day
 
+    This function returns the average prediction for a day.
+    """
     sequence, times, feat = y_true.shape
     dseq = int(sequence / number_of_locations)
 
     # Construct new matrix to store averages
     #   shape = (Location x TimeSteps x Features)
 
-    TargetMatrix = np.zeros((number_of_locations, dseq + times - 1, 1))
-    PredMatrix = np.zeros((number_of_locations, dseq + times - 1, 1))
-    locCounter = 0
-    TimeCounter = 0
+    TargetMatrix = np.zeros((number_of_locations, dseq + times - 1, feat))
+    PredMatrix = np.zeros((number_of_locations, dseq + times - 1, feat))
 
-    for seq in range(sequence):
-        if seq != 0 and seq % dseq == 0:
-            # Reset Time counter and increment locations
-            locCounter += 1
-            TimeCounter = 0
+    for f in range(feat):
 
-        for TimeStep in range(times):  # TimeStep goes from 0 to 14 (length = 15)
-            TargetMatrix[locCounter, TimeCounter + TimeStep] = y_true[seq, TimeStep]
-            PredMatrix[locCounter, TimeCounter + TimeStep] += y_preds[seq, TimeStep]
+        locCounter = 0
+        TimeCounter = 0
 
-        TimeCounter += 1
+        for seq in range(sequence):
+            if seq != 0 and seq % dseq == 0:
+                # Reset Time counter and increment locations
+                locCounter += 1
+                TimeCounter = 0
 
-    # Divide matrix chunk would be used if we would like to average predictions for a given day. Given
-    # that we have overlapping sequences, we will also have overlapping predictions. Currently we take first
+            for TimeStep in range(times):  # TimeStep goes from 0 to 14 (length = 15)
+                TargetMatrix[locCounter, TimeCounter + TimeStep, f] = y_true[seq, TimeStep, f]
+                PredMatrix[locCounter, TimeCounter + TimeStep, f] += y_preds[seq, TimeStep, f]
 
-    # Divide Matrix ---> to incorporate this into the above code
-    for idx,i in enumerate(TargetMatrix):
-        for jdx,j in enumerate(i):
-            if jdx >= times-1 and jdx <= TargetMatrix.shape[1] - times:
-                # TargetMatrix[idx,jdx] = np.divide(TargetMatrix[idx,jdx], times)
-                PredMatrix[idx,jdx] = np.divide(PredMatrix[idx,jdx], times)
-            else:
-                divisor = min(abs(jdx+1), abs(TargetMatrix.shape[1]-jdx))
-                # TargetMatrix[idx,jdx] = np.divide(TargetMatrix[idx,jdx], divisor)
-                PredMatrix[idx,jdx] = np.divide(PredMatrix[idx,jdx], divisor)
+            TimeCounter += 1
+
+        # Divide matrix chunk would be used if we would like to average predictions for a given day. Given
+        # that we have overlapping sequences, we will also have overlapping predictions. Currently we take first
+
+        # Divide Matrix ---> to incorporate this into the above code
+        for idx, i in enumerate(TargetMatrix):
+            for jdx, j in enumerate(i):
+                if times-1 <= jdx <= TargetMatrix.shape[1] - times:
+                    # TargetMatrix[idx,jdx] = np.divide(TargetMatrix[idx,jdx], times)
+                    PredMatrix[idx, jdx, f] = np.divide(PredMatrix[idx, jdx, f], times)
+                else:
+                    divisor = min(abs(jdx+1), abs(TargetMatrix.shape[1]-jdx))
+                    # TargetMatrix[idx,jdx] = np.divide(TargetMatrix[idx,jdx], divisor)
+                    PredMatrix[idx, jdx, f] = np.divide(PredMatrix[idx, jdx, f], divisor)
 
     TargetMatrix = np.clip(TargetMatrix, 0, TargetMatrix.max() + 1)
     PredMatrix = np.clip(PredMatrix, 0, PredMatrix.max() + 1)
-
-    # print('Reshaped Preds')
-    # print(PredMatrix.shape)
 
     return TargetMatrix, PredMatrix
 
@@ -116,9 +130,15 @@ def train_validation_test_split(df:DataFrame, parameterManager:ParameterManager,
 
     target_scaler = MinMaxScaler()
     target_column = parameterManager.target_column
-    train_data.loc[:, [target_column]] = target_scaler.fit_transform(train_data[[target_column]])
-    validation_data.loc[:, [target_column]] = target_scaler.transform(validation_data[[target_column]])
-    test_data.loc[:, [target_column]] = target_scaler.transform(test_data[[target_column]])
+
+    if len(target_column) == 1:
+        train_data.loc[:, [target_column]] = target_scaler.fit_transform(train_data[[target_column]])
+        validation_data.loc[:, [target_column]] = target_scaler.transform(validation_data[[target_column]])
+        test_data.loc[:, [target_column]] = target_scaler.transform(test_data[[target_column]])
+    else:
+        train_data.loc[:, target_column] = target_scaler.fit_transform(train_data[target_column])
+        validation_data.loc[:, target_column] = target_scaler.transform(validation_data[target_column])
+        test_data.loc[:, target_column] = target_scaler.transform(test_data[target_column])
 
     return train_data, validation_data, test_data, target_scaler
 
