@@ -6,10 +6,16 @@ __pycache__/
 .ipynb_checkpoints
 
 # checkpoint and data folders
-checkpoints
-TF2/Notebooks/2021_Nov
-TF2/Notebooks/2022_May
-TF2/Notebooks/output
-v0/2022_May
-v0/2021_Nov
-v0/output
+# checkpoints
+lightning_logs
+# figures
+# figures_best
+*.out
+
+TF2/2021_Nov
+TF2/output
+
+Total.csv
+best_predictions_case_death.csv
+predictions_case_death.csv
+!TFT-pytorch/results/
