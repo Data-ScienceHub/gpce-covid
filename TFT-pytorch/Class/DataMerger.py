@@ -185,7 +185,7 @@ class DataMerger:
             if 'Date' not in df.columns:
                 #TODO: add for cases where date is already pivoted
                 if remove_input_outliers: 
-                    df = fix_dynamic_outliers(df)
+                    df = remove_outliers(df)
 
                 # technically this should be set of common columns
                 id_vars = [col for col in df.columns if not valid_date(col)]
@@ -250,7 +250,7 @@ class DataMerger:
                 df.fillna(0, inplace=True)
 
                 if remove_target_outliers:
-                    df = fix_dynamic_outliers(df, verbose=False)
+                    df = remove_outliers(df, verbose=False)
 
                 # technically this should be set of common columns
                 id_vars = [col for col in df.columns if not valid_date(col)]
@@ -281,11 +281,9 @@ class DataMerger:
                 else:
                     selected_columns = merge_keys + [feature_name]
 
-                # using outer to keep the union of dates 
-                # as vaccination dates are not available before late in 2020
                 target_df = target_df.merge(df[selected_columns], how='outer',on=merge_keys)
 
-                # however, we don't need to keep mismatch of FIPS
+                # we don't need to keep mismatch of FIPS
                 target_df = target_df[~target_df['FIPS'].isna()]
             print()
 
