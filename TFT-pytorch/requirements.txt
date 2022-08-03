@@ -1,9 +1,6 @@
 # conda install --file requirements.txt
 pip
 tensorflow-gpu
-pytorch
-cudatoolkit
-cudnn
 ipykernel
 ipywidgets
 joblib
@@ -13,11 +10,13 @@ matplotlib
 notebook
 numpy
 pandas
-python
 requests
 scikit-learn
-# scikit-learn-intelex
 seaborn
 setuptools
 pytorch-lightning
 pytorch-forecasting
+
+# should be handled using anaconda or separately
+# cudatoolkit
+# cudnn
