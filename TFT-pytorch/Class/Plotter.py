@@ -6,32 +6,19 @@ https://pytorch-forecasting.readthedocs.io/en/stable/_modules/pytorch_forecastin
 import os, sys
 import numpy as np
 from pandas import DataFrame, to_timedelta
-from typing import List, Dict, Union
+from typing import List, Dict
 from pytorch_forecasting.models.temporal_fusion_transformer import TemporalFusionTransformer
 
 sys.path.append('..')
 from script.utils import calculate_result
 from Class.PredictionProcessor import *
-from Class.Parameters import Parameters
+from Class.PlotConfig import *
 
-import matplotlib.pyplot as plt
-import matplotlib.ticker as ticker
-from matplotlib.ticker import StrMethodFormatter
-import seaborn as sns
-# Apply the default theme
-sns.set_theme()
-sns.set(font_scale = 2)
-
-plt.rcParams['lines.linewidth'] = 2
-plt.rcParams['lines.markersize'] = 12
-
-markers = ['s', 'x',  '.', '+',  'h', 'D', '^', '>', 'p', '<', '*', 'P', 'v']
-
-DPI = 300
-ONE_DAY = to_timedelta(1, unit='D')
+from matplotlib.ticker import StrMethodFormatter, MultipleLocator
+# ONE_DAY = to_timedelta(1, unit='D')
 
 class PlotResults:
-    def __init__(self, figPath:str, targets:List[str], figsize=(18,10), show=True) -> None:
+    def __init__(self, figPath:str, targets:List[str], figsize=FIGSIZE, show=True) -> None:
         self.figPath = figPath
         if not os.path.exists(figPath):
             print(f'Creating folder {figPath}')
@@ -43,7 +30,7 @@ class PlotResults:
     
     def plot(
         self, df:DataFrame, target:str, title:str=None, unit=1, 
-        figure_name:str=None, base:int=7, plot_error:bool=False
+        base:int=None, figure_name:str=None, plot_error:bool=False
     ):
         fig, ax = plt.subplots(figsize=self.figsize)
         if title is not None: plt.title(title)
@@ -54,28 +41,32 @@ class PlotResults:
 
         if plot_error:
             plt.plot(df[x_column], abs(df[target] - df[f'Predicted_{target}']), color='red', label='Error')
-
-        plt.xlim(left=df[x_column].min() - ONE_DAY, right=df[x_column].max() + ONE_DAY)
         plt.ylim(bottom=0)
-
-        if base is not None:
-            ax.xaxis.set_major_locator(ticker.MultipleLocator(base=base))
-
+        
+        if base is None:
+            x_first_tick = df[x_column].min()
+            x_last_tick = df[x_column].max()
+            x_major_ticks = DATE_TICKS
+            ax.set_xticks(
+                [x_first_tick + (x_last_tick - x_first_tick) * i / (x_major_ticks - 1) for i in range(x_major_ticks)]
+            )
+        else:
+            # plt.xlim(left=df[x_column].min() - ONE_DAY, right=df[x_column].max() + ONE_DAY)
+            ax.xaxis.set_major_locator(MultipleLocator(base=base))
+        
         plt.xticks(rotation = 45)
+        # plt.xlabel(x_column)
 
         if unit>1:
-            label_text, values = [], []
-            for loc in ax.get_yticks():
-                if loc != 0: label_text.append(f'{int(loc/unit)}k')
-                else: label_text.append('0')
+            ax.yaxis.set_major_formatter(get_formatter(unit))
+            if unit==1e3: unit = 'in thousands'
+            elif unit==1e6: unit = 'in millions'
+            else: unit = f'x {unit:.0e}'
 
-                values.append(loc)
-
-            ax.set_yticks(values)
-            ax.set_yticklabels(label_text)
+            plt.ylabel(f'Daily {target} ({unit})')
+        else:
+            plt.ylabel(f'Daily {target}')
             
-        # plt.xlabel(x_column)
-        plt.ylabel(f'Daily {target}')
         plt.legend(loc='upper right')
         fig.tight_layout()
 
@@ -86,7 +77,7 @@ class PlotResults:
 
     def summed_plot(
         self, merged_df:DataFrame, type:str='', save:bool=True, 
-        base:int=7, plot_error:bool=False
+        base:int=None, plot_error:bool=False
     ):
         """
         Plots summation of prediction and observation from all counties
@@ -95,28 +86,30 @@ class PlotResults:
             figure_name: must contain the figure type extension. No need to add target name as 
             this method will add the target name as prefix to the figure name.
         """
+        merged_df['Date'] = pd.to_datetime(merged_df['Date'])
         summed_df = PredictionProcessor.makeSummed(merged_df, self.targets)
+
         for target in self.targets:
             predicted_column = f'Predicted_{target}'
             y_true, y_pred = merged_df[target].values, merged_df[predicted_column].values
             
             mae, rmse, smape, nnse = calculate_result(y_true, y_pred)
-            title = f'Summed plot: {target} {type} MAE {mae:0.4g}, RMSE {rmse:0.4g}, SMAPE {smape:0.4g}, NNSE {nnse:0.4g}'
+            title = f'{target} MAE {mae:0.4g}, RMSE {rmse:0.4g}, SMAPE {smape:0.4g}, NNSE {nnse:0.4g}'
             
             unit = 1
-            if (summed_df[target].max() - summed_df[target].min())>=10000:
-                unit = 1000
+            if (summed_df[target].max() - summed_df[target].min()) >= 1e4:
+                unit = 1e3
 
             target_figure_name = None
             if save: target_figure_name = f'Summed_plot_{target}_{type}.jpg'
 
             self.plot(
-                summed_df, target, title, unit, target_figure_name, base, plot_error
+                summed_df, target, title, unit, base, target_figure_name, plot_error
             )
 
     def individual_plot(
         self, df:DataFrame, fips:str, type:str='', save:bool=True, 
-        base:int=7, plot_error:bool=False
+        base:int=None, plot_error:bool=False
     ):
         """
         Plots the prediction and observation for this specific county
@@ -133,15 +126,15 @@ class PlotResults:
             predicted_column = f'Predicted_{target}'
             y_true, y_pred = df[target].values, df[predicted_column].values
             
-            mae, rmse, msle, smape, nnse = calculate_result(y_true, y_pred)
+            mae, rmse, smape, nnse = calculate_result(y_true, y_pred)
             if (df[target].max() - df[target].min())>=10000: unit = 1000
             else: unit = 1
 
             target_figure_name = None
             if save: target_figure_name = f'Individual_plot_{target}_{type}_FIPS_{fips}.jpg'
             
-            title = f'{target} {type} MAE {mae:0.4g}, RMSE {rmse:0.4g}, MSLE {msle:0.4g}, SMAPE {smape:0.4g}, NNSE {nnse:0.4g}'
-            self.plot(df, target, title, unit, target_figure_name, base, plot_error)
+            title = f'{target} MAE {mae:0.4g}, RMSE {rmse:0.4g}, SMAPE {smape:0.4g}, NNSE {nnse:0.4g}'
+            self.plot(df, target, title, unit, base, target_figure_name, plot_error)
 
 class PlotWeights:
     def __init__(self, figPath:str, max_encoder_length:int, model:TemporalFusionTransformer, show:bool=True):
@@ -168,7 +161,7 @@ class PlotWeights:
         ax.set_title(title)
 
         ax.set_xlabel("Importance in %")
-        plt.tight_layout()
+        fig.tight_layout()
 
         if self.show:
             plt.show()
@@ -189,29 +182,33 @@ class PlotWeights:
         """
         figures = {}
         figures['attention'] = self.plot_summed_attention(
-            interpretation, figsize=(12, 8)
+            interpretation
         )
+
+        variables = interpretation["static_variables"].detach().cpu()
         figures["static_variables"] = self.make_selection_plot(
-            "Static variables importance", interpretation["static_variables"].detach().cpu(), 
-            self.static_variables, (10, 4)
+            "Static variables importance", variables, 
+            self.static_variables, (10, 1.5*len(variables)+0.5)
         )
 
         # Dynamic variables
+        variables = interpretation["encoder_variables"].detach().cpu()
         figures["encoder_variables"] = self.make_selection_plot(
-            "Encoder variables importance", interpretation["encoder_variables"].detach().cpu(), 
-            self.encoder_variables, (10, 8)
+            "Encoder variables importance", variables, 
+            self.encoder_variables, (10, 1*len(variables) + 0.5)
         )
 
         # time unknown variable
+        variables = interpretation["decoder_variables"].detach().cpu()
         figures["decoder_variables"] = self.make_selection_plot(
-            "Decoder variables importance", interpretation["decoder_variables"].detach().cpu(), 
-            self.decoder_variables, (10, 6)
+            "Decoder variables importance", variables, 
+            self.decoder_variables, (10, 1.5*len(variables)+ 0.5)
         )
 
         return figures
 
     def plot_summed_attention(
-        self, interpretation, title:str=None, figure_name:str=None, figsize=(10, 6)
+        self, interpretation, title:str=None, figure_name:str=None, figsize=(12, 6)
     ):
         fig, ax = plt.subplots(figsize=figsize)
         attention = interpretation["attention"].detach().cpu()
@@ -219,13 +216,14 @@ class PlotWeights:
         ax.plot(
             np.arange(-self.max_encoder_length, attention.size(0) - self.max_encoder_length), attention
         )
-        # plt.ylim(bottom=0)
+        plt.ylim(attention.min())
         ax.set_xlabel("Time index")
         ax.set_ylabel("Attention weight")
 
         if title is not None: ax.set_title(title)
         plt.gca().yaxis.set_major_formatter(self.weight_formatter)
-        ax.xaxis.set_major_locator(ticker.MultipleLocator(base=1))
+        ax.xaxis.set_major_locator(MultipleLocator(base=1))
+        fig.tight_layout()
 
         if figure_name is not None:
             plt.savefig(os.path.join(self.figPath, figure_name), dpi=DPI)
@@ -236,7 +234,7 @@ class PlotWeights:
 
     def plot_attention(
         self, attention_mean:DataFrame, title:str='Attention comparison on different time index',
-        figsize=(18, 10), step_size:int=1, figure_name:str=None, base:int=7, target_day:int=None, 
+        figsize=(14, 8), step_size:int=1, figure_name:str=None, base:int=None, target_day:int=None, 
         limit:int=3, enable_markers=True
     ):
         """
@@ -296,14 +294,21 @@ class PlotWeights:
                     ymax=ymax, label=weekdays[target_day], color='black'
                 )
         
-        plt.xlim(attention_mean[x_column].min() - ONE_DAY, attention_mean[x_column].max() + ONE_DAY)
-        # plt.ylim(bottom=0)
-        if base is not None:
-            ax.xaxis.set_major_locator(ticker.MultipleLocator(base=base))
+        plt.ylim(ymin)
+        if base is None:
+            x_first_tick = attention_mean[x_column].min()
+            x_last_tick = attention_mean[x_column].max()
+            x_major_ticks = DATE_TICKS
+            ax.set_xticks(
+                [x_first_tick + (x_last_tick - x_first_tick) * i / (x_major_ticks - 1) for i in range(x_major_ticks)]
+            )
+        else:
+            # plt.xlim(attention_mean[x_column].min() - ONE_DAY, attention_mean[x_column].max() + ONE_DAY)
+            ax.xaxis.set_major_locator(MultipleLocator(base=base))
+        
+        plt.xticks(rotation = 45)
         
         plt.gca().yaxis.set_major_formatter(self.weight_formatter)
-        plt.xticks(rotation = 45)
-
         plt.ylabel('Attention weight')
         plt.legend(loc='upper right')
 
@@ -316,7 +321,7 @@ class PlotWeights:
         
     def plot_weekly_attention(
         self, attention_weekly:DataFrame, title:str= 'Attention comparison on different days of the week',
-        figsize=(18, 10), step_size=1, limit:int=3, figure_name:str=None
+        figsize=(14, 8), step_size=1, limit:int=3, figure_name:str=None
     ):
         """
         Plots attention weights by weekdays.
@@ -351,7 +356,6 @@ class PlotWeights:
             break
         
         # plt.ylim(bottom=0)
-
         plt.ylabel('Attention weight')
         # plt.xlabel('Weekday')
         
