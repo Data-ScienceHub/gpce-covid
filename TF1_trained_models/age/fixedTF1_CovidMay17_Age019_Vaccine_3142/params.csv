@@ -1,0 +1,31 @@
+,"1_128_True_1_0_False_[]_[('Location', 3, 4), ('Time from Start', 0, 5), ('RawLabel', 0, -1), ('0 Cases Root 2', 0, 0), ('1 Deaths Root 2', 0, 0), ('2 AGE019', 0, 3), ('3 Vaccination', 0, 1), ('4 LinearSpace', 0, 2), ('5 CosWeekly', 0, 2), ('6 SinWeekly', 0, 2)]_0.2_60_64_[1, 2]_8_[]_[3, 5, 6, 7]_0.001_0.01_64_./GPCE/TFToriginal/TFTData/saved_models/FFFFWNPF/fixedTF1_CovidMay17_Age019_Vaccine_3142_5_13_60_4_2_0_['MSE']_[1.0]_1_[3]_28"
+dropout_rate,0.2
+hidden_layer_size,64
+learning_rate,0.001
+minibatch_size,64
+max_gradient_norm,0.01
+num_heads,4
+stack_size,1
+model_folder,./GPCE/TFToriginal/TFTData/saved_models/FFFFWNPF/fixedTF1_CovidMay17_Age019_Vaccine_3142
+total_time_steps,28
+num_encoder_steps,13
+num_epochs,60
+early_stopping_patience,60
+multiprocessing_workers,5
+column_definition,"[('Location', 3, 4), ('Time from Start', 0, 5), ('RawLabel', 0, -1), ('0 Cases Root 2', 0, 0), ('1 Deaths Root 2', 0, 0), ('2 AGE019', 0, 3), ('3 Vaccination', 0, 1), ('4 LinearSpace', 0, 2), ('5 CosWeekly', 0, 2), ('6 SinWeekly', 0, 2)]"
+input_size,8
+output_size,2
+category_counts,[]
+input_obs_loc,"[1, 2]"
+static_input_loc,[3]
+known_regular_inputs,"[3, 5, 6, 7]"
+known_categorical_inputs,[]
+quantiles,[1.0]
+quantilenames,['MSE']
+quantileindex,0
+TFTLSTMFinalMLP,128
+TFTOption1,1
+TFTOption2,0
+TFTMultivariate,True
+TFTFinalGatingOption,1
+TFTSymbolicWindows,False
