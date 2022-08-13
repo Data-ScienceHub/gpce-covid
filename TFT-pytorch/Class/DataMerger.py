@@ -154,7 +154,7 @@ class DataMerger:
             static_df = static_df.merge(feature_df, how='inner', on='FIPS')
 
         print(f"\nMerged static features have {static_df['FIPS'].nunique()} counties")
-        print(static_df.head())
+        # print(static_df.head())
         
         return static_df
 
@@ -209,16 +209,13 @@ class DataMerger:
                 else:
                     selected_columns = merge_keys + [dynamic_features_map[file_name]]
 
-                # using outer to keep the union of dates 
-                # as vaccination dates are not available before late in 2020
                 dynamic_df = dynamic_df.merge(df[selected_columns], how='outer',on=merge_keys)
-
-                # however, we don't need to keep mismatch of FIPS
+                # we don't need to keep mismatch of FIPS
                 dynamic_df = dynamic_df[~dynamic_df['FIPS'].isna()]
             print()
 
         print(f'Total dynamic feature shape {dynamic_df.shape}')
-        print(dynamic_df.head())
+        # print(dynamic_df.head())
         
         return dynamic_df
 
@@ -250,7 +247,7 @@ class DataMerger:
                 df.fillna(0, inplace=True)
 
                 if remove_target_outliers:
-                    df = remove_outliers(df, verbose=False)
+                    df = remove_outliers(df)
 
                 # technically this should be set of common columns
                 id_vars = [col for col in df.columns if not valid_date(col)]
@@ -260,7 +257,7 @@ class DataMerger:
                 ).reset_index(drop=True)
             else:
                 df.fillna(0, inplace=True)
-                # df = fix_outliers(df, verbose=False)
+                # df = remove_outliers(df)
 
             # some days had old covid cases fixed by adding neg values
             print(f'Setting negative daily {feature_name} counts to zero.')
@@ -281,14 +278,16 @@ class DataMerger:
                 else:
                     selected_columns = merge_keys + [feature_name]
 
+                # using outer to keep the union of dates 
+                # as vaccination dates are not available before late in 2020
                 target_df = target_df.merge(df[selected_columns], how='outer',on=merge_keys)
 
-                # we don't need to keep mismatch of FIPS
+                # however, we don't need to keep mismatch of FIPS
                 target_df = target_df[~target_df['FIPS'].isna()]
             print()
 
         print(f'Total target feature shape {target_df.shape}')
-        print(target_df.head())
+        # print(target_df.head())
         
         return target_df
 

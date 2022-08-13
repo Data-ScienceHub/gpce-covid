@@ -8,7 +8,6 @@
 
 # %%
 import os, gc
-import numpy as np
 import torch
 
 import warnings
@@ -76,6 +75,7 @@ class args:
     # if you want to change some config, but not to create a new config file, just change the value
     # of the corresponding parameter in the config section
     configPath = '../configurations/total_target_cleaned_scaled.json'
+    # configPath = '../config_2022_August.json'
 
     # Path/URL of the checkpoint from which training is resumed
     ckpt_model_path = None # os.path.join(checkpoint_folder, 'latest-epoch=7.ckpt')
@@ -121,9 +121,6 @@ if running_on_colab:
 
 max_prediction_length = tft_params.target_sequence_length
 max_encoder_length = tft_params.input_sequence_length
-
-# only kept for comparability with TF1. 
-# Should not be used uere since LinearSpace is just a static categorical feature
 parameters.data.time_varying_known_features.append('LinearSpace')
 
 # %% [markdown]
@@ -135,7 +132,6 @@ import random
 def seed_torch(seed=7):
     random.seed(seed)
     os.environ['PYTHONHASHSEED'] = str(seed)
-    np.random.seed(seed)
     pl.seed_everything(seed)
 
 seed_torch(tft_params.seed)
@@ -341,22 +337,24 @@ train_predictions = upscale_prediction(targets, train_raw_predictions['predictio
 train_result_merged = processor.align_result_with_dataset(train_data, train_predictions, train_index)
 show_result(train_result_merged, targets)
 
-plotter.summed_plot(train_result_merged, type='Train' , base=45)
-plotter.summed_plot(train_result_merged, type='Train_error', base=45, plot_error=True)
+plotter.summed_plot(train_result_merged, type='Train')
+plotter.summed_plot(train_result_merged, type='Train_error', plot_error=True)
 gc.collect()
 
 # %%
-predicted_columns = [f'Predicted_{target}' for target in targets]
-if target_scaler is not None:
-    train_result_merged.loc[:, predicted_columns] = target_scaler.transform(train_result_merged[predicted_columns])
-    train_result_merged.loc[:, targets] = target_scaler.transform(train_result_merged[targets])
-else:
-    scaler = MinMaxScaler()
-    train_result_merged.loc[:, targets] = scaler.fit_transform(train_result_merged[targets])
-    train_result_merged.loc[:, predicted_columns] = scaler.transform(train_result_merged[predicted_columns])
+# predicted_columns = [f'Predicted_{target}' for target in targets]
+# temp = train_result_merged.copy()
+# if target_scaler is not None:
+#     temp.loc[:, predicted_columns] = target_scaler.transform(temp[predicted_columns])
+#     temp.loc[:, targets] = target_scaler.transform(temp[targets])
+# else:
+#     scaler = MinMaxScaler()
+#     temp.loc[:, targets] = scaler.fit_transform(temp[targets])
+#     temp.loc[:, predicted_columns] = scaler.transform(temp[predicted_columns])
     
-show_result(train_result_merged, targets)
-plotter.summed_plot(train_result_merged, type='Train_scaled', base=45)
+# show_result(temp, targets)
+# plotter.summed_plot(temp, type='Train_scaled')
+# del temp
 
 # %% [markdown]
 # ### By future days
@@ -367,7 +365,7 @@ for day in range(1, max_prediction_length+1):
     print(f'Day {day}')
     df = processor.align_result_with_dataset(train_data, train_predictions, train_index, target_time_step = day)
     show_result(df, targets)
-    plotter.summed_plot(df, type=f'Train_day_{day}', base=45)
+    plotter.summed_plot(df, type=f'Train_day_{day}')
     break
 
 # %% [markdown]
@@ -423,7 +421,7 @@ train_result_merged['split'] = 'train'
 validation_result_merged['split'] = 'validation'
 test_result_merged['split'] = 'test'
 df = pd.concat([train_result_merged, validation_result_merged, test_result_merged])
-df.to_csv(os.path.join(args.result_folder, 'predictions_case_death.csv'), index=False)
+df.to_csv(os.path.join(plotter.figPath, 'predictions_case_death.csv'), index=False)
 
 df.head()
 
@@ -471,7 +469,7 @@ if args.interpret_train:
         tft.interpret_output(train_raw_predictions), train_index, return_attention=True
     )
     plotWeights.plot_attention(
-        attention_mean, figure_name='Train_daily_attention', base=45, 
+        attention_mean, figure_name='Train_daily_attention', 
         limit=0, enable_markers=False, title='Attention with dates'
     )
 
@@ -593,8 +591,8 @@ train_predictions = upscale_prediction(targets, train_raw_predictions['predictio
 
 train_result_merged = processor.align_result_with_dataset(train_data, train_predictions, train_index)
 show_result(train_result_merged, targets)
-plotter.summed_plot(train_result_merged, type='Train', base=45)
-plotter.summed_plot(train_result_merged, type='Train_error', base=45, plot_error=True)
+plotter.summed_plot(train_result_merged, type='Train')
+plotter.summed_plot(train_result_merged, type='Train_error', plot_error=True)
 gc.collect()
 
 # %% [markdown]
@@ -605,7 +603,7 @@ gc.collect()
 #     print(f'Day {day}')
 #     df = processor.align_result_with_dataset(train_data, train_predictions, train_index, target_time_step = day)
 #     show_result(df)
-    # plotter.summed_plot(df, type=f'Train_day_{day}', base=45)
+    # plotter.summed_plot(df, type=f'Train_day_{day}')
 
 # %% [markdown]
 # ## Validation results
@@ -661,7 +659,7 @@ train_result_merged['split'] = 'train'
 validation_result_merged['split'] = 'validation'
 test_result_merged['split'] = 'test'
 df = pd.concat([train_result_merged, validation_result_merged, test_result_merged])
-df.to_csv(os.path.join(args.result_folder, 'best_predictions_case_death.csv'), index=False)
+df.to_csv(os.path.join(plotter.figPath, 'predictions_case_death.csv'), index=False)
 
 df.head()
 
@@ -709,7 +707,7 @@ if args.interpret_train:
         best_tft.interpret_output(train_raw_predictions), train_index, return_attention=True
     )
     plotWeights.plot_attention(
-        attention_mean, figure_name='Train_daily_attention', base=45, 
+        attention_mean, figure_name='Train_daily_attention', 
         limit=0, enable_markers=False, title='Attention with dates'
     )
     gc.collect()

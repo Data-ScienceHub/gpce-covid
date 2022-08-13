@@ -1,5 +1,5 @@
 import pandas as pd
-from pandas import DataFrame, to_datetime
+from pandas import DataFrame, to_datetime, to_timedelta
 import numpy as np
 from typing import List
 import os, gc
@@ -20,7 +20,7 @@ def calculate_result(y_true, y_pred):
 
     return mae, rmse, smape, nnse
 
-def remove_outliers(original_df, use_median=True, multiplier=7.5, verbose=False):
+def remove_outliers(original_df, use_median=False, multiplier=7.5, verbose=False):
     df = original_df.copy()
 
     date_columns = sorted([col for col in df.columns if valid_date(col)])
@@ -113,9 +113,9 @@ def get_start_dates(parameters: Parameters):
     validation_start = split.validation_start
     test_start = split.test_start
 
-    train_start = train_start + pd.to_timedelta(((split.train_end - train_start).days +1) % max_encoder_length, unit='D')
-    validation_start = validation_start + pd.to_timedelta(((split.validation_end - validation_start).days+1) % max_encoder_length, unit='D')
-    test_start = test_start + pd.to_timedelta(((split.test_end - test_start).days+1) % max_encoder_length, unit='D')
+    train_start = train_start + to_timedelta(((split.train_end - train_start).days +1) % max_encoder_length, unit='D')
+    validation_start = validation_start + to_timedelta(((split.validation_end - validation_start).days+1) % max_encoder_length, unit='D')
+    test_start = test_start + to_timedelta(((split.test_end - test_start).days+1) % max_encoder_length, unit='D')
 
     print('Modifying start dates of the splits to adapt to encoder input sequence length')
     print(f'Start dates for train {train_start}, validation {validation_start}, test {test_start}')
@@ -134,22 +134,28 @@ def train_validation_test_split(
 
     selected_columns = [col for col in df.columns if col not in ['Date', 'Name']]
 
-    train_data = df[(df['Date']>=split.train_start) & (df['Date']<=split.train_end)][selected_columns]
+    # train_data = df[(df['Date']>=split.train_start) & (df['Date']<=split.train_end)][selected_columns]
     input_sequence_length = parameters.model_parameters.input_sequence_length
+
+    earliest_train_start = max(split.train_start - to_timedelta(input_sequence_length, unit='day'), df['Date'].min())
+    train_data = df[(df['Date'] >= earliest_train_start) & (df['Date'] <= split.train_end)][selected_columns]
     
     # at least input_sequence_length prior days data is needed to start prediction
     # this ensures prediction starts from date validation_start. 
-    earliest_validation_start = split.validation_start - pd.to_timedelta(input_sequence_length, unit='day')
-    if earliest_validation_start in df['Date'].values:
-        validation_data = df[(df['Date'] >= earliest_validation_start) & (df['Date'] <= split.validation_end)][selected_columns]
-    else:
-        validation_data = df[(df['Date'] >= split.validation_start) & (df['Date'] <= split.validation_end)][selected_columns]
+    earliest_validation_start = max(split.validation_start - to_timedelta(input_sequence_length, unit='day'), df['Date'].min())
+    validation_data = df[(df['Date'] >= earliest_validation_start) & (df['Date'] <= split.validation_end)][selected_columns]
+    # if earliest_validation_start in df['Date'].values:
+    #     validation_data = df[(df['Date'] >= earliest_validation_start) & (df['Date'] <= split.validation_end)][selected_columns]
+    # else:
+    #     validation_data = df[(df['Date'] >= split.validation_start) & (df['Date'] <= split.validation_end)][selected_columns]
 
-    earliest_test_start = split.test_start - pd.to_timedelta(input_sequence_length, unit='day')
-    if earliest_test_start in df['Date'].values:
-        test_data = df[(df['Date'] >= earliest_test_start) & (df['Date'] <= split.test_end)][selected_columns]
-    else:
-        test_data = df[(df['Date'] >= split.test_start) & (df['Date'] <= split.test_end)][selected_columns]
+    earliest_test_start = max(split.test_start - to_timedelta(input_sequence_length, unit='day'), df['Date'].min())
+    test_data = df[(df['Date'] >= earliest_test_start) & (df['Date'] <= split.test_end)][selected_columns]
+
+    # if earliest_test_start in df['Date'].values:
+    #     test_data = df[(df['Date'] >= earliest_test_start) & (df['Date'] <= split.test_end)][selected_columns]
+    # else:
+    #     test_data = df[(df['Date'] >= split.test_start) & (df['Date'] <= split.test_end)][selected_columns]
 
     print(f'Train samples {train_data.shape[0]}, validation samples {validation_data.shape[0]}, test samples {test_data.shape[0]}')
 
@@ -175,7 +181,7 @@ def train_test_split(
     
     # at least input_sequence_length prior days data is needed to start prediction
     # this ensures prediction starts from date test start. 
-    earliest_test_start = split.test_start - pd.to_timedelta(input_sequence_length, unit='day')
+    earliest_test_start = split.test_start - to_timedelta(input_sequence_length, unit='day')
     if earliest_test_start in df['Date'].values:
         test_data = df[(df['Date'] >= earliest_test_start) & (df['Date'] <= split.test_end)][selected_columns]
     else:
