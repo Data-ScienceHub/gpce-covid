@@ -51,7 +51,7 @@ from dataclasses import dataclass
 
 @dataclass
 class args:
-    result_folder = '../results/total_target_cleaned_scaled'
+    result_folder = '../results/total_target_cleaned_scaled' # '../results/top_100_early_stopped_target_cleaned_scaled' 
     figPath = os.path.join(result_folder, 'figures')
     checkpoint_folder = os.path.join(result_folder, 'checkpoints')
     input_filePath = '../2022_May_target_cleaned/Total.csv'
@@ -114,9 +114,9 @@ print(f"There are {total_data['FIPS'].nunique()} unique counties in the dataset.
 # Input data length needs to be a multiple of encoder length to created batch data loaders.
 
 # %%
-train_start, validation_start, test_start = get_start_dates(parameters)
+train_start = parameters.data.split.train_start
 total_data = total_data[total_data['Date']>=train_start]
-total_data[time_idx] = (total_data["Date"] - total_data["Date"].min()).apply(lambda x: x.days)
+total_data[time_idx] = (total_data["Date"] - train_start).apply(lambda x: x.days)
 
 # %% [markdown]
 # ## Train validation test split and scaling
@@ -294,7 +294,7 @@ train_result_merged['split'] = 'train'
 validation_result_merged['split'] = 'validation'
 test_result_merged['split'] = 'test'
 df = pd.concat([train_result_merged, validation_result_merged, test_result_merged])
-df.to_csv(os.path.join(args.figPath, 'predictions_case_death.csv'), index=False)
+df.to_csv(os.path.join(plotter.figPath, 'predictions_case_death.csv'), index=False)
 
 df.head()
 
@@ -329,7 +329,6 @@ del train_result_merged, validation_result_merged, test_result_merged
 
 # %%
 plotWeights = PlotWeights(args.figPath, max_encoder_length, tft, show=args.show_progress_bar)
-attentions, attention_means = [], []
 
 # %% [markdown]
 # ### Train
@@ -347,54 +346,8 @@ if args.interpret_train:
     attention_weekly = processor.get_attention_by_weekday(attention_mean)
     plotWeights.plot_weekly_attention(attention_weekly, figure_name='Train_weekly_attention')
 
-    attention_mean['split'], attention['split'] = 'train', 'train'
-    attention_means.append(attention_mean)
-    attentions.append(attention)
-
-# %% [markdown]
-# ### Validation
-
-# %%
-attention_mean, attention = processor.get_mean_attention(
-    tft.interpret_output(validation_raw_predictions), validation_index, return_attention=True
-)
-plotWeights.plot_attention(
-    attention_mean, figure_name='Validation_daily_attention', target_day=4
-)
-
-attention_mean['split'], attention['split'] = 'validation', 'validation'
-attention_means.append(attention_mean)
-attentions.append(attention)
-
-# %%
-attention_weekly = processor.get_attention_by_weekday(attention_mean)
-plotWeights.plot_weekly_attention(attention_weekly, figure_name='Validation_weekly_attention')
-
-# %% [markdown]
-# ### Test
-
-# %%
-attention_mean, attention = processor.get_mean_attention(
-    tft.interpret_output(test_raw_predictions), test_index, return_attention=True
-)
-plotWeights.plot_attention(attention_mean, figure_name='Test_daily_attention', target_day=4)
-attention_mean['split'], attention['split'] = 'test', 'test'
-attention_means.append(attention_mean)
-attentions.append(attention)
-
-# %%
-attention_weekly = processor.get_attention_by_weekday(attention_mean)
-plotWeights.plot_weekly_attention(attention_weekly, figure_name='Test_weekly_attention')
-
-# %% [markdown]
-# ### Dump
-
-# %%
-attention_mean_df = pd.concat(attention_means)
-attention_mean_df.round(3).to_csv(os.path.join(args.figPath, 'attention_mean.csv'), index=False)
-
-attention_df = pd.concat(attentions)
-attention_df.round(3).to_csv(os.path.join(args.figPath, 'attention.csv'), index=False)
+    attention_mean.round(3).to_csv(os.path.join(plotter.figPath, 'attention_mean.csv'), index=False)
+    attention.round(3).to_csv(os.path.join(plotter.figPath, 'attention.csv'), index=False)
 
 # %% [markdown]
 # ## Variable Importance

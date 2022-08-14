@@ -133,29 +133,19 @@ def train_validation_test_split(
     split = parameters.data.split
 
     selected_columns = [col for col in df.columns if col not in ['Date', 'Name']]
-
-    # train_data = df[(df['Date']>=split.train_start) & (df['Date']<=split.train_end)][selected_columns]
     input_sequence_length = parameters.model_parameters.input_sequence_length
 
-    earliest_train_start = max(split.train_start - to_timedelta(input_sequence_length, unit='day'), df['Date'].min())
-    train_data = df[(df['Date'] >= earliest_train_start) & (df['Date'] <= split.train_end)][selected_columns]
+    # earliest_train_start = max(split.train_start - to_timedelta(input_sequence_length, unit='day'), df['Date'].min())
+    # split.train_start = earliest_train_start
+    train_data = df[(df['Date'] >= split.train_start) & (df['Date'] <= split.train_end)][selected_columns]
     
     # at least input_sequence_length prior days data is needed to start prediction
     # this ensures prediction starts from date validation_start. 
     earliest_validation_start = max(split.validation_start - to_timedelta(input_sequence_length, unit='day'), df['Date'].min())
     validation_data = df[(df['Date'] >= earliest_validation_start) & (df['Date'] <= split.validation_end)][selected_columns]
-    # if earliest_validation_start in df['Date'].values:
-    #     validation_data = df[(df['Date'] >= earliest_validation_start) & (df['Date'] <= split.validation_end)][selected_columns]
-    # else:
-    #     validation_data = df[(df['Date'] >= split.validation_start) & (df['Date'] <= split.validation_end)][selected_columns]
 
     earliest_test_start = max(split.test_start - to_timedelta(input_sequence_length, unit='day'), df['Date'].min())
     test_data = df[(df['Date'] >= earliest_test_start) & (df['Date'] <= split.test_end)][selected_columns]
-
-    # if earliest_test_start in df['Date'].values:
-    #     test_data = df[(df['Date'] >= earliest_test_start) & (df['Date'] <= split.test_end)][selected_columns]
-    # else:
-    #     test_data = df[(df['Date'] >= split.test_start) & (df['Date'] <= split.test_end)][selected_columns]
 
     print(f'Train samples {train_data.shape[0]}, validation samples {validation_data.shape[0]}, test samples {test_data.shape[0]}')
 

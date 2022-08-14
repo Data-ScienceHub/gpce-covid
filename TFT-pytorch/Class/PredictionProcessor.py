@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+weekdays = ['Mon', 'Tues', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
 class PredictionProcessor:
     """
@@ -124,24 +124,29 @@ class PredictionProcessor:
         attention[self.group_id] = index[self.group_id]
         return attention
 
-    def get_mean_attention(self, interpretation, index, return_attention=False) -> pd.DataFrame:
+    def get_mean_attention(
+        self, interpretation, index, return_attention=False,
+        trim:bool= True
+    ) -> pd.DataFrame:
         attention = self.get_attention(interpretation, index)
         max_encoder_length = self.max_encoder_length
         attention_mean = attention.groupby('Date')[list(range(max_encoder_length))].aggregate('mean').reset_index()
 
         # if you want to preserve early max_encoder_length days of attention. But not all days have attention within this time
-        # df = pd.DataFrame(
-        #     {encoder_length:[0]*max_encoder_length for encoder_length in range(max_encoder_length)}
-        # )
-        # df['Date'] = [attention_mean['Date'].min() - pd.to_timedelta(encoder_length, unit='day') for encoder_length in range(1, max_encoder_length+1)]
-        # attention_mean = pd.concat([df, attention_mean]).reset_index(drop=True).sort_values(by='Date')
+        if not trim:
+            df = pd.DataFrame(
+            {encoder_length:[None]*max_encoder_length for encoder_length in range(max_encoder_length)}
+            )
+            df['Date'] = [attention_mean['Date'].min() - pd.to_timedelta(encoder_length, unit='day') for encoder_length in range(1, max_encoder_length+1)]
+            attention_mean = pd.concat([df, attention_mean]).reset_index(drop=True).sort_values(by='Date')
 
         for i in range(max_encoder_length):
             attention_mean[i] = attention_mean[i].shift(periods=i-max_encoder_length, fill_value=0)
 
         # comment this out if you want to preserve the last max_encoder_length days of attention. 
         # But not all days have attention within this time
-        attention_mean = attention_mean.drop(range(attention_mean.shape[0]-max_encoder_length-1, attention_mean.shape[0]), axis=0)
+        if trim:
+            attention_mean = attention_mean.drop(range(attention_mean.shape[0]-max_encoder_length-1, attention_mean.shape[0]), axis=0)
 
         attention_mean['mean'] = attention_mean.drop(columns='Date').mean(axis=1)
         attention_mean['median'] = attention_mean.drop(columns='Date').median(axis=1)

@@ -75,7 +75,7 @@ class args:
     # if you want to change some config, but not to create a new config file, just change the value
     # of the corresponding parameter in the config section
     configPath = '../configurations/total_target_cleaned_scaled.json'
-    # configPath = '../config_2022_August.json'
+    # configPath = '../config_2022_Aug.json'
 
     # Path/URL of the checkpoint from which training is resumed
     ckpt_model_path = None # os.path.join(checkpoint_folder, 'latest-epoch=7.ckpt')
@@ -149,9 +149,9 @@ print(f"There are {total_data['FIPS'].nunique()} unique counties in the dataset.
 # Input data length needs to be a multiple of encoder length to created batch data loaders.
 
 # %%
-train_start, validation_start, test_start = get_start_dates(parameters)
+train_start = parameters.data.split.train_start
 total_data = total_data[total_data['Date']>=train_start]
-total_data[time_idx] = (total_data["Date"] - total_data["Date"].min()).apply(lambda x: x.days)
+total_data[time_idx] = (total_data["Date"] - train_start).apply(lambda x: x.days)
 
 # %% [markdown]
 # ## Train validation test split and scaling
@@ -456,7 +456,6 @@ del train_result_merged, validation_result_merged, test_result_merged, df
 
 # %%
 plotWeights = PlotWeights(args.figPath, max_encoder_length, tft, show=args.show_progress_bar)
-attentions, attention_means = [], []
 
 # %% [markdown]
 # ### Train
@@ -476,54 +475,8 @@ if args.interpret_train:
     attention_weekly = processor.get_attention_by_weekday(attention_mean)
     plotWeights.plot_weekly_attention(attention_weekly, figure_name='Train_weekly_attention')
 
-    attention_mean['split'], attention['split'] = 'train', 'train'
-    attention_means.append(attention_mean)
-    attentions.append(attention)
-
-# %% [markdown]
-# ### Validation
-
-# %%
-attention_mean, attention = processor.get_mean_attention(
-    tft.interpret_output(validation_raw_predictions), validation_index, return_attention=True
-)
-plotWeights.plot_attention(
-    attention_mean, figure_name='Validation_daily_attention', target_day=4
-)
-
-attention_mean['split'], attention['split'] = 'validation', 'validation'
-attention_means.append(attention_mean)
-attentions.append(attention)
-
-# %%
-attention_weekly = processor.get_attention_by_weekday(attention_mean)
-plotWeights.plot_weekly_attention(attention_weekly, figure_name='Validation_weekly_attention')
-
-# %% [markdown]
-# ### Test
-
-# %%
-attention_mean, attention = processor.get_mean_attention(
-    tft.interpret_output(test_raw_predictions), test_index, return_attention=True
-)
-plotWeights.plot_attention(attention_mean, figure_name='Test_daily_attention', target_day=4)
-attention_mean['split'], attention['split'] = 'test', 'test'
-attention_means.append(attention_mean)
-attentions.append(attention)
-
-# %%
-attention_weekly = processor.get_attention_by_weekday(attention_mean)
-plotWeights.plot_weekly_attention(attention_weekly, figure_name='Test_weekly_attention')
-
-# %% [markdown]
-# ### Dump
-
-# %%
-attention_mean_df = pd.concat(attention_means)
-attention_mean_df.round(3).to_csv(os.path.join(plotWeights.figPath, 'attention_mean.csv'), index=False)
-
-attention_df = pd.concat(attentions)
-attention_df.round(3).to_csv(os.path.join(plotWeights.figPath, 'attention.csv'), index=False)
+    attention_mean.round(3).to_csv(os.path.join(plotWeights.figPath, 'attention_mean.csv'), index=False)
+    attention.round(3).to_csv(os.path.join(plotWeights.figPath, 'attention.csv'), index=False)
 
 # %% [markdown]
 # ## Variable Importance
@@ -560,7 +513,7 @@ for key in figures.keys():
 # ## Clear up
 
 # %%
-del tft, attention_mean, attention_weekly, interpretation
+del tft, interpretation
 del train_raw_predictions, validation_raw_predictions, test_raw_predictions
 gc.collect()
 
@@ -696,7 +649,6 @@ del train_result_merged, validation_result_merged, test_result_merged, df
 plotWeights = PlotWeights(
     args.figPath+'_best', max_encoder_length, best_tft, show=args.show_progress_bar
 )
-attentions, attention_means = [], []
 
 # %% [markdown]
 # ### Train
@@ -714,53 +666,8 @@ if args.interpret_train:
     attention_weekly = processor.get_attention_by_weekday(attention_mean)
     plotWeights.plot_weekly_attention(attention_weekly, figure_name='Train_weekly_attention')
 
-    attention_mean['split'], attention['split'] = 'train', 'train'
-    attention_means.append(attention_mean)
-    attentions.append(attention)
-
-# %% [markdown]
-# ### Validation
-
-# %%
-attention_mean, attention = processor.get_mean_attention(
-    best_tft.interpret_output(validation_raw_predictions), 
-    validation_index, return_attention=True
-)
-plotWeights.plot_attention(attention_mean, figure_name='Validation_daily_attention', target_day=4)
-attention_mean['split'], attention['split'] = 'validation', 'validation'
-attention_means.append(attention_mean)
-attentions.append(attention)
-
-# %%
-attention_weekly = processor.get_attention_by_weekday(attention_mean)
-plotWeights.plot_weekly_attention(attention_weekly, figure_name='Validation_weekly_attention')
-
-# %% [markdown]
-# ### Test
-
-# %%
-attention_mean, attention = processor.get_mean_attention(
-    best_tft.interpret_output(test_raw_predictions), 
-    test_index, return_attention=True
-)
-plotWeights.plot_attention(attention_mean, figure_name='Test_daily_attention', target_day=4)
-attention_mean['split'], attention['split'] = 'test', 'test'
-attention_means.append(attention_mean)
-attentions.append(attention)
-
-# %%
-attention_weekly = processor.get_attention_by_weekday(attention_mean)
-plotWeights.plot_weekly_attention(attention_weekly, figure_name='Test_weekly_attention')
-
-# %% [markdown]
-# ### Dump
-
-# %%
-attention_mean_df = pd.concat(attention_means)
-attention_mean_df.round(3).to_csv(os.path.join(plotWeights.figPath, 'attention_mean.csv'), index=False)
-
-attention_df = pd.concat(attentions)
-attention_df.round(3).to_csv(os.path.join(plotWeights.figPath, 'attention.csv'), index=False)
+    attention_mean.round(3).to_csv(os.path.join(plotWeights.figPath, 'attention_mean.csv'), index=False)
+    attention.round(3).to_csv(os.path.join(plotWeights.figPath, 'attention.csv'), index=False)
 
 # %% [markdown]
 # ## Variable Importance

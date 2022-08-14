@@ -12,7 +12,7 @@
         "learning_rate": 0.001,
         "clipnorm": 0.01,
 
-        "early_stopping_patience": 5,
+        "early_stopping_patience": 60,
         "seed":7,
         "batch_size": 64
     },
@@ -55,7 +55,7 @@
             2
         ],
         "split": {
-            "train_start": "2020-02-28",
+            "train_start": "2020-02-29",
             "validation_start": "2021-11-30",
             "test_start": "2022-02-23",
             "test_end": "2022-05-17"
@@ -65,6 +65,6 @@
         "remove_input_outliers": true,
         "remove_target_outliers": true,
         "scale_input": true,
-        "scale_target": false
+        "scale_target": true
     }
 }

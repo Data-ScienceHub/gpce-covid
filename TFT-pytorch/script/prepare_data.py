@@ -52,7 +52,7 @@ class args:
     cachePath = None # '../2022_May_target_cleaned/Total.csv'
 
     # choose this carefully
-    outputPath = '../2022_May/'
+    outputPath = '../2022_May_target_cleaned/'
 
 # %%
 # create output path if it doesn't exist
@@ -87,6 +87,10 @@ else:
     total_df = dataMerger.get_all_features()
     
     output_path_total = os.path.join(args.outputPath, 'Total.csv') 
+
+    # for feature in dataMerger.data_config.targets + dataMerger.data_config.dynamic_features:
+    #     total_df[feature] = total_df[feature].rolling(7).mean().fillna(0)
+
     print(f'Writing total data to {output_path_total}\n')
     total_df.round(4).to_csv(output_path_total, index=False)
 
@@ -114,6 +118,16 @@ if dataMerger.need_rurality_cut():
 # uncomment this and rerun this cell to get top 100 counties data
 # dataMerger.parameters.data.population_cut = 100
 
+if dataMerger.need_population_cut():
+    top_df = dataMerger.population_cut(total_df)
+    filename = f"Top_{dataMerger.data_config.population_cut}.csv"
+
+    output_path_population_cut = os.path.join(args.outputPath, filename)
+
+    print(f'Writing population cut data to {output_path_population_cut}\n')
+    top_df.round(4).to_csv(output_path_population_cut, index=False)
+
+dataMerger.parameters.data.population_cut = 100
 if dataMerger.need_population_cut():
     top_df = dataMerger.population_cut(total_df)
     filename = f"Top_{dataMerger.data_config.population_cut}.csv"

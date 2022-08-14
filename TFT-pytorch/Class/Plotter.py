@@ -15,7 +15,6 @@ from Class.PredictionProcessor import *
 from Class.PlotConfig import *
 
 from matplotlib.ticker import StrMethodFormatter, MultipleLocator
-# ONE_DAY = to_timedelta(1, unit='D')
 
 class PlotResults:
     def __init__(self, figPath:str, targets:List[str], figsize=FIGSIZE, show=True) -> None:
@@ -36,7 +35,7 @@ class PlotResults:
         if title is not None: plt.title(title)
         x_column = 'Date'
 
-        plt.plot(df[x_column], df[target], color='blue', label='Observation')
+        plt.plot(df[x_column], df[target], color='blue', label='Ground Truth')
         plt.plot(df[x_column], df[f'Predicted_{target}'], color='green', label='Prediction')
 
         if plot_error:
@@ -74,6 +73,7 @@ class PlotResults:
             plt.savefig(os.path.join(self.figPath, figure_name), dpi=DPI)
         if self.show:
             plt.show()
+        return fig
 
     def summed_plot(
         self, merged_df:DataFrame, type:str='', save:bool=True, 
@@ -88,7 +88,7 @@ class PlotResults:
         """
         merged_df['Date'] = pd.to_datetime(merged_df['Date'])
         summed_df = PredictionProcessor.makeSummed(merged_df, self.targets)
-
+        figures = []
         for target in self.targets:
             predicted_column = f'Predicted_{target}'
             y_true, y_pred = merged_df[target].values, merged_df[predicted_column].values
@@ -103,9 +103,12 @@ class PlotResults:
             target_figure_name = None
             if save: target_figure_name = f'Summed_plot_{target}_{type}.jpg'
 
-            self.plot(
+            fig = self.plot(
                 summed_df, target, title, unit, base, target_figure_name, plot_error
             )
+            figures.append(fig)
+        
+        return figures
 
     def individual_plot(
         self, df:DataFrame, fips:str, type:str='', save:bool=True, 
@@ -188,7 +191,7 @@ class PlotWeights:
         variables = interpretation["static_variables"].detach().cpu()
         figures["static_variables"] = self.make_selection_plot(
             "Static variables importance", variables, 
-            self.static_variables, (10, 1.5*len(variables)+0.5)
+            self.static_variables, (10, 1*len(variables)+0.5)
         )
 
         # Dynamic variables
@@ -202,13 +205,13 @@ class PlotWeights:
         variables = interpretation["decoder_variables"].detach().cpu()
         figures["decoder_variables"] = self.make_selection_plot(
             "Decoder variables importance", variables, 
-            self.decoder_variables, (10, 1.5*len(variables)+ 0.5)
+            self.decoder_variables, (10, 1*len(variables)+ 0.5)
         )
 
         return figures
 
     def plot_summed_attention(
-        self, interpretation, title:str=None, figure_name:str=None, figsize=(12, 6)
+        self, interpretation, title:str=None, figure_name:str=None, figsize=FIGSIZE
     ):
         fig, ax = plt.subplots(figsize=figsize)
         attention = interpretation["attention"].detach().cpu()
@@ -235,7 +238,7 @@ class PlotWeights:
     def plot_attention(
         self, attention_mean:DataFrame, title:str='Attention comparison on different time index',
         figsize=(14, 8), step_size:int=1, figure_name:str=None, base:int=None, target_day:int=None, 
-        limit:int=3, enable_markers=True
+        limit:int=0, enable_markers=True
     ):
         """
         Plots attention weights by weekdays.
@@ -255,9 +258,11 @@ class PlotWeights:
         if title is not None: plt.title(title)
         x_column = 'Date'
 
-        if limit is None: limit = max_encoder_length
+        if limit is None: count = max_encoder_length
+        else: count = limit
+        
         for encoder_length in range(-1, -1-max_encoder_length, -step_size):
-            if limit < 1: break
+            if count < 1: break
 
             if enable_markers:
                 plt.plot(
@@ -270,7 +275,7 @@ class PlotWeights:
                     attention_mean[x_column], attention_mean.loc[:, max_encoder_length + encoder_length], 
                     label=f'Time index {encoder_length}'
                 )
-            limit -= 1
+            count -= 1
 
         for index, column in enumerate(['mean', 'median']):
             if enable_markers: plt.plot(
@@ -285,13 +290,12 @@ class PlotWeights:
             break
  
         ymin, ymax = plt.gca().get_ylim()
-
         weeks = attention_mean[x_column].dt.weekday.values
 
         if target_day is not None:
             plt.vlines(
                     x=attention_mean[weeks==target_day][x_column], ymin=ymin,
-                    ymax=ymax, label=weekdays[target_day], color='black'
+                    ymax=ymax, label=weekdays[target_day], color='olive'
                 )
         
         plt.ylim(ymin)
@@ -310,7 +314,8 @@ class PlotWeights:
         
         plt.gca().yaxis.set_major_formatter(self.weight_formatter)
         plt.ylabel('Attention weight')
-        plt.legend(loc='upper right')
+        if limit != 0:
+            plt.legend(loc='upper right')
 
         fig.tight_layout()
 
