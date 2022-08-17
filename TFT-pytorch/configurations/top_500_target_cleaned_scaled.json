@@ -57,8 +57,8 @@
         "split": {
             "train_start": "2020-02-29",
             "validation_start": "2021-11-30",
-            "test_start": "2022-02-23",
-            "test_end": "2022-05-17"
+            "test_start": "2021-12-15",
+            "test_end": "2022-12-29"
         }
     },
     "preprocess": {
