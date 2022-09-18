@@ -59,7 +59,7 @@ class args:
     configPath = '../configurations/total_target_cleaned_scaled.json'
     # configPath = '../config_2022_August.json'
 
-    model_path = os.path.join(checkpoint_folder, 'latest-epoch=0-v8.ckpt')
+    model_path = os.path.join(checkpoint_folder, 'latest-epoch=0.ckpt')
 
     # set this to false when submitting batch script, otherwise it prints a lot of lines
     show_progress_bar = False

@@ -46,8 +46,8 @@ from Class.DataMerger import *
 @dataclass
 class args:
     # folder where the cleaned feature file are at
-    dataPath = '../dataset_raw/CovidMay17-2022'
-    supportPath = '../dataset_raw/Support files'
+    dataPath = '../../dataset_raw/CovidMay17-2022'
+    supportPath = '../../dataset_raw/Support files'
     configPath = '../config_2022_May.json'
     cachePath = None # '../2022_May_cleaned/Total.csv'
 
