@@ -5,11 +5,12 @@ import json
 class Preprocess:
     def __init__(
         self, data, remove_input_outliers, remove_target_outliers, 
-        scale_input, scale_target
+        target_moving_average_by_day, scale_input, scale_target
     ):
         self.data = data 
         self.remove_input_outliers = remove_input_outliers
-        self.remove_target_outliers = remove_target_outliers 
+        self.remove_target_outliers = remove_target_outliers
+        self.target_moving_average_by_day = target_moving_average_by_day 
         self.scale_input = scale_input 
         self.scale_target = scale_target
     
@@ -18,7 +19,8 @@ class Preprocess:
 
 class Split:
     def __init__(
-        self, data, train_start, validation_start, test_start, test_end
+        self, data, train_start, validation_start, test_start, test_end,
+        first_date, last_date
     ):
         self.data = data
         
@@ -26,9 +28,11 @@ class Split:
         self.validation_start = to_datetime(validation_start )
         self.test_start = to_datetime(test_start )
         self.test_end = to_datetime(test_end)
+        self.first_date = to_datetime(first_date)
+        self.last_date = to_datetime(last_date)
 
-        self.train_end = self.validation_start - pd.to_timedelta(1, unit='D')
         self.validation_end = self.test_start - pd.to_timedelta(1, unit='D')
+        self.train_end = self.validation_start - pd.to_timedelta(1, unit='D')
 
     def __str__(self) -> str:
         return json.dumps(self.data, indent=4)

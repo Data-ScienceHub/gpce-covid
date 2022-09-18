@@ -70,7 +70,7 @@ class Embedding:
             for idx, i in enumerate(data['FIPS'].unique()):
                 data.loc[data['FIPS'] == i, 'LinearSpace'] = LLE[idx]
 
-        # Set up constant encoding
+        # Set up constant encoding. Only needed in TFT when there is a single timeseries
         if 'Constant' in features: data['Constant'] = 0.5
 
         # Set up linear time encoding
@@ -171,11 +171,13 @@ class DataMerger:
         merge_keys = ['FIPS', 'Date']
         remove_input_outliers = self.parameters.preprocess.remove_input_outliers
         if remove_input_outliers:
-            print('Will remove outliers from dynamic inputs.')
+            print('Removing outliers from dynamic inputs.')
+        moving_average = self.parameters.preprocess.target_moving_average_by_day
+        if moving_average > 0:
+            print(f'Processing with {moving_average} days moving average.')
 
-        first_date = self.parameters.data.split.train_start
-        last_date = self.parameters.data.split.test_end
-        print(f'Will filter out dynamic features outside range, train start {first_date} and test end {last_date}.')
+        first_date = self.parameters.data.split.first_date
+        last_date = self.parameters.data.split.last_date
 
         for file_name in dynamic_features_map.keys():
             print(f'Reading {file_name}')
@@ -183,20 +185,23 @@ class DataMerger:
             
             # check whether the Date column has been pivoted
             if 'Date' not in df.columns:
-                #TODO: add for cases where date is already pivoted
                 if remove_input_outliers: 
                     df = remove_outliers(df)
-
+                
                 # technically this should be set of common columns
                 id_vars = [col for col in df.columns if not valid_date(col)]
                 df = df.melt(
                     id_vars= id_vars,
                     var_name='Date', value_name=dynamic_features_map[file_name]
                 ).reset_index(drop=True)
+            else:
+                print('Warning ! Removing outliers is not still implemented for this case.')
 
             # can be needed as some feature files may have different date format
             df['Date'] = pd.to_datetime(df['Date'])
+
             print(f'Min date {df["Date"].min()}, max date {df["Date"].max()}')
+            print(f'Filtering out dynamic features outside range {first_date} and {last_date}.')
             df = df[(first_date <= df['Date']) & (df['Date']<= last_date)]
 
             print(f'Length {df.shape[0]}.')
@@ -231,10 +236,9 @@ class DataMerger:
         remove_target_outliers = self.parameters.preprocess.remove_target_outliers
         if remove_target_outliers:
             print('Will remove outliers from target.')
-
-        first_date = self.parameters.data.split.train_start
-        last_date = self.parameters.data.split.test_end
-        print(f'Will filter out target data outside range, train start {first_date} and test end {last_date}.')
+        moving_average = self.parameters.preprocess.target_moving_average_by_day
+        if moving_average > 0:
+            print(f'Will process with {moving_average} days moving average.')
 
         for file_name in self.data_config.target_map.keys():
             print(f'Reading {file_name}')
@@ -245,27 +249,36 @@ class DataMerger:
             if 'Date' not in df.columns:
                 df = convert_cumulative_to_daily(df)
                 df.fillna(0, inplace=True)
+                # technically this should be set of common columns
+                id_vars = [col for col in df.columns if not valid_date(col)]
 
                 if remove_target_outliers:
                     df = remove_outliers(df)
+                if moving_average > 0:
+                    date_columns = sorted([col for col in df.columns if col not in id_vars]) # dates should be in asceding order
+                    df = df[id_vars + date_columns]
+                    df[date_columns] = df[date_columns].rolling(moving_average, axis=1).mean().fillna(df[date_columns])
 
-                # technically this should be set of common columns
-                id_vars = [col for col in df.columns if not valid_date(col)]
                 df = df.melt(
                     id_vars= id_vars,
                     var_name='Date', value_name=feature_name
                 ).reset_index(drop=True)
             else:
+                print('Warning ! Removing outliers and moving average are not still implemented for this case.')
                 df.fillna(0, inplace=True)
                 # df = remove_outliers(df)
+
+            # can be needed as some feature files may have different date format
+            df['Date'] = pd.to_datetime(df['Date'])
 
             # some days had old covid cases fixed by adding neg values
             print(f'Setting negative daily {feature_name} counts to zero.')
             df.loc[df[feature_name]<0, feature_name] = 0
             
-            # can be needed as some feature files may have different date format
-            df['Date'] = pd.to_datetime(df['Date'])
             print(f'Min date {df["Date"].min()}, max date {df["Date"].max()}')
+            first_date = self.parameters.data.split.first_date
+            last_date = self.parameters.data.split.last_date
+            print(f'Will filter out target data outside range {first_date} and {last_date}.')
             df = df[(first_date <= df['Date']) & (df['Date']<= last_date)]
 
             print(f'Length {df.shape[0]}.')
@@ -278,9 +291,8 @@ class DataMerger:
                 else:
                     selected_columns = merge_keys + [feature_name]
 
-                # using outer to keep the union of dates 
-                # as vaccination dates are not available before late in 2020
-                target_df = target_df.merge(df[selected_columns], how='outer',on=merge_keys)
+                # using outer to keep the union of dates
+                target_df = target_df.merge(df[selected_columns], how='outer', on=merge_keys)
 
                 # however, we don't need to keep mismatch of FIPS
                 target_df = target_df[~target_df['FIPS'].isna()]

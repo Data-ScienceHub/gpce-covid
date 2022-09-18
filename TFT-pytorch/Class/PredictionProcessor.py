@@ -167,6 +167,6 @@ class PredictionProcessor:
         if verbose:
             max_index = np.argmax(attention_weekly[range(self.max_encoder_length)].to_numpy(), axis=0)
             max_days = [(-self.max_encoder_length+index, weekdays[day]) for index, day in enumerate(max_index)]
-            print(f'Weekdays when these attentions are maximum: {max_days}')
+            print(f'Weekdays when these attentions are maximum: \n{max_days}')
 
         return attention_weekly

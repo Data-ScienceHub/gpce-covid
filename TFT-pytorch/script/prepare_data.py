@@ -46,13 +46,13 @@ from Class.DataMerger import *
 @dataclass
 class args:
     # folder where the cleaned feature file are at
-    dataPath = '../../dataset_raw/CovidMay17-2022'
-    supportPath = '../../dataset_raw/Support files'
+    dataPath = '../dataset_raw/CovidMay17-2022'
+    supportPath = '../dataset_raw/Support files'
     configPath = '../config_2022_May.json'
-    cachePath = None # '../2022_May_target_cleaned/Total.csv'
+    cachePath = None # '../2022_May_cleaned/Total.csv'
 
     # choose this carefully
-    outputPath = '../2022_May_target_cleaned/'
+    outputPath = '../2022_May_cleaned/'
 
 # %%
 # create output path if it doesn't exist
@@ -77,6 +77,7 @@ with open(args.configPath) as inputFile:
 # %%
 # get merger class
 dataMerger = DataMerger(config, args.dataPath, args.supportPath)
+# dataMerger.parameters.preprocess.target_moving_average_by_day = 0 
 
 # %%
 # if you have already created the total df one, and now just want to 

@@ -3,7 +3,7 @@ from pandas import DataFrame, to_datetime, to_timedelta
 import numpy as np
 from typing import List
 import os, gc
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import MinMaxScaler, StandardScaler, RobustScaler
 
 import sys
 sys.path.append( '..' )
@@ -25,6 +25,7 @@ def remove_outliers(original_df, use_median=False, multiplier=7.5, verbose=False
 
     date_columns = sorted([col for col in df.columns if valid_date(col)])
     total_outliers = 0
+    fips = df['FIPS'].values
 
     for i in range(df.shape[0]):
         county_data = df.loc[i, date_columns]
@@ -32,7 +33,6 @@ def remove_outliers(original_df, use_median=False, multiplier=7.5, verbose=False
         median = np.percentile(county_data,50)
         q1 = np.percentile(county_data, 25) 
         q3 = np.percentile(county_data, 75)
-        county_data[county_data<0] =0
 
         iqr = q3-q1
         upper_limit = q3 + multiplier*iqr
@@ -50,7 +50,7 @@ def remove_outliers(original_df, use_median=False, multiplier=7.5, verbose=False
             continue
 
         if verbose:
-            print(f'FIPS {df.iloc[i, 0]}, outliers found, higher: {county_data[higher_outliers].shape[0]}, lower: {county_data[lower_outliers].shape[0]}.')
+            print(f'FIPS {fips[i]}, outliers found, higher: {county_data[higher_outliers].shape[0]}, lower: {county_data[lower_outliers].shape[0]}.')
 
         if use_median:
             county_data[higher_outliers | lower_outliers] = median

@@ -28,7 +28,7 @@ class PlotResults:
         self.targets = targets
     
     def plot(
-        self, df:DataFrame, target:str, title:str=None, unit=1, 
+        self, df:DataFrame, target:str, title:str=None, scale=1, 
         base:int=None, figure_name:str=None, plot_error:bool=False
     ):
         fig, ax = plt.subplots(figsize=self.figsize)
@@ -40,7 +40,8 @@ class PlotResults:
 
         if plot_error:
             plt.plot(df[x_column], abs(df[target] - df[f'Predicted_{target}']), color='red', label='Error')
-        plt.ylim(bottom=0)
+        _, y_max = ax.get_ylim()
+        ax.set_ylim(0, y_max*1.1)
         
         if base is None:
             x_first_tick = df[x_column].min()
@@ -53,20 +54,34 @@ class PlotResults:
             # plt.xlim(left=df[x_column].min() - ONE_DAY, right=df[x_column].max() + ONE_DAY)
             ax.xaxis.set_major_locator(MultipleLocator(base=base))
         
-        plt.xticks(rotation = 45)
+        # plt.xticks(rotation = 15)
         # plt.xlabel(x_column)
 
-        if unit>1:
-            ax.yaxis.set_major_formatter(get_formatter(unit))
-            if unit==1e3: unit = 'in thousands'
-            elif unit==1e6: unit = 'in millions'
-            else: unit = f'x {unit:.0e}'
+        if scale>1:
+            if scale==1e3 or scale==1e6:
+                label_text = [] 
+                if scale ==1e3: unit = 'K'
+                else: unit = 'M'
 
-            plt.ylabel(f'Daily {target} ({unit})')
+                for loc in plt.yticks()[0]:
+                    if loc == 0:
+                        label_text.append('0')
+                    else:
+                        label_text.append(f'{loc/scale:0.5g}{unit}') 
+
+                ax.set_yticklabels(label_text)
+                plt.ylabel(f'Daily {target}')
+            else:
+                ax.yaxis.set_major_formatter(get_formatter(scale))
+                if scale==1e3: unit = 'in thousands'
+                elif scale==1e6: unit = 'in millions'
+                else: unit = f'x {scale:.0e}'
+
+                plt.ylabel(f'Daily {target} ({unit})')
         else:
             plt.ylabel(f'Daily {target}')
             
-        plt.legend(loc='upper right')
+        plt.legend(framealpha=0.3, edgecolor="black", ncol=2)
         fig.tight_layout()
 
         if figure_name is not None:
@@ -94,17 +109,17 @@ class PlotResults:
             y_true, y_pred = merged_df[target].values, merged_df[predicted_column].values
             
             mae, rmse, smape, nnse = calculate_result(y_true, y_pred)
-            title = f'{target} MAE {mae:0.4g}, RMSE {rmse:0.4g}, SMAPE {smape:0.4g}, NNSE {nnse:0.4g}'
+            title = f'{target} MAE {mae:0.3g}, RMSE {rmse:0.3g}, SMAPE {smape:0.3g}, NNSE {nnse:0.3g}'
             
-            unit = 1
-            if (summed_df[target].max() - summed_df[target].min()) >= 1e4:
-                unit = 1e3
+            if (summed_df[target].max() - summed_df[target].min()) >= 1e3:
+                scale = 1e3
+            else: scale = 1
 
             target_figure_name = None
             if save: target_figure_name = f'Summed_plot_{target}_{type}.jpg'
 
             fig = self.plot(
-                summed_df, target, title, unit, base, target_figure_name, plot_error
+                summed_df, target, title, scale, base, target_figure_name, plot_error
             )
             figures.append(fig)
         
@@ -125,19 +140,23 @@ class PlotResults:
         assert fips in df['FIPS'].values, f'Provided FIPS code {fips} does not exist in the dataframe.'
         df = df[df['FIPS']==fips]
 
+        figures = []
         for target in self.targets:
             predicted_column = f'Predicted_{target}'
             y_true, y_pred = df[target].values, df[predicted_column].values
             
             mae, rmse, smape, nnse = calculate_result(y_true, y_pred)
-            if (df[target].max() - df[target].min())>=10000: unit = 1000
-            else: unit = 1
+            if (df[target].max() - df[target].min())>=2e3: scale = 1e3
+            else: scale = 1
 
             target_figure_name = None
             if save: target_figure_name = f'Individual_plot_{target}_{type}_FIPS_{fips}.jpg'
             
             title = f'{target} MAE {mae:0.4g}, RMSE {rmse:0.4g}, SMAPE {smape:0.4g}, NNSE {nnse:0.4g}'
-            self.plot(df, target, title, unit, base, target_figure_name, plot_error)
+            fig = self.plot(df, target, title, scale, base, target_figure_name, plot_error)
+            figures.append(fig)
+
+        return figures
 
 class PlotWeights:
     def __init__(self, figPath:str, max_encoder_length:int, model:TemporalFusionTransformer, show:bool=True):
@@ -146,9 +165,11 @@ class PlotWeights:
             print(f'Creating folder {figPath}')
             os.makedirs(figPath, exist_ok=True)
 
-        self.static_variables = model.static_variables # self.hparams.static_categoricals + self.hparams.static_reals
+        self.static_variables = model.static_variables
         self.encoder_variables = model.encoder_variables 
         self.decoder_variables = model.decoder_variables
+
+        print(f"Variables:\nStatic {self.static_variables} \nEncoder {self.encoder_variables} \nDecoder {self.decoder_variables}.")
         self.max_encoder_length = max_encoder_length
         self.show = show
         self.weight_formatter = StrMethodFormatter('{x:,.2f}')
@@ -191,7 +212,7 @@ class PlotWeights:
         variables = interpretation["static_variables"].detach().cpu()
         figures["static_variables"] = self.make_selection_plot(
             "Static variables importance", variables, 
-            self.static_variables, (10, 1*len(variables)+0.5)
+            self.static_variables, (10, 1.5*len(variables)+0.5)
         )
 
         # Dynamic variables
@@ -219,9 +240,10 @@ class PlotWeights:
         ax.plot(
             np.arange(-self.max_encoder_length, attention.size(0) - self.max_encoder_length), attention
         )
-        plt.ylim(attention.min())
-        ax.set_xlabel("Time index")
-        ax.set_ylabel("Attention weight")
+        # plt.ylim(attention.min())
+        ax.set_ylim(0)
+        ax.set_xlabel("Time Index")
+        ax.set_ylabel("Attention Weight")
 
         if title is not None: ax.set_title(title)
         plt.gca().yaxis.set_major_formatter(self.weight_formatter)
@@ -267,13 +289,13 @@ class PlotWeights:
             if enable_markers:
                 plt.plot(
                     attention_mean[x_column], attention_mean.loc[:, max_encoder_length + encoder_length], 
-                    label=f'Time index {encoder_length}', 
+                    label=f'Time Index {encoder_length}', 
                     marker=markers[max_encoder_length + encoder_length]
                 )
             else:
                 plt.plot(
                     attention_mean[x_column], attention_mean.loc[:, max_encoder_length + encoder_length], 
-                    label=f'Time index {encoder_length}'
+                    label=f'Time Index {encoder_length}'
                 )
             count -= 1
 
@@ -310,12 +332,12 @@ class PlotWeights:
             # plt.xlim(attention_mean[x_column].min() - ONE_DAY, attention_mean[x_column].max() + ONE_DAY)
             ax.xaxis.set_major_locator(MultipleLocator(base=base))
         
-        plt.xticks(rotation = 45)
+        plt.xticks(rotation = 15)
         
         plt.gca().yaxis.set_major_formatter(self.weight_formatter)
-        plt.ylabel('Attention weight')
+        plt.ylabel('Attention Weight')
         if limit != 0:
-            plt.legend(loc='upper right')
+            plt.legend()
 
         fig.tight_layout()
 
@@ -347,7 +369,7 @@ class PlotWeights:
 
             plt.plot(
                 attention_weekly['weekday'], attention_weekly.loc[:, self.max_encoder_length + encoder_length], 
-                label=f'Time index {encoder_length}', 
+                label=f'Time Index {encoder_length}', 
                 marker=markers[encoder_length]
             )
             limit -= 1
@@ -360,12 +382,12 @@ class PlotWeights:
             )
             break
         
-        # plt.ylim(bottom=0)
-        plt.ylabel('Attention weight')
+        plt.ylim(bottom=0)
+        plt.ylabel('Attention Weight')
         # plt.xlabel('Weekday')
         
         plt.gca().yaxis.set_major_formatter(self.weight_formatter)
-        plt.legend(loc='upper right')
+        plt.legend()
 
         fig.tight_layout()
 

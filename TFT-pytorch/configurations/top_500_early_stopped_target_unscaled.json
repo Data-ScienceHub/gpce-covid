@@ -58,7 +58,9 @@
             "train_start": "2020-02-29",
             "validation_start": "2021-11-30",
             "test_start": "2021-12-15",
-            "test_end": "2022-12-29"
+            "test_end": "2021-12-29",
+            "first_date":"2020-02-29",
+            "last_date": "2022-05-17"
         }
     },
     "preprocess": {

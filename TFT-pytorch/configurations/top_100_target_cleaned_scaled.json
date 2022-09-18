@@ -58,12 +58,15 @@
             "train_start": "2020-02-29",
             "validation_start": "2021-11-30",
             "test_start": "2021-12-15",
-            "test_end": "2022-12-29"
+            "test_end": "2021-12-29",
+            "first_date":"2020-02-29",
+            "last_date": "2022-05-17"
         }
     },
     "preprocess": {
         "remove_input_outliers": true,
         "remove_target_outliers": true,
+        "target_moving_average_by_day": 0,
         "scale_input": true,
         "scale_target": true
     }

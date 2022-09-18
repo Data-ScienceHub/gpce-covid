@@ -18,21 +18,26 @@ plt.rc('xtick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
 plt.rc('ytick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
 plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
 plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
+plt.rc('axes', titlepad=15)
 
 # set tick width
-plt.rcParams['xtick.major.size'] = 14 # default 3.5
-plt.rcParams['xtick.major.width'] = 1.6 # default 0.8 
+plt.rcParams['xtick.major.size'] = 17.5 # default 3.5
+plt.rcParams['xtick.major.width'] = 2.4 # default 0.8 
 
-plt.rcParams['ytick.major.size'] = 10.5 # default 3.5
-plt.rcParams['ytick.major.width'] = 1.6 # 0.8 
+plt.rcParams['ytick.major.size'] = 14 # default 3.5
+plt.rcParams['ytick.major.width'] = 2.4 # 0.8 
 
-plt.rcParams['lines.linewidth'] = 2
+plt.rcParams['lines.linewidth'] = 3
 
 DPI = 200
-FIGSIZE = (14, 8)
-DATE_TICKS = 8
+FIGSIZE = (12, 7)
+DATE_TICKS = 5
 
-markers = ['s', 'x',  '.', '+',  'h', 'D', '^', '>', 'p', '<', '*', 'P', 'v']
+markers = ['s', 'x', '+',  'h', 'D', '.', '^', '>', 'p', '<', '*', 'P', 'v']
 
 def get_formatter(scale):
     return FuncFormatter(lambda x, pos: '{0:g}'.format(x/scale))
+
+prop_cycle = iter(plt.rcParams["axes.prop_cycle"])
+obs_color = next(prop_cycle)["color"]
+pred_color = next(prop_cycle)["color"]
