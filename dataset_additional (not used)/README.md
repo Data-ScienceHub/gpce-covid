@@ -52,30 +52,4 @@ Each of the following features are collected at county level. Source links are a
 * `Vaccination`: Overall US COVID-19 Vaccine administration and vaccine equity data at [county level from CDC](https://data.cdc.gov/Vaccinations/COVID-19-Vaccinations-in-the-United-States-County/8xkx-amqh). The earliest available entry is from 2020-12-13. The raw data contains 66 columns in total, but we are using the following features,
   * `Administered_Dose1_Recip`: Total number of people with at least one dose of vaccine.
   * `Series_Complete_Yes`: Total number of people who are fully vaccinated (have a second dose of a two-dose vaccine or one dose of a single-dose vaccine) based on the jurisdiction and county where recipient lives.
-
-## Status on Old Dataset
-
-Most of them are not linked to any verified source or I couldn't find one. Hence suggesting the replacement of some of them.
-
-* `2020votes`: not used and don’t need to be updated.
-* `Age Distribution`: Source not found. Used population by age instead.
-* `Air pollution`: Source not found. Used Pm2.5 air pollution index instead.
-* `Alaskavoting2016`: not used and no need to update.
-* `Comorbidities`: Source not found. Used other comorbidities from US health ranking instead.
-* `Demographic`: Which demographic? Used demographic data from US population census instead (population by age, sex).
-* `Disease Spread`: Source not found. How is it calculated?
-* `Health Disparities`: Doesn’t mention source. But we can use US health ranking instead.
-* `Hospital beds`: Most data are either noise, lots of missing values or start at the later part of 2020.
-* `Mobility`: Replaced with google, apple and bts data.
-* `Population`: Demographic data added.
-* `Residential density`: Didn’t find this in US census data. Can be replaced with population density.
-* `Rurality_Median_Mad`: can be calculated from rurality score.
-* `RuralityCodes`: Sources found for 2013. But it doesn't match.
-* `Social Distancing`: Private source not free anymore. Is there any other source?
-* `Testing`: updated.
-* `Transmissible Cases`: Source not found.
-* `US_daily_cumulative_cases`: Updated.
-* `US_daily_cumulative_deaths`: Updated.
-* `Vaccination`: Updated
-* `VaccinationOneDose`: Updated
   
