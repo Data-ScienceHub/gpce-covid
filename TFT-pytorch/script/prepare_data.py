@@ -46,13 +46,13 @@ from Class.DataMerger import *
 @dataclass
 class args:
     # folder where the cleaned feature file are at
-    dataPath = '../../dataset_raw/CovidMay17-2022'
+    dataPath = '../../dataset_raw/CovidOct25-2022'
     supportPath = '../../dataset_raw/Support files'
-    configPath = '../config_2022_May.json'
-    cachePath = None # '../2022_May_cleaned/Total.csv'
+    configPath = '../config_2022_Oct.json'
+    cachePath = None # '../2022_Oct_cleaned/Total.csv'
 
     # choose this carefully
-    outputPath = '../2022_May_cleaned/'
+    outputPath = '../2022_Oct_cleaned/'
 
 # %%
 # create output path if it doesn't exist
@@ -88,12 +88,10 @@ else:
     total_df = dataMerger.get_all_features()
     
     output_path_total = os.path.join(args.outputPath, 'Total.csv') 
-
-    # for feature in dataMerger.data_config.targets + dataMerger.data_config.dynamic_features:
-    #     total_df[feature] = total_df[feature].rolling(7).mean().fillna(0)
-
     print(f'Writing total data to {output_path_total}\n')
-    total_df.round(4).to_csv(output_path_total, index=False)
+    
+    # rounding up to reduce the file size
+    total_df.round(3).to_csv(output_path_total, index=False)
 
 # %% [markdown]
 # ## Rurality cut
@@ -107,7 +105,7 @@ if dataMerger.need_rurality_cut():
 
     output_path_rurality_cut = os.path.join(args.outputPath, 'Rurality_cut.csv')
     print(f'Writing rurality cut data to {output_path_rurality_cut}\n')
-    rurality_df.round(4).to_csv(output_path_rurality_cut, index=False)
+    rurality_df.round(3).to_csv(output_path_rurality_cut, index=False)
 
 # %% [markdown]
 # ## Population cut
@@ -126,7 +124,7 @@ if dataMerger.need_population_cut():
     output_path_population_cut = os.path.join(args.outputPath, filename)
 
     print(f'Writing population cut data to {output_path_population_cut}\n')
-    top_df.round(4).to_csv(output_path_population_cut, index=False)
+    top_df.round(3).to_csv(output_path_population_cut, index=False)
 
 dataMerger.parameters.data.population_cut = 100
 if dataMerger.need_population_cut():
@@ -136,4 +134,4 @@ if dataMerger.need_population_cut():
     output_path_population_cut = os.path.join(args.outputPath, filename)
 
     print(f'Writing population cut data to {output_path_population_cut}\n')
-    top_df.round(4).to_csv(output_path_population_cut, index=False)
+    top_df.round(3).to_csv(output_path_population_cut, index=False)

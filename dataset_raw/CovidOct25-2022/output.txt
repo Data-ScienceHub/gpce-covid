@@ -1,0 +1,72 @@
+onfig file loaded from ../config_2022_Oct.json
+Unique counties present 3142
+Merging feature Age Distribution.csv with length 3142
+Merging feature Health Disparities.csv with length 3142
+
+Merged static features have 3142 counties
+Removing outliers from dynamic inputs.
+Reading Disease Spread.csv
+Outliers found 6292, percent 0.206
+Min date 2020-02-28 00:00:00, max date 2022-10-27 00:00:00
+Filtering out dynamic features outside range 2020-03-01 00:00:00 and 2022-10-25 00:00:00.
+Length 3044598.
+
+Reading Transmissible Cases.csv
+Outliers found 584, percent 0.019
+Min date 2020-02-28 00:00:00, max date 2022-10-27 00:00:00
+Filtering out dynamic features outside range 2020-03-01 00:00:00 and 2022-10-25 00:00:00.
+Length 3044598.
+
+Reading Vaccination.csv
+Outliers found 206, percent 0.011
+Min date 2020-12-13 00:00:00, max date 2022-10-26 00:00:00
+Filtering out dynamic features outside range 2020-03-01 00:00:00 and 2022-10-25 00:00:00.
+Length 1834456.
+
+Reading Social Distancing.csv
+Outliers found 119823, percent 3.919
+Min date 2020-02-28 00:00:00, max date 2022-10-27 00:00:00
+Filtering out dynamic features outside range 2020-03-01 00:00:00 and 2022-10-25 00:00:00.
+Length 3044598.
+
+Total dynamic feature shape (3091256, 7)
+Will remove outliers from target.
+Reading Cases.csv
+Outliers found 119204, percent 3.768
+Setting negative daily Cases counts to zero.
+Min date 2020-01-22 00:00:00, max date 2022-10-25 00:00:00
+Will filter out target data outside range 2020-03-01 00:00:00 and 2022-10-25 00:00:00.
+Length 3041456.
+
+Reading Deaths.csv
+Outliers found 224682, percent 7.101
+Setting negative daily Deaths counts to zero.
+Min date 2020-01-22 00:00:00, max date 2022-10-25 00:00:00
+Will filter out target data outside range 2020-03-01 00:00:00 and 2022-10-25 00:00:00.
+Length 3041456.
+
+Total target feature shape (3041456, 4)
+Merging all features
+Total merged data shape (3044598, 11)
+Missing percentage in total data
+VaccinationFull    41.28
+Cases               0.10
+Deaths              0.10
+FIPS                0.00
+AgeDist             0.00
+HealthDisp          0.00
+Name                0.00
+Date                0.00
+DiseaseSpread       0.00
+Transmission        0.00
+SocialDist          0.00
+dtype: float64
+Filling null values with 0
+Adding time based embeddings.
+Writing total data to ../2022_Oct_cleaned/Total.csv
+
+Slicing based on top 500 counties by population
+Writing population cut data to ../2022_Oct_cleaned/Top_500.csv
+
+Slicing based on top 100 counties by population
+Writing population cut data to ../2022_Oct_cleaned/Top_100.csv
