@@ -27,7 +27,7 @@ plt.rcParams['xtick.major.width'] = 2.4 # default 0.8
 plt.rcParams['ytick.major.size'] = 14 # default 3.5
 plt.rcParams['ytick.major.width'] = 2.4 # 0.8 
 
-plt.rcParams['lines.linewidth'] = 3
+plt.rcParams['lines.linewidth'] = 2
 
 DPI = 200
 FIGSIZE = (12, 7)

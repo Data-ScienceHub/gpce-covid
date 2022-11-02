@@ -81,7 +81,7 @@ class PlotResults:
         else:
             plt.ylabel(f'Daily {target}')
             
-        plt.legend(framealpha=0.3, edgecolor="black", ncol=2)
+        plt.legend(framealpha=0.3, edgecolor="black", ncol=2, loc='top left')
         fig.tight_layout()
 
         if figure_name is not None:
