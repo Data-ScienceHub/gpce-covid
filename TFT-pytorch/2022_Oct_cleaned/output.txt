@@ -18,10 +18,10 @@ Filtering out dynamic features outside range 2020-03-01 00:00:00 and 2022-10-25 
 Length 3044598.
 
 Reading Vaccination.csv
-Outliers found 206, percent 0.011
+Outliers found 102, percent 0.005
 Min date 2020-12-13 00:00:00, max date 2022-10-26 00:00:00
 Filtering out dynamic features outside range 2020-03-01 00:00:00 and 2022-10-25 00:00:00.
-Length 1834456.
+Length 2198768.
 
 Reading Social Distancing.csv
 Outliers found 119823, percent 3.919
@@ -29,7 +29,7 @@ Min date 2020-02-28 00:00:00, max date 2022-10-27 00:00:00
 Filtering out dynamic features outside range 2020-03-01 00:00:00 and 2022-10-25 00:00:00.
 Length 3044598.
 
-Total dynamic feature shape (3091256, 7)
+Total dynamic feature shape (3100522, 7)
 Will remove outliers from target.
 Reading Cases.csv
 Outliers found 119204, percent 3.768
@@ -49,7 +49,7 @@ Total target feature shape (3041456, 4)
 Merging all features
 Total merged data shape (3044598, 11)
 Missing percentage in total data
-VaccinationFull    41.28
+VaccinationFull    29.62
 Cases               0.10
 Deaths              0.10
 FIPS                0.00
