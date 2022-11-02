@@ -40,9 +40,7 @@ class Split:
 class DataParameters:
     def __init__(
         self, data, id, static_features_map, dynamic_features_map, known_futures, 
-        target_map, time_idx, population, population_cut, 
-        rurality, rurality_cut, rurality_range,
-        MAD_range, split
+        target_map, time_idx, population, population_cut, split
     ):
         self.data = data
         self.id = id
@@ -65,11 +63,6 @@ class DataParameters:
         self.time_idx = time_idx 
         self.population_filepath = population
         self.population_cut = population_cut 
-        
-        self.rurality_filepath = rurality
-        self.rurality_cut =rurality_cut
-        self.rurality_range = rurality_range
-        self.MAD_range = MAD_range
         
         self.split = Split(split, **split)
 

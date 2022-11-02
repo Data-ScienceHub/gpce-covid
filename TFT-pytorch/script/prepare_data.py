@@ -16,7 +16,7 @@ sys.path.append( '..' )
 # %% [markdown]
 # # Setup storage
 # 
-# You would need the `CovidMay17-2022` and `Support files` folders for the dateset. And the `TFT-pytorch` folder for the codes. Upload both of them in the place where you are running the code from. My folder structure looks like this
+# You would need the `CovidOct-2022` and `Support files` folders for the dateset. And the `TFT-pytorch` folder for the codes. Upload both of them in the place where you are running the code from. My folder structure looks like this
 # * dataset_raw
 #     * CovidMay17-2022
 #     * Support files
@@ -77,11 +77,10 @@ with open(args.configPath) as inputFile:
 # %%
 # get merger class
 dataMerger = DataMerger(config, args.dataPath, args.supportPath)
-# dataMerger.parameters.preprocess.target_moving_average_by_day = 0 
 
 # %%
 # if you have already created the total df one, and now just want to 
-# reuse it to create different population or rurality cut
+# reuse it to create different population cut
 if args.cachePath:
     total_df = pd.read_csv(args.cachePath)
 else:
@@ -94,28 +93,11 @@ else:
     total_df.round(3).to_csv(output_path_total, index=False)
 
 # %% [markdown]
-# ## Rurality cut
-
-# %%
-# you can define "Rurality cut" in 'data'->'support'
-# "Rurality cut" has to be set true. and also set lower and upper limit in RuralityRange and/or MADRange
-# having -1 in either of these two will result in ignoring that key
-if dataMerger.need_rurality_cut():
-    rurality_df = dataMerger.rurality_cut(total_df)
-
-    output_path_rurality_cut = os.path.join(args.outputPath, 'Rurality_cut.csv')
-    print(f'Writing rurality cut data to {output_path_rurality_cut}\n')
-    rurality_df.round(3).to_csv(output_path_rurality_cut, index=False)
-
-# %% [markdown]
 # ## Population cut
 
 # %%
 # you can define 'Population cut' in 'data'->'support'
 # this means how many of top counties you want to keep
-
-# uncomment this and rerun this cell to get top 100 counties data
-# dataMerger.parameters.data.population_cut = 100
 
 if dataMerger.need_population_cut():
     top_df = dataMerger.population_cut(total_df)

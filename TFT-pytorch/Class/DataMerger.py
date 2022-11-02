@@ -332,14 +332,6 @@ class DataMerger:
         )
         return total_df
 
-    def need_rurality_cut(self) -> bool:
-        """Whether the configuration mentions to perform a cut based on rurality
-        
-        Returns:
-            bool: yes or no 
-        """
-        return self.parameters.data.rurality_cut
-
     def need_population_cut(self) -> bool:
         """Whether the configuration mentions to perform a cut based on population
         
@@ -348,56 +340,7 @@ class DataMerger:
         """
         return self.parameters.data.population_cut > 0
 
-    def rurality_cut(self, total_df:DataFrame) -> DataFrame:
-        """Slices the total features based on rurality cut defined by RuralityRange and MADRange 
-        
-        Args:
-            total_df: total feature file
-
-        Returns:
-            DataFrame: sliced feature file
-        """
-
-        MADRANGE = self.parameters.data.MAD_range
-        RURRANGE = self.parameters.data.rurality_range
-        rurality_filapath = self.parameters.data.rurality_filepath
-
-        # fails to read on unicode
-        rurality = pd.read_csv(os.path.join(self.support_path, rurality_filapath), encoding = 'latin1')
-
-        locs = rurality.FIPS
-
-        if -1 in RURRANGE:
-            print('No Median Rurality Cut')
-            lost = []
-        else:
-            locs = rurality[(rurality['Median'] >= RURRANGE[0]) & (rurality['Median'] <= RURRANGE[1])].FIPS
-            lost = rurality[~((rurality['Median'] >= RURRANGE[0]) & (rurality['Median'] <= RURRANGE[1]))].FIPS
-            rurality = rurality[rurality['FIPS'].isin(locs)]
-
-        print('Lost number of locations from median cut ' + str(len(lost)))
-        print('Remaining number of locations from median cut ' + str(len(locs)))
-
-        if -1 in MADRANGE:
-            print('No MAD cut')
-            lost = []
-        else:
-            locs = rurality[(rurality['MAD'] >= MADRANGE[0]) & (rurality['MAD'] < MADRANGE[1])].FIPS
-            lost = rurality[~((rurality['MAD'] >= MADRANGE[0]) & (rurality['MAD'] < MADRANGE[1]))].FIPS
-
-        print('Lost Num Locations from MAD Cut ' + str(len(lost)))
-        print('Remaining Num Locations from MAD Cut ' + str(len(locs)))
-
-        print('#' * 50)
-        print('Final Location Count: ' + str(len(locs)))
-
-        # only keep the selected counties
-        df = total_df[total_df['FIPS'].isin(locs)].reset_index(drop=True)
-        print(f'Rurality cut dataset shape {df.shape}')
-
-        return df
-
-    def get_population(self) -> DataFrame :
+    def get_population(self) -> DataFrame:
         """Loads the population file
 
         Returns:
