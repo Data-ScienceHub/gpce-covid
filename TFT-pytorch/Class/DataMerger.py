@@ -366,7 +366,7 @@ class DataMerger:
         print(f'Slicing based on top {top_counties} counties by population')
         
         population = self.get_population()
-        sorted_fips = population.sort_values(by=['POPESTIMATE2019'], ascending=False)['FIPS'].values
+        sorted_fips = population.sort_values(by=['POPESTIMATE'], ascending=False)['FIPS'].values
 
         df = total_df[total_df['FIPS'].isin(sorted_fips[:top_counties])]
 
