@@ -46,13 +46,13 @@ from Class.DataMerger import *
 @dataclass
 class args:
     # folder where the cleaned feature file are at
-    dataPath = '../../dataset_raw/CovidOct25-2022'
+    dataPath = '../../dataset_raw/CovidMay17-2022'
     supportPath = '../../dataset_raw/Support files'
-    configPath = '../config_2022_Oct.json'
+    configPath = '../config_2022_May.json'
     cachePath = None # '../2022_Oct_cleaned/Total.csv'
 
     # choose this carefully
-    outputPath = '../2022_Oct_cleaned/'
+    outputPath = '../2022_May_cleaned/'
 
 # %%
 # create output path if it doesn't exist
@@ -90,7 +90,7 @@ else:
     print(f'Writing total data to {output_path_total}\n')
     
     # rounding up to reduce the file size
-    total_df.round(3).to_csv(output_path_total, index=False)
+    total_df.round(4).to_csv(output_path_total, index=False)
 
 # %% [markdown]
 # ## Population cut
