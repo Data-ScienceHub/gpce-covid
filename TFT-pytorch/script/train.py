@@ -65,7 +65,7 @@ from dataclasses import dataclass
 
 @dataclass
 class args:
-    result_folder = '../results/total_target_cleaned_scaled'
+    result_folder = '../results/total/'
     figPath = os.path.join(result_folder, 'figures')
     checkpoint_folder = os.path.join(result_folder, 'checkpoints')
     input_filePath = '../2022_May_cleaned/Total.csv'
@@ -84,7 +84,7 @@ class args:
     show_progress_bar = False
 
     # interpret_output has high memory requirement
-    # results in out-of-memery for Total.csv. Set to true if it doesn't
+    # results in out-of-memery for Total.csv and a model of hidden size 64, even with 64GB memory
     interpret_train = 'Total.csv' not in input_filePath
 
 # %%
@@ -121,6 +121,7 @@ if running_on_colab:
 
 max_prediction_length = tft_params.target_sequence_length
 max_encoder_length = tft_params.input_sequence_length
+# parameters.data.time_varying_known_features.append('LinearSpace')
 
 # %% [markdown]
 # # Seed
@@ -321,8 +322,8 @@ plotter = PlotResults(args.figPath, targets, show=args.show_progress_bar)
 # %%
 # not a must, but increases inference speed 
 _, train_dataloader = prepare_data(train_scaled, parameters) 
+print(f'\n---Training results--\n')
 
-print('\nPredicting on train data')
 # mode="prediction" would return only the prediction. mode="raw" returns additional keys needed for interpretation
 train_raw_predictions, train_index = tft.predict(
     train_dataloader, mode="raw", return_index=True, show_progress_bar=args.show_progress_bar
@@ -334,7 +335,6 @@ for key in train_raw_predictions.keys():
     if type(item)==list: print(key, f'list of length {len(item)}', item[0].shape)
     else: print(key, item.shape)
 
-print(f'\n---Training results--\n')
 train_predictions = upscale_prediction(targets, train_raw_predictions['prediction'], target_scaler, max_prediction_length)
 train_result_merged = processor.align_result_with_dataset(train_data, train_predictions, train_index)
 show_result(train_result_merged, targets)
@@ -401,7 +401,6 @@ test_predictions = upscale_prediction(targets, test_raw_predictions['prediction'
 test_result_merged = processor.align_result_with_dataset(test_data, test_predictions, test_index)
 show_result(test_result_merged, targets)
 plotter.summed_plot(test_result_merged, 'Test')
-plotter.summed_plot(test_result_merged, type='Test_error',  plot_error=True)
 gc.collect()
 
 # %% [markdown]
@@ -448,87 +447,16 @@ for index, fips in enumerate(fips_codes):
     print(f'County {name}, FIPS {fips}')
     df = train_result_merged[train_result_merged['FIPS']==fips]
     show_result(df, targets)
+    print()
 
 # %%
 del train_result_merged, validation_result_merged, test_result_merged, df
 
 # %% [markdown]
-# ## Attention weights
-
-# %%
-plotWeights = PlotWeights(args.figPath, max_encoder_length, tft, show=args.show_progress_bar)
-
-# %% [markdown]
-# ### Train
-
-# %%
-# interpret_output has high memory requirement
-# results in out-of-memery for Total.csv and a model of hidden size 64, even with 64GB memory
-if args.interpret_train:
-    print("\nInterpreting train attention")
-    interpretation = tft.interpret_output(train_raw_predictions)
-    attention_mean, attention = processor.get_mean_attention(
-        interpretation, train_index,return_attention=True
-    )
-    plotWeights.plot_attention(
-        attention_mean, figure_name='Train_daily_attention', 
-        limit=0, enable_markers=False, title='Attention with dates'
-    )
-    gc.collect()
-    attention_weekly = processor.get_attention_by_weekday(attention_mean)
-    plotWeights.plot_weekly_attention(attention_weekly, figure_name='Train_weekly_attention')
-else:
-    print("\nInterpreting test attention")
-    interpretation = tft.interpret_output(test_raw_predictions)
-    attention_mean, attention = processor.get_mean_attention(
-        interpretation, test_index,return_attention=True
-    )
-    plotWeights.plot_attention(
-        attention_mean, figure_name='Test_daily_attention', 
-        limit=0, enable_markers=False, title='Attention with dates'
-    )
-    gc.collect()
-    attention_weekly = processor.get_attention_by_weekday(attention_mean)
-    plotWeights.plot_weekly_attention(attention_weekly, figure_name='Test_weekly_attention')
-
-print('\nRaw interpretation shapes')
-for key in interpretation.keys():
-    print(key, interpretation[key].shape)
-attention_mean.round(3).to_csv(os.path.join(plotter.figPath, 'attention_mean.csv'), index=False)
-attention.round(3).to_csv(os.path.join(plotter.figPath, 'attention.csv'), index=False)
-
-
-# %% [markdown]
-# ## Variable Importance
-
-# %%
-if args.interpret_train:
-    print("\nMean interpreting train predictions")
-    interpretation = tft.interpret_output(train_raw_predictions, reduction="mean")
-        
-    figures = plotWeights.plot_interpretation(interpretation)
-    for key in figures.keys():
-        figure = figures[key]
-        figure.savefig(os.path.join(plotter.figPath, f'Train_{key}.jpg'), dpi=DPI)
-else:
-    print("\nMean interpreting test predictions")
-    interpretation = tft.interpret_output(test_raw_predictions, reduction="mean")
-
-    figures = plotWeights.plot_interpretation(interpretation)
-    for key in figures.keys():
-        figure = figures[key]
-        figure.savefig(os.path.join(plotter.figPath, f'Test_{key}.jpg'), dpi=DPI)
-
-print('\nMean interpretation values')
-for key in interpretation.keys():
-    print(key, interpretation[key])
-
-# %% [markdown]
 # ## Clear up
 
 # %%
-del tft, interpretation
-del train_raw_predictions, validation_raw_predictions, test_raw_predictions
+del tft, train_raw_predictions, validation_raw_predictions, test_raw_predictions
 gc.collect()
 
 # %% [markdown]
@@ -538,7 +466,7 @@ gc.collect()
 # %%
 best_model_path = trainer.checkpoint_callback.best_model_path
 print(f'Loading best model from {best_model_path}')
-best_tft = TemporalFusionTransformer.load_from_checkpoint(best_model_path)
+tft = TemporalFusionTransformer.load_from_checkpoint(best_model_path)
 
 # %%
 plotter = PlotResults(f'{args.figPath}_best', targets, show=args.show_progress_bar)
@@ -550,27 +478,18 @@ plotter = PlotResults(f'{args.figPath}_best', targets, show=args.show_progress_b
 # ### Average
 
 # %%
-print(f'\n---Training results--\n')
-train_raw_predictions, train_index = best_tft.predict(
+print('\n---Training results--\n')
+train_raw_predictions, train_index = tft.predict(
     train_dataloader, mode="raw", return_index=True, show_progress_bar=args.show_progress_bar
 )
 train_predictions = upscale_prediction(targets, train_raw_predictions['prediction'], target_scaler, max_prediction_length)
 
 train_result_merged = processor.align_result_with_dataset(train_data, train_predictions, train_index)
+
 show_result(train_result_merged, targets)
 plotter.summed_plot(train_result_merged, type='Train')
 plotter.summed_plot(train_result_merged, type='Train_error', plot_error=True)
 gc.collect()
-
-# %% [markdown]
-# ### By future days
-
-# %%
-# for day in range(1, max_prediction_length+1):
-#     print(f'Day {day}')
-#     df = processor.align_result_with_dataset(train_data, train_predictions, train_index, target_time_step = day)
-#     show_result(df)
-    # plotter.summed_plot(df, type=f'Train_day_{day}')
 
 # %% [markdown]
 # ## Validation results
@@ -578,7 +497,7 @@ gc.collect()
 # %%
 print(f'\n---Validation results--\n')
 
-validation_raw_predictions, validation_index = best_tft.predict(
+validation_raw_predictions, validation_index = tft.predict(
     validation_dataloader, mode="raw", return_index=True, show_progress_bar=args.show_progress_bar
 )
 validation_predictions = upscale_prediction(targets, validation_raw_predictions['prediction'], target_scaler, max_prediction_length)
@@ -597,7 +516,7 @@ gc.collect()
 # %%
 print(f'\n---Test results--\n')
 
-test_raw_predictions, test_index = best_tft.predict(
+test_raw_predictions, test_index = tft.predict(
     test_dataloader, mode="raw", return_index=True, show_progress_bar=args.show_progress_bar
 )
 test_predictions = upscale_prediction(targets, test_raw_predictions['prediction'], target_scaler, max_prediction_length)
@@ -605,7 +524,6 @@ test_predictions = upscale_prediction(targets, test_raw_predictions['prediction'
 test_result_merged = processor.align_result_with_dataset(total_data, test_predictions, test_index)
 show_result(test_result_merged, targets)
 plotter.summed_plot(test_result_merged, 'Test')
-plotter.summed_plot(test_result_merged, type='Test_error',  plot_error=True)
 gc.collect()
 
 # %% [markdown]
@@ -661,7 +579,7 @@ del train_result_merged, validation_result_merged, test_result_merged, df
 
 # %%
 plotWeights = PlotWeights(
-    args.figPath+'_best', max_encoder_length, best_tft, show=args.show_progress_bar
+    args.figPath+'_best', max_encoder_length, tft, show=args.show_progress_bar
 )
 
 # %% [markdown]
@@ -670,7 +588,7 @@ plotWeights = PlotWeights(
 # %%
 if args.interpret_train:
     attention_mean, attention = processor.get_mean_attention(
-        best_tft.interpret_output(train_raw_predictions), train_index, return_attention=True
+        tft.interpret_output(train_raw_predictions), train_index, return_attention=True
     )
     plotWeights.plot_attention(
         attention_mean, figure_name='Train_daily_attention', 
@@ -684,12 +602,12 @@ if args.interpret_train:
     attention.round(3).to_csv(os.path.join(plotWeights.figPath, 'attention.csv'), index=False)
 
 # %% [markdown]
-# ## Variable Importance
+# ## Variable importance and mean attention
 
 # %%
 if args.interpret_train:
     print("Interpreting train predictions")
-    interpretation = best_tft.interpret_output(train_raw_predictions, reduction="mean")
+    interpretation = tft.interpret_output(train_raw_predictions, reduction="mean")
     for key in interpretation.keys():
         print(key, interpretation[key])
 
@@ -699,7 +617,7 @@ if args.interpret_train:
         figure.savefig(os.path.join(plotter.figPath, f'Train_{key}.jpg'), dpi=DPI)    
 else:
     print("Interpreting test predictions")
-    interpretation = best_tft.interpret_output(test_raw_predictions, reduction="mean")
+    interpretation = tft.interpret_output(test_raw_predictions, reduction="mean")
     for key in interpretation.keys():
         print(key, interpretation[key])
         

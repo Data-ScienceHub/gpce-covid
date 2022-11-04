@@ -195,7 +195,7 @@ def scale_data(
         scaled_features = parameters.data.static_features + parameters.data.dynamic_features
 
         print(f'Scaling static and dynamic input features: {scaled_features}')
-        feature_scaler = MinMaxScaler()
+        feature_scaler = StandardScaler()
         train.loc[:, scaled_features] = feature_scaler.fit_transform(train[scaled_features])
         if validation is not None:
             validation.loc[:, scaled_features] = feature_scaler.transform(validation[scaled_features])
@@ -208,7 +208,7 @@ def scale_data(
         target_features = parameters.data.targets
         print(f'Scaling targets {target_features}')
 
-        target_scaler = MinMaxScaler()
+        target_scaler = StandardScaler()
         train.loc[:, target_features] = target_scaler.fit_transform(train[target_features])
         if validation is not None:
             validation.loc[:, target_features] = target_scaler.transform(validation[target_features])
