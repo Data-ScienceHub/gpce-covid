@@ -72,7 +72,7 @@ Note that, past values target and known futures are also used as observed inputs
 <td>Daily</td>
 <td style="background: #CC3333;"></td>
 <td><em>Cases from the last 14 days per 100k population</em>. Because of the 14-day incubation period, the cases identified in that time period are the most likely to be transmissible. This metric is the number of such &ldquo;contagious&rdquo; individuals relative to the population, so a greater number indicates more likely continued spread of disease.</td>
-<td><span><span><a href="https://usafacts.org/issues/coronavirus/" target="_blank">USA Facts</a>, <a href="https://svi.cdc.gov/data-and-tools-download.html" target="_blank">2020 SVI</a> (for population estimate)</span></span></td>
+<td><span><span><a href="https://usafacts.org/issues/coronavirus/" target="_blank">USA Facts</a> , <a href="https://svi.cdc.gov/data-and-tools-download.html" target="_blank">2020 SVI</a> (for population estimate)</span></span></td>
 </tr>
 <tr>
 <td colspan="5"><strong>Disease Spread</strong></td>
