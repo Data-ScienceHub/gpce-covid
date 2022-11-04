@@ -8,8 +8,6 @@ __pycache__/
 # checkpoint and data folders
 # checkpoints
 lightning_logs
-# figures
-# figures_best
 *.out
 
 TF2/2021_Nov
@@ -20,3 +18,4 @@ best_predictions_case_death.csv
 predictions_case_death.csv
 attention.csv
 !TFT-pytorch/results/
+scratch/
