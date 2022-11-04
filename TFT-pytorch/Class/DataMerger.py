@@ -320,6 +320,10 @@ class DataMerger:
         total_df = static_df.merge(total_df, how='inner', on='FIPS')
         total_df = total_df.reset_index(drop=True)
 
+        # print('Merging population file for county names')
+        # population = self.get_population()[['FIPS', 'Name']]
+        # total_df= population.merge(total_df, how='inner', on='FIPS').reset_index(drop=True)
+
         print(f'Total merged data shape {total_df.shape}')
         print('Missing percentage in total data')
         print(missing_percentage(total_df))
