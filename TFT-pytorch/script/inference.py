@@ -51,21 +51,21 @@ from dataclasses import dataclass
 
 @dataclass
 class args:
-    result_folder = '../results/total_target_cleaned_scaled' # '../results/top_100_early_stopped_target_cleaned_scaled' # 
+    result_folder = '../results/total_target_cleaned_scaled' # '../results/top_100_early_stopped_target_cleaned_scaled' 
     figPath = os.path.join(result_folder, 'figures')
     checkpoint_folder = os.path.join(result_folder, 'checkpoints')
-    input_filePath = '../2022_May_cleaned/Total.csv' # '../2022_May_cleaned/Top_100.csv' # 
+    input_filePath = '../2022_May_cleaned/Total.csv'
 
     configPath = '../configurations/total_target_cleaned_scaled.json'
     # configPath = '../config_2022_August.json'
 
-    model_path = os.path.join(checkpoint_folder, 'latest-epoch=0.ckpt')
+    model_path = os.path.join(checkpoint_folder, 'latest-epoch=59.ckpt')
 
     # set this to false when submitting batch script, otherwise it prints a lot of lines
-    show_progress_bar = False
+    show_progress_bar = True
 
     # interpret_output has high memory requirement
-    # may results in out-of-memery for Total.csv. Set to true if it doesn't
+    # results in out-of-memery for Total.csv and a model of hidden size 64, even with 64GB memory
     interpret_train = 'Total.csv' not in input_filePath
 
 # %%
@@ -115,7 +115,7 @@ print(f"There are {total_data['FIPS'].nunique()} unique counties in the dataset.
 # %%
 train_start = parameters.data.split.train_start
 total_data = total_data[total_data['Date']>=train_start]
-total_data[time_idx] = (total_data["Date"] - train_start).apply(lambda x: x.days)
+total_data[time_idx] = (total_data["Date"] - total_data["Date"].min()).apply(lambda x: x.days)
 
 # %% [markdown]
 # ## Train validation test split and scaling
@@ -172,8 +172,6 @@ gc.collect()
 # %%
 tft = TemporalFusionTransformer.load_from_checkpoint(args.model_path)
 
-from pytorch_lightning.utilities.model_summary import summarize
-print(summarize(tft))
 print(f"Number of parameters in network: {tft.size()/1e3:.1f}k")
 
 # %% [markdown]
@@ -202,40 +200,25 @@ plotter = PlotResults(args.figPath, targets, show=args.show_progress_bar)
 # ### Average
 
 # %%
-print('\nPredicting on train data')
+print(f'\n---Training prediction--\n')
+
 train_raw_predictions, train_index = tft.predict(
     train_dataloader, mode="raw", return_index=True, show_progress_bar=args.show_progress_bar
 )
 
-print('\nTrain raw prediction shapes')
+print('\nTrain raw prediction shapes\n')
 for key in train_raw_predictions.keys():
     item = train_raw_predictions[key]
-    if type(item)==list and len(item)>0: print(key, len(item), item[0].shape)
-    else: print(key, train_raw_predictions[key].shape)
+    if type(item) == list: print(key, f'list of length {len(item)}', item[0].shape)
+    else: print(key, item.shape)
 
-print(f'\n---Training results--\n')
+print('\n---Training results--\n')
 train_predictions = upscale_prediction(targets, train_raw_predictions['prediction'], target_scaler, max_prediction_length)
 train_result_merged = processor.align_result_with_dataset(train_data, train_predictions, train_index)
 show_result(train_result_merged, targets)
 
-plotter.summed_plot(train_result_merged, type='Train')
 plotter.summed_plot(train_result_merged, type='Train_error', plot_error=True)
 gc.collect()
-
-# %%
-# predicted_columns = [f'Predicted_{target}' for target in targets]
-# temp = train_result_merged.copy()
-# if target_scaler is not None:
-#     temp.loc[:, predicted_columns] = target_scaler.transform(temp[predicted_columns])
-#     temp.loc[:, targets] = target_scaler.transform(temp[targets])
-# else:
-#     scaler = MinMaxScaler()
-#     temp.loc[:, targets] = scaler.fit_transform(temp[targets])
-#     temp.loc[:, predicted_columns] = scaler.transform(temp[predicted_columns])
-    
-# show_result(temp, targets)
-# plotter.summed_plot(temp, type='Train_scaled')
-# del temp
 
 # %% [markdown]
 # ### By future days
@@ -255,9 +238,9 @@ for day in range(1, max_prediction_length+1):
 # %%
 print(f'\n---Validation results--\n')
 validation_raw_predictions, validation_index = tft.predict(
-    validation_dataloader, mode="raw", return_index=True, show_progress_bar=args.show_progress_bar
+    validation_dataloader, return_index=True, show_progress_bar=args.show_progress_bar
 )
-validation_predictions = upscale_prediction(targets, validation_raw_predictions['prediction'], target_scaler, max_prediction_length)
+validation_predictions = upscale_prediction(targets, validation_raw_predictions, target_scaler, max_prediction_length)
 
 validation_result_merged = processor.align_result_with_dataset(validation_data, validation_predictions, validation_index)
 show_result(validation_result_merged, targets)
@@ -280,7 +263,6 @@ test_predictions = upscale_prediction(targets, test_raw_predictions['prediction'
 test_result_merged = processor.align_result_with_dataset(test_data, test_predictions, test_index)
 show_result(test_result_merged, targets)
 plotter.summed_plot(test_result_merged, 'Test')
-plotter.summed_plot(test_result_merged, type='Test_error',  plot_error=True)
 gc.collect()
 
 # %% [markdown]
@@ -314,7 +296,6 @@ gc.collect()
 
 # %%
 fips_codes = test_result_merged['FIPS'].unique()
-names_df = total_data[['FIPS', 'Name']]
 
 print(f'\n---Per county test results--\n')
 count = 5
@@ -322,10 +303,10 @@ count = 5
 for index, fips in enumerate(fips_codes):
     if index == count: break
 
-    name = names_df[names_df['FIPS']==fips]['Name'].values[0]
-    print(f'County {name}, FIPS {fips}')
+    print(f'FIPS {fips}')
     df = test_result_merged[test_result_merged['FIPS']==fips]
     show_result(df, targets)
+    print()
 
 # %%
 del train_result_merged, validation_result_merged, test_result_merged
@@ -341,10 +322,8 @@ plotWeights = PlotWeights(args.figPath, max_encoder_length, tft, show=args.show_
 
 # %%
 if args.interpret_train:
-    print("\nInterpreting train attention")
-    interpretation = tft.interpret_output(train_raw_predictions)
     attention_mean, attention = processor.get_mean_attention(
-        interpretation, train_index,return_attention=True
+        tft.interpret_output(train_raw_predictions), train_index,return_attention=True
     )
     plotWeights.plot_attention(
         attention_mean, figure_name='Train_daily_attention', 
@@ -353,25 +332,9 @@ if args.interpret_train:
     gc.collect()
     attention_weekly = processor.get_attention_by_weekday(attention_mean)
     plotWeights.plot_weekly_attention(attention_weekly, figure_name='Train_weekly_attention')
-else:
-    print("\nInterpreting test attention")
-    interpretation = tft.interpret_output(test_raw_predictions)
-    attention_mean, attention = processor.get_mean_attention(
-        interpretation, test_index,return_attention=True
-    )
-    plotWeights.plot_attention(
-        attention_mean, figure_name='Test_daily_attention', 
-        limit=0, enable_markers=False, title='Attention with dates'
-    )
-    gc.collect()
-    attention_weekly = processor.get_attention_by_weekday(attention_mean)
-    plotWeights.plot_weekly_attention(attention_weekly, figure_name='Test_weekly_attention')
 
-print('\nRaw interpretation shapes')
-for key in interpretation.keys():
-    print(key, interpretation[key].shape)
-attention_mean.round(3).to_csv(os.path.join(plotter.figPath, 'attention_mean.csv'), index=False)
-attention.round(3).to_csv(os.path.join(plotter.figPath, 'attention.csv'), index=False)
+    attention_mean.round(3).to_csv(os.path.join(plotter.figPath, 'attention_mean.csv'), index=False)
+    attention.round(3).to_csv(os.path.join(plotter.figPath, 'attention.csv'), index=False)
 
 # %% [markdown]
 # ## Variable Importance
@@ -381,26 +344,30 @@ attention.round(3).to_csv(os.path.join(plotter.figPath, 'attention.csv'), index=
 
 # %%
 if args.interpret_train:
-    print("\nMean interpreting train predictions")
+    print("Interpreting train predictions")
     interpretation = tft.interpret_output(train_raw_predictions, reduction="mean")
+    for key in interpretation.keys():
+        print(key, interpretation[key])
         
     figures = plotWeights.plot_interpretation(interpretation)
     for key in figures.keys():
         figure = figures[key]
         figure.savefig(os.path.join(plotter.figPath, f'Train_{key}.jpg'), dpi=DPI)
 else:
-    print("\nMean interpreting test predictions")
+    print("Interpreting test predictions")
     interpretation = tft.interpret_output(test_raw_predictions, reduction="mean")
-
+    for key in interpretation.keys():
+        print(key, interpretation[key])
+        
     figures = plotWeights.plot_interpretation(interpretation)
     for key in figures.keys():
         figure = figures[key]
         figure.savefig(os.path.join(plotter.figPath, f'Test_{key}.jpg'), dpi=DPI)
 
-print('\nMean interpretation values')
-for key in interpretation.keys():
-    print(key, interpretation[key])
+# %% [markdown]
+# # End
+
 # %%
-print(f'\nEnded at {datetime.now()}. Elapsed time {datetime.now() - start}')
+print(f'Ended at {datetime.now()}. Elapsed time {datetime.now() - start}')
 
 
