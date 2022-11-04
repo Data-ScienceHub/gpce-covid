@@ -292,7 +292,7 @@ print(f'\n----Training ended at {end}, elapsed time {end-start}')
 print(f'Best model by validation loss saved at {trainer.checkpoint_callback.best_model_path}')
 
 # %% [markdown]
-# # Prediction Processor
+# # Prediction Processor and PlotResults
 
 # %%
 from Class.PredictionProcessor import PredictionProcessor
@@ -302,162 +302,10 @@ processor = PredictionProcessor(
     train_start, max_encoder_length
 )
 
-# %% [markdown]
-# # Evaluate - final model
-
-# %% [markdown]
-# ## PlotResults
-
 # %%
 from Class.Plotter import *
 
 plotter = PlotResults(args.figPath, targets, show=args.show_progress_bar)
-
-# %% [markdown]
-# ## Train results
-
-# %% [markdown]
-# ### Average
-
-# %%
-# not a must, but increases inference speed 
-_, train_dataloader = prepare_data(train_scaled, parameters) 
-print(f'\n---Training results--\n')
-
-# mode="prediction" would return only the prediction. mode="raw" returns additional keys needed for interpretation
-train_raw_predictions, train_index = tft.predict(
-    train_dataloader, mode="raw", return_index=True, show_progress_bar=args.show_progress_bar
-)
-
-print('\nTrain raw prediction shapes')
-for key in train_raw_predictions.keys():
-    item = train_raw_predictions[key]
-    if type(item)==list: print(key, f'list of length {len(item)}', item[0].shape)
-    else: print(key, item.shape)
-
-train_predictions = upscale_prediction(targets, train_raw_predictions['prediction'], target_scaler, max_prediction_length)
-train_result_merged = processor.align_result_with_dataset(train_data, train_predictions, train_index)
-show_result(train_result_merged, targets)
-
-plotter.summed_plot(train_result_merged, type='Train')
-plotter.summed_plot(train_result_merged, type='Train_error', plot_error=True)
-gc.collect()
-
-# %%
-# predicted_columns = [f'Predicted_{target}' for target in targets]
-# temp = train_result_merged.copy()
-# if target_scaler is not None:
-#     temp.loc[:, predicted_columns] = target_scaler.transform(temp[predicted_columns])
-#     temp.loc[:, targets] = target_scaler.transform(temp[targets])
-# else:
-#     scaler = MinMaxScaler()
-#     temp.loc[:, targets] = scaler.fit_transform(temp[targets])
-#     temp.loc[:, predicted_columns] = scaler.transform(temp[predicted_columns])
-    
-# show_result(temp, targets)
-# plotter.summed_plot(temp, type='Train_scaled')
-# del temp
-
-# %% [markdown]
-# ### By future days
-
-# %%
-gc.collect()
-for day in range(1, max_prediction_length+1):
-    print(f'Day {day}')
-    df = processor.align_result_with_dataset(train_data, train_predictions, train_index, target_time_step = day)
-    show_result(df, targets)
-    plotter.summed_plot(df, type=f'Train_day_{day}')
-    break
-
-# %% [markdown]
-# ## Validation results
-
-# %%
-print(f'\n---Validation results--\n')
-validation_raw_predictions, validation_index = tft.predict(
-    validation_dataloader, mode="raw", return_index=True, show_progress_bar=args.show_progress_bar
-)
-validation_predictions = upscale_prediction(targets, validation_raw_predictions['prediction'], target_scaler, max_prediction_length)
-
-validation_result_merged = processor.align_result_with_dataset(validation_data, validation_predictions, validation_index)
-show_result(validation_result_merged, targets)
-plotter.summed_plot(validation_result_merged, type='Validation')
-gc.collect()
-
-# %% [markdown]
-# ## Test results
-
-# %% [markdown]
-# ### Average
-
-# %%
-print(f'\n---Test results--\n')
-test_raw_predictions, test_index = tft.predict(
-    test_dataloader, mode="raw", return_index=True, show_progress_bar=args.show_progress_bar
-)
-test_predictions = upscale_prediction(targets, test_raw_predictions['prediction'], target_scaler, max_prediction_length)
-
-test_result_merged = processor.align_result_with_dataset(test_data, test_predictions, test_index)
-show_result(test_result_merged, targets)
-plotter.summed_plot(test_result_merged, 'Test')
-gc.collect()
-
-# %% [markdown]
-# ### By future days
-
-# %%
-for day in range(1, max_prediction_length+1):
-    print(f'Day {day}')
-    df = processor.align_result_with_dataset(test_data, test_predictions, test_index, target_time_step = day)
-    show_result(df, targets)
-    # plotter.summed_plot(df, type=f'Test_day_{day}')
-    # break
-
-# %% [markdown]
-# ## Dump results
-
-# %%
-train_result_merged['split'] = 'train'
-validation_result_merged['split'] = 'validation'
-test_result_merged['split'] = 'test'
-df = pd.concat([train_result_merged, validation_result_merged, test_result_merged])
-df.to_csv(os.path.join(plotter.figPath, 'predictions_case_death.csv'), index=False)
-
-df.head()
-
-# %%
-del train_predictions, validation_predictions, test_predictions
-gc.collect()
-
-# %% [markdown]
-# ## Evaluation by county
-
-# %%
-fips_codes = train_result_merged['FIPS'].unique()
-names_df = total_data[['FIPS', 'Name']]
-
-print(f'\n---Per county train results--\n')
-count = 5
-
-for index, fips in enumerate(fips_codes):
-    if index == count: break
-
-    name = names_df[names_df['FIPS']==fips]['Name'].values[0]
-    print(f'County {name}, FIPS {fips}')
-    df = train_result_merged[train_result_merged['FIPS']==fips]
-    show_result(df, targets)
-    print()
-
-# %%
-del train_result_merged, validation_result_merged, test_result_merged, df
-
-# %% [markdown]
-# ## Clear up
-
-# %%
-del tft, train_raw_predictions, validation_raw_predictions, test_raw_predictions
-gc.collect()
 
 # %% [markdown]
 # # Evaluate - best model
@@ -467,9 +315,6 @@ gc.collect()
 best_model_path = trainer.checkpoint_callback.best_model_path
 print(f'Loading best model from {best_model_path}')
 tft = TemporalFusionTransformer.load_from_checkpoint(best_model_path)
-
-# %%
-plotter = PlotResults(f'{args.figPath}_best', targets, show=args.show_progress_bar)
 
 # %% [markdown]
 # ## Train results
@@ -482,12 +327,17 @@ print('\n---Training results--\n')
 train_raw_predictions, train_index = tft.predict(
     train_dataloader, mode="raw", return_index=True, show_progress_bar=args.show_progress_bar
 )
-train_predictions = upscale_prediction(targets, train_raw_predictions['prediction'], target_scaler, max_prediction_length)
 
+print('\nTrain raw prediction shapes')
+for key in train_raw_predictions.keys():
+    item = train_raw_predictions[key]
+    if type(item) == list: print(key, f'list of length {len(item)}', item[0].shape)
+    else: print(key, item.shape)
+
+train_predictions = upscale_prediction(targets, train_raw_predictions['prediction'], target_scaler, max_prediction_length)
 train_result_merged = processor.align_result_with_dataset(train_data, train_predictions, train_index)
 
 show_result(train_result_merged, targets)
-plotter.summed_plot(train_result_merged, type='Train')
 plotter.summed_plot(train_result_merged, type='Train_error', plot_error=True)
 gc.collect()
 
@@ -498,9 +348,9 @@ gc.collect()
 print(f'\n---Validation results--\n')
 
 validation_raw_predictions, validation_index = tft.predict(
-    validation_dataloader, mode="raw", return_index=True, show_progress_bar=args.show_progress_bar
+    validation_dataloader, return_index=True, show_progress_bar=args.show_progress_bar
 )
-validation_predictions = upscale_prediction(targets, validation_raw_predictions['prediction'], target_scaler, max_prediction_length)
+validation_predictions = upscale_prediction(targets, validation_raw_predictions, target_scaler, max_prediction_length)
 
 validation_result_merged = processor.align_result_with_dataset(validation_data, validation_predictions, validation_index)
 show_result(validation_result_merged, targets)
@@ -557,7 +407,6 @@ gc.collect()
 
 # %%
 fips_codes = test_result_merged['FIPS'].unique()
-names_df = total_data[['FIPS', 'Name']]
 
 print(f'\n---Per county test results--\n')
 count = 5
@@ -565,8 +414,7 @@ count = 5
 for index, fips in enumerate(fips_codes):
     if index == count: break
 
-    name = names_df[names_df['FIPS']==fips]['Name'].values[0]
-    print(f'County {name}, FIPS {fips}')
+    print(f'FIPS {fips}')
     df = test_result_merged[test_result_merged['FIPS']==fips]
     show_result(df, targets)
     print()
@@ -579,7 +427,7 @@ del train_result_merged, validation_result_merged, test_result_merged, df
 
 # %%
 plotWeights = PlotWeights(
-    args.figPath+'_best', max_encoder_length, tft, show=args.show_progress_bar
+    args.figPath, max_encoder_length, tft, show=args.show_progress_bar
 )
 
 # %% [markdown]
