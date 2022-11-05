@@ -31,7 +31,6 @@
             "Social Distancing.csv": "SocialDist"
         },
         "known_futures": [
-            "LinearSpace",
             "SinWeekly",
             "CosWeekly"
         ],
@@ -42,7 +41,7 @@
         "time_idx": "TimeFromStart",
      
         "population": "Population.csv",
-        "population_cut": -1,
+        "population_cut": 500,
         "split": {
             "train_start": "2020-02-29",
             "validation_start": "2021-11-30",
@@ -57,6 +56,6 @@
         "remove_target_outliers": true,
         "target_moving_average_by_day": 0,
         "scale_input": true,
-        "scale_target": false
+        "scale_target": true
     }
 }

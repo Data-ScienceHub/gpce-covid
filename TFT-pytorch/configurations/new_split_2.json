@@ -1,6 +1,6 @@
 {
     "model_parameters": {
-        "hidden_layer_size": 64,
+        "hidden_layer_size": 16,
         "dropout_rate": 0.2,
         "input_sequence_length": 13,
         "target_sequence_length": 15,
@@ -31,7 +31,6 @@
             "Social Distancing.csv": "SocialDist"
         },
         "known_futures": [
-            "LinearSpace",
             "SinWeekly",
             "CosWeekly"
         ],

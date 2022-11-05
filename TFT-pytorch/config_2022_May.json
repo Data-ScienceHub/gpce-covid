@@ -1,6 +1,6 @@
 {
     "model_parameters": {
-        "hidden_layer_size": 64,
+        "hidden_layer_size": 16,
         "dropout_rate": 0.2,
         "input_sequence_length": 13,
         "target_sequence_length": 15,
@@ -10,7 +10,7 @@
 
         "optimizer": "adam",
         "learning_rate": 0.001,
-        "clipnorm": 0.01,
+        "clipnorm": 1,
 
         "early_stopping_patience": 3,
         "seed":7,
@@ -31,7 +31,6 @@
             "Social Distancing.csv": "SocialDist"
         },
         "known_futures": [
-            "LinearSpace",
             "SinWeekly",
             "CosWeekly"
         ],
