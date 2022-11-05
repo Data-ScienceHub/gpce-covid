@@ -51,12 +51,12 @@ from dataclasses import dataclass
 
 @dataclass
 class args:
-    result_folder = '../results/total_target_cleaned_scaled' # '../results/top_100_early_stopped_target_cleaned_scaled' 
+    result_folder = '../results/total' # '../results/top_100_early_stopped_target_cleaned_scaled' 
     figPath = os.path.join(result_folder, 'figures')
     checkpoint_folder = os.path.join(result_folder, 'checkpoints')
     input_filePath = '../2022_May_cleaned/Total.csv'
 
-    configPath = '../configurations/total_target_cleaned_scaled.json'
+    configPath = '../configurations/baseline.json'
     # configPath = '../config_2022_August.json'
 
     model_path = os.path.join(checkpoint_folder, 'latest-epoch=59.ckpt')
