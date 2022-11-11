@@ -90,7 +90,6 @@ tft_params = parameters.model_parameters
 batch_size = tft_params.batch_size
 max_prediction_length = tft_params.target_sequence_length
 max_encoder_length = tft_params.input_sequence_length
-# parameters.data.time_varying_known_features.append('LinearSpace')
 
 # %% [markdown]
 # # Seed

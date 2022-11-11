@@ -35,8 +35,7 @@
             "CosWeekly"
         ],
         "target_map": {
-            "Cases.csv": "Cases",
-            "Deaths.csv": "Deaths"
+            "Cases.csv": "Cases"
         },
         "time_idx": "TimeFromStart",
      
