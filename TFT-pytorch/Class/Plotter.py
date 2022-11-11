@@ -8,6 +8,7 @@ import numpy as np
 from pandas import DataFrame, to_timedelta
 from typing import List, Dict
 from pytorch_forecasting.models.temporal_fusion_transformer import TemporalFusionTransformer
+import matplotlib.pyplot as plt
 
 sys.path.append('..')
 from script.utils import calculate_result
@@ -163,7 +164,10 @@ class PlotResults:
         return figures
 
 class PlotWeights:
-    def __init__(self, figPath:str, max_encoder_length:int, model:TemporalFusionTransformer, show:bool=True):
+    def __init__(
+        self, figPath:str, max_encoder_length:int, 
+        model:TemporalFusionTransformer, show:bool=True
+    ):
         self.figPath = figPath
         if not os.path.exists(figPath):
             print(f'Creating folder {figPath}')
@@ -230,7 +234,7 @@ class PlotWeights:
         variables = interpretation["decoder_variables"].detach().cpu()
         figures["decoder_variables"] = self.make_selection_plot(
             "Decoder variables importance", variables, 
-            self.decoder_variables, (10, 1*len(variables)+ 0.5)
+            self.decoder_variables, (10, 1.5*len(variables)+ 0.5)
         )
 
         return figures

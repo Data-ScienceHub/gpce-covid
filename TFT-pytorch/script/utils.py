@@ -157,34 +157,21 @@ def train_validation_test_split(
 
     return train_data, validation_data, test_data
 
-def train_test_split(
-    df:DataFrame, parameters:Parameters,
+def location_based_split(
+    df:DataFrame, parameters:Parameters, 
+    location:List[float], selected_columns:List
 ):
-    split = parameters.data.split
+    train_data, validation_data, test_data = train_validation_test_split(df, parameters)
+    fips_codes = np.random.shuffle(df['FIPS'].unique())
 
-    selected_columns = [col for col in df.columns if col not in ['Date', 'Name']]
+    num_train_counties = np.round(len(fips_codes) * location[0])
+    num_validation_counties = np.round(len(fips_codes) * location[1])
 
-    train_data = df[(df['Date']>=split.train_start) & (df['Date']<=split.train_end)][selected_columns]
-    train_data = train_data.sample(frac=1, random_state=parameters.model_parameters.seed) # randomly shuffle the train data, not required for others
+    train_data = train_data[train_data['FIPS'].isin(fips_codes[:num_train_counties])]
+    validation_data = validation_data[validation_data['FIPS'].isin(fips_codes[num_train_counties : (num_train_counties + num_validation_counties)])]
+    test_data = test_data[test_data['FIPS'].isin(fips_codes[(num_train_counties + num_validation_counties): ])]
 
-    input_sequence_length = parameters.model_parameters.input_sequence_length
-    
-    # at least input_sequence_length prior days data is needed to start prediction
-    # this ensures prediction starts from date test start. 
-    earliest_test_start = split.test_start - to_timedelta(input_sequence_length, unit='day')
-    if earliest_test_start in df['Date'].values:
-        test_data = df[(df['Date'] >= earliest_test_start) & (df['Date'] <= split.test_end)][selected_columns]
-    else:
-        test_data = df[(df['Date'] >= split.test_start) & (df['Date'] <= split.test_end)][selected_columns]
-
-    print(f'Train samples {train_data.shape[0]}, test samples {test_data.shape[0]}')
-
-    train_days = (split.train_end - split.train_start).days + 1
-    test_days = (split.test_end - split.test_start).days + 1
-
-    print(f'{train_days} days of training, {test_days} days of test data.')
-
-    return train_data, test_data
+    return train_data, validation_data, test_data
 
 def scale_data(
         train_data:DataFrame, validation_data:DataFrame, test_data:DataFrame, parameters:Parameters

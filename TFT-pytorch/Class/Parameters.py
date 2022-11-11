@@ -19,11 +19,12 @@ class Preprocess:
 
 class Split:
     def __init__(
-        self, data, train_start, validation_start, test_start, test_end,
+        self, data, location, train_start, validation_start, test_start, test_end,
         first_date, last_date
     ):
         self.data = data
         
+        self.location = location
         self.train_start = to_datetime(train_start)
         self.validation_start = to_datetime(validation_start )
         self.test_start = to_datetime(test_start )
