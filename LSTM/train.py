@@ -18,6 +18,7 @@ from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 SEED = 7
 tf.random.set_seed(SEED)
 SHOW_IMAGE = False
+VERBOSE = 2
 
 # %% [markdown]
 # ## Plot configuration
@@ -69,7 +70,7 @@ if not os.path.exists(output_folder):
 # # Preprocessing
 
 # %%
-df = pd.read_csv('../TFT-pytorch/2022_May_cleaned/Top_100.csv')
+df = pd.read_csv('../TFT-pytorch/2022_May_cleaned/Total.csv')
 df.head()
 
 # %%
@@ -92,7 +93,7 @@ input_sequence_length = 13
 output_sequence_length = 15
 BATCH_SIZE = 128
 BUFFER_SIZE = 1000
-EPOCHS = 5
+EPOCHS = 1
 LEARNING_RATE = 1e-5
 df['Date'] = pd.to_datetime(df['Date'])
 
@@ -140,7 +141,7 @@ def prepare_dataset(df, id=group_id):
     data, labels = [], []
     assert df.shape[0] >= (input_sequence_length+output_sequence_length), f"Data size ({df.shape[0]}) too small for a complete sequence"
 
-    for (_, county) in tqdm(df.groupby(id)):
+    for (_, county) in df.groupby(id):
         feature_df = county[selected_columns]
         target_df = county[targets]
 
@@ -250,12 +251,12 @@ def build_BiLSTM(loss:str='mse', verbose:bool=False):
 
 # %%
 model = build_LSTM()
-early_stopping = EarlyStopping(patience = 5, restore_best_weights=True)
+early_stopping = EarlyStopping(patience = 3, restore_best_weights=True)
 model_checkpoint = ModelCheckpoint(filepath='model.h5', save_best_only=True, save_weights_only=True)
 
 history = model.fit(
-    train_data, epochs=5, validation_data=val_data, 
-    callbacks=[early_stopping, model_checkpoint]
+    train_data, epochs=EPOCHS, validation_data=val_data, 
+    callbacks=[early_stopping, model_checkpoint], verbose=VERBOSE
 )
 gc.collect()
 model.load_weights(model_checkpoint.filepath)
@@ -285,7 +286,7 @@ def process_prediction(target_df, y_pred, id):
     zeroes_df = pd.DataFrame(np.zeros_like(target_df[targets]), columns=targets)
     zeroes_df[group_id] = target_df[group_id].values
     
-    for (fips, county) in tqdm(zeroes_df.groupby(id)):
+    for (fips, county) in zeroes_df.groupby(id):
         df = county[targets].reset_index(drop=True)
         # keeps counter of how many times each index appeared in prediction
         indices_counter = np.zeros(df.shape[0])
@@ -410,7 +411,7 @@ def plot_predition(df, target, plot_error=True, figure_name=None, figsize=FIGSIZ
 # ## Train data
 
 # %%
-y_pred = model.predict(x_train)
+y_pred = model.predict(x_train, verbose=VERBOSE)
 
 # upscale prediction
 y_pred = target_scaler.inverse_transform(
@@ -433,7 +434,7 @@ for target in targets:
 # ## Validation data
 
 # %%
-y_pred = model.predict(x_val)
+y_pred = model.predict(x_val, verbose=VERBOSE)
 
 # upscale prediction
 y_pred = target_scaler.inverse_transform(
@@ -456,7 +457,7 @@ for target in targets:
 # ## Test data
 
 # %%
-y_pred = model.predict(x_test)
+y_pred = model.predict(x_test, verbose=VERBOSE)
 
 # upscale prediction
 y_pred = target_scaler.inverse_transform(
