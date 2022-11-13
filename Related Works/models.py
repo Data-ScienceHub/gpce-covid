@@ -44,10 +44,10 @@ def build_GRU(
     summarize:bool=False, learning_rate:float=1e-5
     ):
     model = Sequential([
-        Bidirectional(GRU(64, return_sequences=True)),
+        GRU(64, return_sequences=True),
         Dropout(0.1),
-        Bidirectional(GRU(64, return_sequences=True)),
-        Bidirectional(GRU(32)),
+        GRU(64, return_sequences=True),
+        GRU(32),
         Dense(64),
         Dense(output_size)
     ])

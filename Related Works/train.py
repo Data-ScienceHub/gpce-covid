@@ -5,10 +5,7 @@
 import pandas as pd
 # disable chained assignments
 pd.options.mode.chained_assignment = None 
-import numpy as np
-import matplotlib.pyplot as plt
 import os, gc
-from pandas import to_timedelta
 
 import tensorflow as tf
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
