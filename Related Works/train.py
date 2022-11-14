@@ -38,7 +38,7 @@ if not os.path.exists(output_folder):
 # # Preprocessing
 
 # %%
-df = pd.read_csv('../TFT-pytorch/2022_May_cleaned/Top_100.csv')
+df = pd.read_csv('../TFT-pytorch/2022_May_cleaned/Total.csv')
 df['Date'] = pd.to_datetime(df['Date'])
 df.head()
 
@@ -141,7 +141,8 @@ model_checkpoint = ModelCheckpoint(
 
 history = model.fit(
     train_data, epochs=Config.epochs, validation_data=val_data, 
-    callbacks=[early_stopping, model_checkpoint]
+    callbacks=[early_stopping, model_checkpoint],
+    verbose=VERBOSE
 )
 gc.collect()
 model.load_weights(model_checkpoint.filepath)

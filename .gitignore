@@ -16,6 +16,7 @@ TF2/output
 Total.csv
 best_predictions_case_death.csv
 predictions_case_death.csv
+predictions.csv
 attention.csv
 !TFT-pytorch/results/
 scratch/
