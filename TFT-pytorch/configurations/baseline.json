@@ -40,9 +40,8 @@
         "time_idx": "TimeFromStart",
      
         "population": "Population.csv",
-        "population_cut": 500,
+        "population_cut": [100, 500],
         "split": {
-            "location": [0.80, 0.10, 0.10], // spliting train, validation, test based on county using FIPS
             "train_start": "2020-02-29",
             "validation_start": "2021-11-30",
             "test_start": "2021-12-15",

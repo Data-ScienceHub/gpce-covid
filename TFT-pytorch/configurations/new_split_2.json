@@ -40,7 +40,7 @@
         "time_idx": "TimeFromStart",
      
         "population": "Population.csv",
-        "population_cut": 500,
+        "population_cut": [100, 500],
         "split": {
             "train_start": "2020-02-29",
             "validation_start": "2022-02-01",

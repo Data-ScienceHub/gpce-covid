@@ -52,7 +52,7 @@ class args:
     cachePath = None # '../2022_Oct_cleaned/Total.csv'
 
     # choose this carefully
-    outputPath = '../2022_May_cleaned/'
+    outputPath = '../2022_May_cleaned_/'
 
 # %%
 # create output path if it doesn't exist
@@ -100,20 +100,12 @@ else:
 # this means how many of top counties you want to keep
 
 if dataMerger.need_population_cut():
-    top_df = dataMerger.population_cut(total_df)
-    filename = f"Top_{dataMerger.data_config.population_cut}.csv"
+    population_cuts = dataMerger.population_cut(total_df)
+    for index, population_cut in enumerate(population_cuts):
+        top_counties = dataMerger.data_config.population_cut[index]
+        filename = f"Top_{top_counties}.csv"
 
-    output_path_population_cut = os.path.join(args.outputPath, filename)
+        output_path_population_cut = os.path.join(args.outputPath, filename)
 
-    print(f'Writing population cut data to {output_path_population_cut}\n')
-    top_df.round(3).to_csv(output_path_population_cut, index=False)
-
-dataMerger.parameters.data.population_cut = 100
-if dataMerger.need_population_cut():
-    top_df = dataMerger.population_cut(total_df)
-    filename = f"Top_{dataMerger.data_config.population_cut}.csv"
-
-    output_path_population_cut = os.path.join(args.outputPath, filename)
-
-    print(f'Writing population cut data to {output_path_population_cut}\n')
-    top_df.round(3).to_csv(output_path_population_cut, index=False)
+        print(f'Writing top {top_counties} populated counties data to {output_path_population_cut}\n')
+        population_cuts[index].round(3).to_csv(output_path_population_cut, index=False)

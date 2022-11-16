@@ -342,7 +342,7 @@ class DataMerger:
         Returns:
             bool: yes or no 
         """
-        return self.parameters.data.population_cut > 0
+        return len(self.parameters.data.population_cut) > 0
 
     def get_population(self) -> DataFrame:
         """Loads the population file
@@ -355,7 +355,7 @@ class DataMerger:
         
         return population
 
-    def population_cut(self, total_df:DataFrame) -> DataFrame:
+    def population_cut(self, total_df:DataFrame) -> List[DataFrame]:
         """Slices the total feature file based on number of top counties by population, 
         mentioned in `Population cut`
 
@@ -363,15 +363,21 @@ class DataMerger:
             total_df: total feature file
 
         Returns:
-            DataFrame: selected feature files
+            List[DataFrame]: list selected feature files
         """
+        if not self.need_population_cut():
+            print('Error !! Number not specified for population cuts.')
+            return []
+
+        population_cuts = []
         # number of top counties (by population) to keep
-        top_counties = self.parameters.data.population_cut
-        print(f'Slicing based on top {top_counties} counties by population')
-        
-        population = self.get_population()
-        sorted_fips = population.sort_values(by=['POPESTIMATE'], ascending=False)['FIPS'].values
+        for top_counties in self.parameters.data.population_cut:
+            print(f'Slicing based on top {top_counties} counties by population')
+            
+            population = self.get_population()
+            sorted_fips = population.sort_values(by=['POPESTIMATE'], ascending=False)['FIPS'].values
 
-        df = total_df[total_df['FIPS'].isin(sorted_fips[:top_counties])]
+            df = total_df[total_df['FIPS'].isin(sorted_fips[:top_counties])]
+            population_cuts.append(df)
 
-        return df
+        return population_cuts
