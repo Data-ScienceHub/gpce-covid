@@ -49,10 +49,10 @@ class args:
     dataPath = '../../dataset_raw/CovidMay17-2022'
     supportPath = '../../dataset_raw/Support files'
     configPath = '../config_2022_May.json'
-    cachePath = None # '../2022_Oct_cleaned/Total.csv'
+    cachePath = None # '../2022_May_cleaned/Total.csv'
 
     # choose this carefully
-    outputPath = '../2022_May_cleaned_/'
+    outputPath = '../2022_May_cleaned/'
 
 # %%
 # create output path if it doesn't exist
@@ -107,5 +107,5 @@ if dataMerger.need_population_cut():
 
         output_path_population_cut = os.path.join(args.outputPath, filename)
 
-        print(f'Writing top {top_counties} populated counties data to {output_path_population_cut}\n')
+        print(f'Writing top {top_counties} populated counties data to {output_path_population_cut}.')
         population_cuts[index].round(3).to_csv(output_path_population_cut, index=False)

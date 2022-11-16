@@ -4,7 +4,7 @@ Merging feature Age Distribution.csv with length 3142
 Merging feature Health Disparities.csv with length 3142
 
 Merged static features have 3142 counties
-Removing outliers from dynamic inputs.
+Removing outliers from dynamic inputs.   
 Reading Disease Spread.csv
 Outliers found 7415, percent 0.234
 Min date 2020-01-22 00:00:00, max date 2022-10-25 00:00:00
@@ -38,22 +38,14 @@ Min date 2020-01-22 00:00:00, max date 2022-10-25 00:00:00
 Will filter out target data outside range 2020-03-01 00:00:00 and 2022-10-25 00:00:00.
 Length 3041456.
 
-Reading Deaths.csv
-Outliers found 224682, percent 7.101
-Setting negative daily Deaths counts to zero.
-Min date 2020-01-22 00:00:00, max date 2022-10-25 00:00:00
-Will filter out target data outside range 2020-03-01 00:00:00 and 2022-10-25 00:00:00.
-Length 3041456.
-
-Total target feature shape (3041456, 4)
+Total target feature shape (3041456, 3)
 Merging all features
-Total merged data shape (3044598, 10)
+Total merged data shape (3044598, 9)
 Missing percentage in total data
 VaccinationFull    29.62
 DiseaseSpread       0.10
 Transmission        0.10
 Cases               0.10
-Deaths              0.10
 FIPS                0.00
 AgeDist             0.00
 HealthDisp          0.00
@@ -64,8 +56,8 @@ Filling null values with 0
 Adding time based embeddings.
 Writing total data to ../2022_Oct_cleaned/Total.csv
 
-Slicing based on top 500 counties by population
-Writing population cut data to ../2022_Oct_cleaned/Top_500.csv
-
 Slicing based on top 100 counties by population
-Writing population cut data to ../2022_Oct_cleaned/Top_100.csv
+Slicing based on top 500 counties by population
+Writing top 100 populated counties data to ../2022_Oct_cleaned/Top_100.csv
+
+Writing top 500 populated counties data to ../2022_Oct_cleaned/Top_500.csv
