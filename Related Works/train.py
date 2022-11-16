@@ -70,7 +70,6 @@ class Config:
     learning_rate = 1e-6
     early_stopping_patience = 5
     loss = 'mse'
-    build_model = build_LSTM
 
 targets = Config.targets
 group_id = Config.group_id
@@ -126,8 +125,8 @@ test_data = cache_data(
 
 # %%
 output_size = len(targets) * output_sequence_length
-model = Config.build_model(
-    output_size=output_size, loss=Config.loss, 
+model = build_LSTM(
+    input_shape=x_train.shape[1:], output_size=output_size, loss=Config.loss, 
     summarize=False, learning_rate=Config.learning_rate
 )
 early_stopping = EarlyStopping(
