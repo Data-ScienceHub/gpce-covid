@@ -62,7 +62,7 @@ class args:
     model_path = os.path.join(checkpoint_folder, 'latest-epoch=59.ckpt')
 
     # set this to false when submitting batch script, otherwise it prints a lot of lines
-    show_progress_bar = True
+    show_progress_bar = False
 
     # interpret_output has high memory requirement
     # results in out-of-memery for Total.csv and a model of hidden size 64, even with 64GB memory
