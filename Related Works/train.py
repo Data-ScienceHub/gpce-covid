@@ -13,11 +13,13 @@ from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 from models import *
 from plotter import *
 from utils import *
+from splits import *
 
 SEED = 7
 tf.random.set_seed(SEED)
 SHOW_IMAGE = False
 VERBOSE = 2
+Split = Split_1
 
 # %% [markdown]
 # ## Google Colab
@@ -39,26 +41,18 @@ if not os.path.exists(output_folder):
 
 # %%
 df = pd.read_csv('../TFT-pytorch/2022_May_cleaned/Total.csv')
-df['Date'] = pd.to_datetime(df['Date'])
+df['Date'] = to_datetime(df['Date'])
 df.head()
 
 # %%
-from dataclasses import dataclass
-
-@dataclass
-class Split:
-    train_start = pd.to_datetime("2020-02-29")
-    validation_start = pd.to_datetime("2021-11-30")
-    test_start = pd.to_datetime("2021-12-15")
-    test_end = pd.to_datetime("2021-12-29")
-
 @dataclass
 class Config:
-    features = [
-    'AgeDist', 'HealthDisp', 
-    'DiseaseSpread', 'Transmission', 'VaccinationFull', 'SocialDist', 
-    'SinWeekly', 'CosWeekly', 'TimeFromStart'
-    ]  # note that TimeFromStart is an index feature commonly used by all timeseries models
+    static_features = ['AgeDist', 'HealthDisp']
+    past_features = ['DiseaseSpread', 'Transmission', 'VaccinationFull', 'SocialDist']
+    known_future = ['SinWeekly', 'CosWeekly']
+    time_index = 'TimeFromStart' # note that this is an index feature commonly used by all timeseries models
+
+    features =  [time_index] + static_features + past_features + known_future
     targets = ['Cases']
     group_id = 'FIPS'
     selected_columns = features + targets
