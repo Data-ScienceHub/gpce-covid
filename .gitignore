@@ -14,9 +14,8 @@ TF2/2021_Nov
 TF2/output
 
 Total.csv
-best_predictions_case_death.csv
-predictions_case_death.csv
 predictions.csv
+predictions_case.csv
+predictions_case_death.csv
 attention.csv
-!TFT-pytorch/results/
 scratch/
