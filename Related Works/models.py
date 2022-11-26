@@ -1,5 +1,7 @@
-from tensorflow.keras.layers import Dense, LSTM, Bidirectional, GRU, Dropout
-from tensorflow.keras import optimizers, Sequential
+from tensorflow.keras.layers import Dense, LSTM, Bidirectional, GRU, Dropout, Conv1D
+
+from tensorflow.keras.layers import MultiHeadAttention, GlobalAveragePooling1D, LayerNormalization
+from tensorflow.keras import optimizers, Sequential, Input, Model
 from typing import Tuple
 
 
@@ -96,3 +98,49 @@ def build_GRU(
     adam = optimizers.Adam(learning_rate=learning_rate)
     model.compile(loss=loss, optimizer=adam)
     return model
+
+def transformer_encoder(
+    inputs, head_size, num_heads, ff_dim, 
+    dropout=0, activation='relu'
+    ):
+    # Attention and Normalization
+    x = MultiHeadAttention(
+        key_dim=head_size, num_heads=num_heads, dropout=dropout
+    )(inputs, inputs)
+    x = Dropout(dropout)(x)
+    x = LayerNormalization(epsilon=1e-6)(x)
+    res = x + inputs
+
+    # Feed Forward Part
+    x = Conv1D(filters=ff_dim, kernel_size=1, activation=activation)(res)
+    x = Dropout(dropout)(x)
+    x = Conv1D(filters=inputs.shape[-1], kernel_size=1)(x)
+    x = LayerNormalization(epsilon=1e-6)(x)
+    return x + res
+
+def build_model(
+    input_shape: Tuple[int],
+    output_size:int,
+    head_size:int=64,
+    num_heads=4,
+    ff_dim=4,
+    num_transformer_blocks=2,
+    mlp_units=[128],
+    activation='relu',
+    dropout=0,
+    mlp_dropout=0,
+):
+    inputs = Input(shape=input_shape)
+    x = inputs
+    for _ in range(num_transformer_blocks):
+        x = transformer_encoder(
+            x, head_size, num_heads, 
+            ff_dim, dropout, activation
+        )
+
+    x = GlobalAveragePooling1D(data_format="channels_first")(x)
+    for dim in mlp_units:
+        x = Dense(dim, activation=activation)(x)
+        x = Dropout(mlp_dropout)(x)
+    outputs = Dense(output_size)(x)
+    return Model(inputs, outputs)
