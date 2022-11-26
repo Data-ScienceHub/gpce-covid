@@ -3,6 +3,8 @@ from pandas import DataFrame
 from matplotlib.ticker import StrMethodFormatter, MultipleLocator
 from utils import calculate_result
 
+# reset to default first, since some imported libraries can have its own settings
+plt.rcParams.update(plt.rcParamsDefault)
 # https://matplotlib.org/stable/tutorials/introductory/customizing.html#the-default-matplotlibrc-file
 SMALL_SIZE = 20
 MEDIUM_SIZE = 24

@@ -28,11 +28,10 @@ print(device)
 # %%
 import pytorch_lightning as pl
 from pytorch_lightning.callbacks import EarlyStopping
-from pytorch_lightning.loggers import TensorBoardLogger
 
 from pytorch_forecasting import DeepAR, TimeSeriesDataSet
 from pytorch_forecasting.data import GroupNormalizer, MultiNormalizer
-from pytorch_forecasting.metrics import MultivariateNormalDistributionLoss, MultiLoss, MultivariateDistributionLoss, RMSE
+from pytorch_forecasting.metrics import MultivariateNormalDistributionLoss, MultiLoss, MultivariateDistributionLoss
 
 # %% [markdown]
 # # Load input
@@ -42,7 +41,7 @@ from dataclasses import dataclass
 
 @dataclass
 class args:
-    outputPath = '../results/DeepVAR_top_100'
+    outputPath = '../scratch/DeepVAR_top_100'
     figPath = os.path.join(outputPath, 'figures')
     checkpoint_folder = os.path.join(outputPath, 'checkpoints')
     input_filePath = '../2022_May_cleaned/Top_100.csv'
@@ -55,11 +54,14 @@ class args:
     show_progress_bar = False
 
 @dataclass
-class Config:
-    batch_size = 128
-    epochs = 10
-    learning_rate = 1e-3
+class Model_Config:
+    epochs = 1
+    learning_rate = 1e-4
     early_stopping_patience = 3
+    rnn_layers = 3
+    hidden_size = 64
+    dropout = 0
+    optimizer = 'adam'
 
 # %%
 total_data = pd.read_csv(args.input_filePath)
@@ -147,7 +149,6 @@ def prepare_data(data: pd.DataFrame, pm: Parameters, train=False):
     max_encoder_length=max_encoder_length,
     max_prediction_length=max_prediction_length,
     static_reals=pm.data.static_features,
-    # static_categoricals=["FIPS"],
     time_varying_known_reals=pm.data.time_varying_known_features, # known features go to encoder. for DeepAR set(encoder) - set(targets) == set(decoder)
     time_varying_unknown_reals = targets, # unknown features got to decoder
     target_normalizer = MultiNormalizer(
@@ -155,7 +156,6 @@ def prepare_data(data: pd.DataFrame, pm: Parameters, train=False):
     )
   )
 
-  # batch_sampler="synchronized" is a must for DeepAR or DeepVAR here
   if train:
     dataloader = data_timeseries.to_dataloader(
       train=True, batch_size=model_params.batch_size, batch_sampler="synchronized"
@@ -191,36 +191,20 @@ early_stop_callback = EarlyStopping(
 best_checkpoint = pl.callbacks.ModelCheckpoint(
     dirpath=args.checkpoint_folder, monitor="val_loss", filename="best-{epoch}"
 )
-# latest_checkpoint = pl.callbacks.ModelCheckpoint(
-#     dirpath=args.checkpoint_folder, every_n_epochs=1, filename="latest-{epoch}"
-# )
-
-logger = TensorBoardLogger(args.outputPath)  # logging results to a tensorboard
 
 # https://pytorch-lightning.readthedocs.io/en/stable/common/trainer.html#trainer-class-api
 trainer = pl.Trainer(
-    max_epochs = model_params.epochs,
+    max_epochs = Model_Config.epochs,
     accelerator = 'auto',
     enable_model_summary=True,
-    gradient_clip_val = model_params.clipnorm,
     callbacks = [early_stop_callback, best_checkpoint],
     enable_progress_bar = args.show_progress_bar,
-    check_val_every_n_epoch = 1
+    check_val_every_n_epoch = 1,
+    logger=False
 )
 
 # %% [markdown]
 # ## Model
-
-# %%
-@dataclass
-class Model_Config:
-    epochs = 10
-    learning_rate = 1e-4
-    early_stopping_patience = 3
-    rnn_layers = 3
-    hidden_size = 64
-    dropout = 0
-    optimizer = 'adam'
 
 # %%
 # https://pytorch-forecasting.readthedocs.io/en/stable/api/pytorch_forecasting.models.deepar.DeepAR.html
@@ -231,7 +215,6 @@ model = DeepAR.from_dataset(
     hidden_size= Model_Config.hidden_size,
     dropout=Model_Config.dropout,
     optimizer=Model_Config.optimizer,
-    log_interval=1,
      # Multivariate loss is what makes this DeepAR a DeepVAR model
     loss=MultiLoss([MultivariateNormalDistributionLoss() for _ in targets])
 )
@@ -341,7 +324,7 @@ train_result_merged['split'] = 'train'
 validation_result_merged['split'] = 'validation'
 test_result_merged['split'] = 'test'
 df = pd.concat([train_result_merged, validation_result_merged, test_result_merged])
-df.to_csv(os.path.join(args.outputPath, 'predictions_case_death.csv'), index=False)
+df.to_csv(os.path.join(args.outputPath, 'predictions.csv'), index=False)
 
 df.head()
 

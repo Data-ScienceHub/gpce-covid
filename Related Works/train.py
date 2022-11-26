@@ -143,9 +143,9 @@ history = model.fit(
 gc.collect()
 end = datetime.now()
 print(f'\n----Training ended at {end}, elapsed time {end-start}.')
-print(f'Best model by validation loss saved at {model_checkpoint.filepath}.')
+print(f'Best model by validation loss saved at {model_checkpoint.best_model_path}.')
 print(f'Loading best model.')
-model.load_weights(model_checkpoint.filepath)
+model.load_weights(model_checkpoint.best_model_path)
 
 # %% [markdown]
 # ## History

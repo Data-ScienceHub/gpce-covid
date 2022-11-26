@@ -35,7 +35,7 @@ Split = Baseline
 
 # %%
 # ## Result folder
-output_folder = 'results_NHiTS'
+output_folder = 'results_NBEATS'
 if not os.path.exists(output_folder):
     os.makedirs(output_folder, exist_ok=True)
 
@@ -76,6 +76,8 @@ output_sequence_length = Config.output_sequence_length
 df = pd.read_csv('../TFT-pytorch/2022_May_cleaned/Top_100.csv')
 df['Date'] = to_datetime(df['Date'])
 df[time_index] = df[time_index].astype(int)
+
+print(df.head(3))
 
 # %% [markdown]
 # ## Split and scale
@@ -125,13 +127,13 @@ val_series, val_past_covariates = get_covariates(val_df)
 # ## Build
 
 # %%
-from darts.models import NHiTSModel
+from darts.models import NBEATSModel
 from pytorch_lightning.trainer import Trainer
 from torch.nn.modules import MSELoss
 from torch.optim import Adam
 
 # %%
-model = NHiTSModel(
+model = NBEATSModel(
     input_chunk_length=input_sequence_length, 
     output_chunk_length=output_sequence_length,
     batch_size=Config.batch_size, loss_fn=MSELoss(),
@@ -156,12 +158,12 @@ checkpoint = ModelCheckpoint(
 start = datetime.now()
 print(f'\n----Training started at {start}----\n')
 model.fit(
-    train_series, val_series=val_series, verbose=VERBOSE,
+    train_series, val_series=val_series, verbose=False,
     past_covariates=train_past_covariates, val_past_covariates=val_past_covariates,
     trainer = Trainer(
         accelerator= "auto", max_epochs=Config.epochs,
         callbacks=[early_stopping, checkpoint], 
-        enable_progress_bar=VERBOSE, logger=False
+        logger=False, enable_progress_bar=VERBOSE
     )
 )
 gc.collect()
@@ -178,7 +180,7 @@ _ = model.load(checkpoint.best_model_path)
 
 # %%
 model.trainer = Trainer(
-    accelerator= "auto", enable_progress_bar=False, logger=False
+    accelerator= "auto", logger=False, enable_progress_bar=False
 )
 
 # %% [markdown]
@@ -252,6 +254,7 @@ def historical_forecast(
 
 # %% [markdown]
 # ## Train
+# The training data inference takes too long for some reason. The `historical_forecast` is not very optimized as the `fit` method.
 
 # %%
 # print('\nTrain prediction')
@@ -285,7 +288,7 @@ print(val_prediction_df.describe())
 # %%
 for target in targets:
     plot_predition(
-        val_prediction_df, target, plot_error=True, show_image=SHOW_IMAGE,
+        val_prediction_df, target, show_image=SHOW_IMAGE,
         figure_path=os.path.join(output_folder, f'Summed_{target}_Validation.jpg')
     )
 
@@ -320,3 +323,5 @@ merged_df = pd.concat([val_prediction_df, test_prediction_df], axis=0)
 merged_df.drop(columns=['TimeFromStart'], inplace=True)
 
 merged_df.to_csv(os.path.join(output_folder, 'predictions.csv'), index=False)
+
+
