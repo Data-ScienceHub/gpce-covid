@@ -58,7 +58,7 @@ def plot_train_history(
         plt.show()
 
 def plot_predition(
-    df:DataFrame, target:str, plot_error:bool=True, 
+    df:DataFrame, target:str, plot_error:bool=False, 
     figure_path:str=None, figsize=FIGSIZE, show_image:bool=True
 ):
     x_major_ticks = DATE_TICKS

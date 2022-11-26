@@ -283,7 +283,7 @@ train_result_merged['split'] = 'train'
 validation_result_merged['split'] = 'validation'
 test_result_merged['split'] = 'test'
 df = pd.concat([train_result_merged, validation_result_merged, test_result_merged])
-df.to_csv(os.path.join(plotter.figPath, 'predictions_case_death.csv'), index=False)
+df.to_csv(os.path.join(plotter.figPath, f"predictions_{'_'.join(targets)}.csv"), index=False)
 
 df.head()
 

@@ -179,7 +179,7 @@ print(train_prediction_df.describe())
 show_result(train_prediction_df, targets)
 for target in targets:
     plot_predition(
-        train_prediction_df, target, show_image=SHOW_IMAGE,
+        train_prediction_df, target, show_image=SHOW_IMAGE, plot_error=True,
         figure_path=os.path.join(output_folder, f'Summed_{target}_Train.jpg')
     )
 
