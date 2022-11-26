@@ -9,6 +9,7 @@ import os, gc
 
 import tensorflow as tf
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
+from datetime import datetime
 
 from models import *
 from plotter import *
@@ -132,12 +133,18 @@ model_checkpoint = ModelCheckpoint(
     save_best_only=True, save_weights_only=True
 )
 
+start = datetime.now()
+print(f'\n----Training started at {start}----\n')
 history = model.fit(
     train_data, epochs=Config.epochs, validation_data=val_data, 
     callbacks=[early_stopping, model_checkpoint],
     verbose=VERBOSE
 )
 gc.collect()
+end = datetime.now()
+print(f'\n----Training ended at {end}, elapsed time {end-start}.')
+print(f'Best model by validation loss saved at {model_checkpoint.filepath}.')
+print(f'Loading best model.')
 model.load_weights(model_checkpoint.filepath)
 
 # %% [markdown]
@@ -248,3 +255,4 @@ val_prediction_df['Split'] = 'validation'
 test_prediction_df['Split'] = 'test'
 merged_df = pd.concat([train_prediction_df, val_prediction_df, test_prediction_df], axis=0)
 merged_df.to_csv(os.path.join(output_folder, 'predictions.csv'), index=False)
+print(f'Ended at {datetime.now()}. Elapsed time {datetime.now() - start}')
