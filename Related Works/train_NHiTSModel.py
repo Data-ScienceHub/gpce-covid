@@ -175,11 +175,6 @@ _ = model.load(checkpoint.best_model_path)
 # %% [markdown]
 # # Historical forecast
 
-# %%
-model.trainer = Trainer(
-    accelerator= "auto", enable_progress_bar=False, logger=False
-)
-
 # %% [markdown]
 # ## Util
 
