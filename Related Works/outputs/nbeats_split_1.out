@@ -1,0 +1,48 @@
+2022-11-27 10:57:09.944575: I tensorflow/core/platform/cpu_feature_guard.cc:193] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F AVX512_VNNI FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2022-11-27 10:57:14.861317: I tensorflow/core/util/util.cc:169] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2022-11-27 10:57:17.094199: E tensorflow/stream_executor/cuda/cuda_blas.cc:2981] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2022-11-27 10:57:33.596172: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libnvinfer.so.7'; dlerror: libnvinfer.so.7: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /sw/centos-7.4/anaconda3/current/lib:/u/mi3se/anaconda3/envs/ml/lib/:/u/mi3se/anaconda3/envs/ml/lib
+2022-11-27 10:57:33.597701: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libnvinfer_plugin.so.7'; dlerror: libnvinfer_plugin.so.7: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /sw/centos-7.4/anaconda3/current/lib:/u/mi3se/anaconda3/envs/ml/lib/:/u/mi3se/anaconda3/envs/ml/lib
+2022-11-27 10:57:33.597730: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Cannot dlopen some TensorRT libraries. If you would like to use Nvidia GPU with TensorRT, please make sure the missing libraries mentioned above are installed properly.
+   FIPS  AgeDist  HealthDisp  ... LinearSpace  SinWeekly  CosWeekly
+0  1001   0.1611       4.202  ...         0.0    -0.9749    -0.2225
+1  1001   0.1611       4.202  ...         0.0    -0.7818     0.6235
+2  1001   0.1611       4.202  ...         0.0     0.0000     1.0000
+
+[3 rows x 14 columns]
+Shapes: train (2111424, 14), validation (87976, 14), test (87976, 14).
+
+----Training started at 2022-11-27 10:59:26.218867----
+
+
+----Training ended at 2022-11-27 12:57:05.716408, elapsed time 1:57:39.497541.
+Best model by validation loss saved at /u/mi3se/Git/gpce-covid/Related Works/results_NBEATS_split_1/best-epoch=0.ckpt.
+Loading best model.
+
+Validation prediction
+Target Cases, MAE 89.279, RMSE 372.84, RMSLE 2.1356, SMAPE 1.1923. NNSE 0.69782.
+
+               FIPS  TimeFromStart  Predicted_Cases         Cases
+count  47130.000000    47130.00000     47130.000000  47130.000000
+mean   30383.649268      679.00000        76.741653    130.303862
+std    15160.256142        4.32054       305.132965    566.586309
+min     1001.000000      672.00000         0.000000      0.000000
+25%    18177.000000      675.00000         0.000000      0.000000
+50%    29176.000000      679.00000        11.000000      8.000000
+75%    45081.000000      683.00000        37.000000     59.000000
+max    56045.000000      686.00000     10698.000000  20618.000000
+
+Test prediction
+Target Cases, MAE 61.787, RMSE 257.71, RMSLE 1.9723, SMAPE 1.0458. NNSE 0.78938.
+
+               FIPS  TimeFromStart  Predicted_Cases         Cases
+count  47130.000000    47130.00000     47130.000000  47130.000000
+mean   30383.649268      694.00000       101.753723    113.217929
+std    15160.256142        4.32054       360.926392    498.915690
+min     1001.000000      687.00000         0.000000      0.000000
+25%    18177.000000      690.00000         4.000000      0.000000
+50%    29176.000000      694.00000        21.000000     10.000000
+75%    45081.000000      698.00000        64.000000     68.000000
+max    56045.000000      701.00000     12508.000000  20618.000000
+Ended at 2022-11-27 13:12:28.620441. Elapsed time 2:13:02.401599
