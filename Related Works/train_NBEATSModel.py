@@ -23,7 +23,6 @@ import warnings
 warnings.filterwarnings('ignore', category=UserWarning)
 warnings.filterwarnings('ignore', category=FutureWarning)
 
-from models import *
 from utils import *
 from splits import *
 from plotter import *
