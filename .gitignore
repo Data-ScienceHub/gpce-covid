@@ -8,7 +8,7 @@ __pycache__/
 # checkpoint and data folders
 # checkpoints
 lightning_logs
-*.out
+# *.out
 
 TF2/2021_Nov
 TF2/output

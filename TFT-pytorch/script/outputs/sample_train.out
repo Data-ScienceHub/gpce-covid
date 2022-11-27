@@ -1,0 +1,313 @@
+Global seed set to 7
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+Missing logger folder: ../results/total_target_cleaned_scaled_old_2/lightning_logs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [3]
+
+   | Name                               | Type                            | Params
+----------------------------------------------------------------------------------------
+0  | loss                               | MultiLoss                       | 0     
+1  | logging_metrics                    | ModuleList                      | 0     
+2  | input_embeddings                   | MultiEmbedding                  | 0     
+3  | prescalers                         | ModuleDict                      | 176   
+4  | static_variable_selection          | VariableSelectionNetwork        | 3.3 K 
+5  | encoder_variable_selection         | VariableSelectionNetwork        | 16.2 K
+6  | decoder_variable_selection         | VariableSelectionNetwork        | 5.2 K 
+7  | static_context_variable_selection  | GatedResidualNetwork            | 16.8 K
+8  | static_context_initial_hidden_lstm | GatedResidualNetwork            | 16.8 K
+9  | static_context_initial_cell_lstm   | GatedResidualNetwork            | 16.8 K
+10 | static_context_enrichment          | GatedResidualNetwork            | 16.8 K
+11 | lstm_encoder                       | LSTM                            | 33.3 K
+12 | lstm_decoder                       | LSTM                            | 33.3 K
+13 | post_lstm_gate_encoder             | GatedLinearUnit                 | 8.3 K 
+14 | post_lstm_add_norm_encoder         | AddNorm                         | 128   
+15 | static_enrichment                  | GatedResidualNetwork            | 20.9 K
+16 | multihead_attn                     | InterpretableMultiHeadAttention | 10.4 K
+17 | post_attn_gate_norm                | GateAddNorm                     | 8.4 K 
+18 | pos_wise_ff                        | GatedResidualNetwork            | 16.8 K
+19 | pre_output_gate_norm               | GateAddNorm                     | 8.4 K 
+20 | output_layer                       | ModuleList                      | 130   
+----------------------------------------------------------------------------------------
+231 K     Trainable params
+0         Non-trainable params
+231 K     Total params
+0.927     Total estimated model params size (MB)
+Metric val_loss improved. New best score: 0.000
+Metric val_loss improved by 0.000 >= min_delta = 0. New best score: 0.000
+Metric val_loss improved by 0.000 >= min_delta = 0. New best score: 0.000
+Metric val_loss improved by 0.000 >= min_delta = 0. New best score: 0.000
+Metric val_loss improved by 0.000 >= min_delta = 0. New best score: 0.000
+Metric val_loss improved by 0.000 >= min_delta = 0. New best score: 0.000
+Metric val_loss improved by 0.000 >= min_delta = 0. New best score: 0.000
+Metric val_loss improved by 0.000 >= min_delta = 0. New best score: 0.000
+Monitored metric val_loss did not improve in the last 3 records. Best score: 0.000. Signaling Trainer to stop.
+cuda
+(2541878, 15)
+There are 3142 unique counties in the dataset.
+Train samples 2010880, validation samples 87976, test samples 87976
+640 days of training, 15 days of validation data, 15 days of test data.
+Scaling static and dynamic input features: ['AgeDist', 'HealthDisp', 'DiseaseSpread', 'Transmission', 'VaccinationFull', 'SocialDist']
+Scaling targets ['Cases', 'Deaths']
+Number of parameters in network: 231.8k
+
+----Training started at 2022-09-02 10:26:19.747266----
+
+
+----Training ended at 2022-09-02 18:41:53.953052, elapsed time 8:15:34.205786
+Best model by validation loss saved at /u/mi3se/Git/COVID-19-forecast/results/total_target_cleaned_scaled_old_2/checkpoints/best-epoch=9.ckpt
+Creating folder ../results/total_target_cleaned_scaled_old_2/figures
+
+---Training results--
+
+prediction list of length 2 torch.Size([1926046, 15, 1])
+encoder_attention torch.Size([1926046, 15, 4, 13])
+decoder_attention torch.Size([1926046, 15, 4, 15])
+static_variables torch.Size([1926046, 1, 2])
+encoder_variables torch.Size([1926046, 13, 1, 9])
+decoder_variables torch.Size([1926046, 15, 1, 3])
+decoder_lengths torch.Size([1926046])
+encoder_lengths torch.Size([1926046])
+Target Cases, MAE 10.261, RMSE 48.812, SMAPE 0.73017. NNSE 0.88027.
+Target Deaths, MAE 0.16232, RMSE 0.92428, SMAPE 0.11084. NNSE 0.85957.
+
+Day 1
+Target Cases, MAE 10.142, RMSE 49.494, SMAPE 0.74155. NNSE 0.8779.
+Target Deaths, MAE 0.1663, RMSE 0.95191, SMAPE 0.11366. NNSE 0.85422.
+
+
+---Validation results--
+
+Target Cases, MAE 21.726, RMSE 91.187, SMAPE 0.88786. NNSE 0.71837.
+Target Deaths, MAE 0.18368, RMSE 1.1135, SMAPE 0.112. NNSE 0.68759.
+
+
+---Test results--
+
+Target Cases, MAE 40.049, RMSE 249.42, SMAPE 0.88551. NNSE 0.62427.
+Target Deaths, MAE 0.21903, RMSE 1.279, SMAPE 0.12108. NNSE 0.67483.
+
+Day 1
+Target Cases, MAE 21.499, RMSE 84.668, SMAPE 0.59494. NNSE 0.76486.
+Target Deaths, MAE 0.29774, RMSE 1.8091, SMAPE 0.12082. NNSE 0.67819.
+
+Day 2
+Target Cases, MAE 20.774, RMSE 111.44, SMAPE 0.64294. NNSE 0.74496.
+Target Deaths, MAE 0.20751, RMSE 1.1209, SMAPE 0.1277. NNSE 0.5565.
+
+Day 3
+Target Cases, MAE 29.777, RMSE 235.01, SMAPE 0.59129. NNSE 0.60841.
+Target Deaths, MAE 0.21165, RMSE 1.0692, SMAPE 0.11077. NNSE 0.81485.
+
+Day 4
+Target Cases, MAE 19.178, RMSE 118.91, SMAPE 1.1646. NNSE 0.71136.
+Target Deaths, MAE 0.16598, RMSE 0.97816, SMAPE 0.1147. NNSE 0.60033.
+
+Day 5
+Target Cases, MAE 17.259, RMSE 114.44, SMAPE 1.1035. NNSE 0.69936.
+Target Deaths, MAE 0.11903, RMSE 0.7321, SMAPE 0.099158. NNSE 0.5587.
+
+Day 6
+Target Cases, MAE 37.678, RMSE 179.63, SMAPE 0.67112. NNSE 0.74619.
+Target Deaths, MAE 0.22247, RMSE 1.1148, SMAPE 0.1258. NNSE 0.552.
+
+Day 7
+Target Cases, MAE 26.617, RMSE 161.44, SMAPE 0.64822. NNSE 0.68283.
+Target Deaths, MAE 0.2395, RMSE 1.4583, SMAPE 0.11682. NNSE 0.76264.
+
+Day 8
+Target Cases, MAE 36.668, RMSE 202.98, SMAPE 0.6527. NNSE 0.68795.
+Target Deaths, MAE 0.19367, RMSE 0.87539, SMAPE 0.11505. NNSE 0.86967.
+
+Day 9
+Target Cases, MAE 50.546, RMSE 275, SMAPE 0.90395. NNSE 0.62093.
+Target Deaths, MAE 0.29058, RMSE 1.5706, SMAPE 0.14756. NNSE 0.53087.
+
+Day 10
+Target Cases, MAE 73.523, RMSE 479.87, SMAPE 1.2629. NNSE 0.54059.
+Target Deaths, MAE 0.28135, RMSE 1.7718, SMAPE 0.13767. NNSE 0.45667.
+
+Day 11
+Target Cases, MAE 23.286, RMSE 155.36, SMAPE 1.2292. NNSE 0.62664.
+Target Deaths, MAE 0.12922, RMSE 0.67604, SMAPE 0.1229. NNSE 0.11763.
+
+Day 12
+Target Cases, MAE 31.028, RMSE 255.15, SMAPE 1.1654. NNSE 0.60566.
+Target Deaths, MAE 0.10694, RMSE 0.66129, SMAPE 0.10051. NNSE 0.53604.
+
+Day 13
+Target Cases, MAE 62.798, RMSE 260.82, SMAPE 0.86279. NNSE 0.69526.
+Target Deaths, MAE 0.2309, RMSE 1.3092, SMAPE 0.11887. NNSE 0.68393.
+
+Day 14
+Target Cases, MAE 61.343, RMSE 283.74, SMAPE 0.86583. NNSE 0.61186.
+Target Deaths, MAE 0.31222, RMSE 1.7848, SMAPE 0.12993. NNSE 0.66265.
+
+Day 15
+Target Cases, MAE 88.769, RMSE 433.44, SMAPE 0.92342. NNSE 0.5876.
+Target Deaths, MAE 0.27673, RMSE 1.3556, SMAPE 0.12795. NNSE 0.75442.
+
+
+---Per county train results--
+
+County Delaware, Kent, FIPS 10001
+Target Cases, MAE 21.461, RMSE 39.661, SMAPE 0.71264. NNSE 0.70136.
+Target Deaths, MAE 0.75837, RMSE 1.3298, SMAPE 0.76599. NNSE 0.52356.
+
+
+County Delaware, New Castle, FIPS 10003
+Target Cases, MAE 64.292, RMSE 117.64, SMAPE 0.66026. NNSE 0.67103.
+Target Deaths, MAE 1.4689, RMSE 2.4485, SMAPE 1.0177. NNSE 0.54851.
+
+
+County Delaware, Sussex, FIPS 10005
+Target Cases, MAE 29.083, RMSE 50.943, SMAPE 0.72453. NNSE 0.68189.
+Target Deaths, MAE 0.98006, RMSE 1.5448, SMAPE 0.88977. NNSE 0.53466.
+
+
+County Alabama, Autauga, FIPS 1001
+Target Cases, MAE 10.571, RMSE 18.813, SMAPE 0.84815. NNSE 0.5976.
+Target Deaths, MAE 0, RMSE 0, SMAPE 0. NNSE nan.
+
+
+County Alabama, Baldwin, FIPS 1003
+Target Cases, MAE 31.274, RMSE 60.015, SMAPE 0.72987. NNSE 0.67384.
+Target Deaths, MAE 0.7815, RMSE 1.4341, SMAPE 0.72512. NNSE 0.59547.
+
+
+Variables: static ['AgeDist', 'HealthDisp'], encoder ['LinearSpace', 'SinWeekly', 'CosWeekly', 'DiseaseSpread', 'Transmission', 'VaccinationFull', 'SocialDist', 'Cases', 'Deaths'], decoder ['LinearSpace', 'SinWeekly', 'CosWeekly'].
+Weekdays when these attentions are maximum: [(-13, 'Fri'), (-12, 'Fri'), (-11, 'Fri'), (-10, 'Fri'), (-9, 'Fri'), (-8, 'Fri'), (-7, 'Fri'), (-6, 'Fri'), (-5, 'Fri'), (-4, 'Fri'), (-3, 'Fri'), (-2, 'Fri'), (-1, 'Fri')]
+Interpreting train predictions
+attention tensor([0.1287, 0.0738, 0.0696, 0.0698, 0.0704, 0.0722, 0.0741, 0.0730, 0.0734,
+        0.0740, 0.0753, 0.0766, 0.0794])
+static_variables tensor([1241651.5000,  684394.5000])
+encoder_variables tensor([139228.3125, 147984.1562,  29488.5059, 178604.8750, 120745.8281,
+        132231.7656,  98468.1641, 741032.6250, 338261.5625])
+decoder_variables tensor([753937.6250, 594787.3125, 577321.1250])
+encoder_length_histogram tensor([      0,       0,       0,       0,       0,       0,       0,       0,
+              0,       0,       0,       0,       0, 1926046])
+decoder_length_histogram tensor([      0,       0,       0,       0,       0,       0,       0,       0,
+              0,       0,       0,       0,       0,       0, 1926046])
+Loading best model from /u/mi3se/Git/COVID-19-forecast/results/total_target_cleaned_scaled_old_2/checkpoints/best-epoch=9.ckpt
+Creating folder ../results/total_target_cleaned_scaled_old_2/figures_best
+
+---Training results--
+
+Target Cases, MAE 10.747, RMSE 50.401, SMAPE 0.77981. NNSE 0.87335.
+Target Deaths, MAE 0.16324, RMSE 0.93977, SMAPE 0.10983. NNSE 0.85551.
+
+
+---Validation results--
+
+Target Cases, MAE 20.28, RMSE 85.035, SMAPE 0.85703. NNSE 0.74576.
+Target Deaths, MAE 0.18585, RMSE 1.1704, SMAPE 0.11005. NNSE 0.66577.
+
+
+---Test results--
+
+Target Cases, MAE 38.399, RMSE 239.97, SMAPE 0.88573. NNSE 0.64219.
+Target Deaths, MAE 0.22362, RMSE 1.3473, SMAPE 0.12009. NNSE 0.65161.
+
+Day 1
+Target Cases, MAE 20.338, RMSE 72.26, SMAPE 0.59547. NNSE 0.81705.
+Target Deaths, MAE 0.2987, RMSE 1.8565, SMAPE 0.11372. NNSE 0.66682.
+
+Day 2
+Target Cases, MAE 19.814, RMSE 107, SMAPE 0.6336. NNSE 0.76012.
+Target Deaths, MAE 0.21133, RMSE 1.1866, SMAPE 0.12879. NNSE 0.52826.
+
+Day 3
+Target Cases, MAE 27.334, RMSE 228.77, SMAPE 0.61637. NNSE 0.62116.
+Target Deaths, MAE 0.23043, RMSE 1.2519, SMAPE 0.11015. NNSE 0.7625.
+
+Day 4
+Target Cases, MAE 21.17, RMSE 115.81, SMAPE 1.2677. NNSE 0.72208.
+Target Deaths, MAE 0.16439, RMSE 0.96225, SMAPE 0.11185. NNSE 0.60818.
+
+Day 5
+Target Cases, MAE 17.129, RMSE 111.97, SMAPE 1.1031. NNSE 0.70848.
+Target Deaths, MAE 0.10917, RMSE 0.71025, SMAPE 0.088459. NNSE 0.57358.
+
+Day 6
+Target Cases, MAE 36.006, RMSE 169.65, SMAPE 0.68078. NNSE 0.76723.
+Target Deaths, MAE 0.22056, RMSE 1.0676, SMAPE 0.13084. NNSE 0.57331.
+
+Day 7
+Target Cases, MAE 25.223, RMSE 146, SMAPE 0.64453. NNSE 0.72469.
+Target Deaths, MAE 0.25573, RMSE 1.8112, SMAPE 0.11413. NNSE 0.67564.
+
+Day 8
+Target Cases, MAE 31.686, RMSE 188.52, SMAPE 0.58505. NNSE 0.71877.
+Target Deaths, MAE 0.21626, RMSE 1.2123, SMAPE 0.1199. NNSE 0.77675.
+
+Day 9
+Target Cases, MAE 48.17, RMSE 266.66, SMAPE 0.87995. NNSE 0.63531.
+Target Deaths, MAE 0.29599, RMSE 1.5926, SMAPE 0.14541. NNSE 0.52396.
+
+Day 10
+Target Cases, MAE 71.367, RMSE 466.9, SMAPE 1.2728. NNSE 0.55417.
+Target Deaths, MAE 0.25461, RMSE 1.4806, SMAPE 0.1344. NNSE 0.5462.
+
+Day 11
+Target Cases, MAE 25.549, RMSE 151.4, SMAPE 1.3202. NNSE 0.63862.
+Target Deaths, MAE 0.13845, RMSE 0.70168, SMAPE 0.12972. NNSE 0.11012.
+
+Day 12
+Target Cases, MAE 30.846, RMSE 253.36, SMAPE 1.1611. NNSE 0.60902.
+Target Deaths, MAE 0.097072, RMSE 0.63752, SMAPE 0.091253. NNSE 0.55419.
+
+Day 13
+Target Cases, MAE 60.594, RMSE 249.84, SMAPE 0.8632. NNSE 0.71318.
+Target Deaths, MAE 0.2309, RMSE 1.3025, SMAPE 0.11887. NNSE 0.68615.
+
+Day 14
+Target Cases, MAE 56.703, RMSE 268.78, SMAPE 0.83058. NNSE 0.63726.
+Target Deaths, MAE 0.32909, RMSE 1.9532, SMAPE 0.13158. NNSE 0.62124.
+
+Day 15
+Target Cases, MAE 84.05, RMSE 415.13, SMAPE 0.83143. NNSE 0.60834.
+Target Deaths, MAE 0.30156, RMSE 1.5322, SMAPE 0.13229. NNSE 0.7063.
+
+
+---Per county test results--
+
+County Delaware, Kent, FIPS 10001
+Target Cases, MAE 55.033, RMSE 66.885, SMAPE 0.70281. NNSE 0.86055.
+Target Deaths, MAE 0.93333, RMSE 1.3663, SMAPE 0.93778. NNSE 0.53333.
+
+
+County Delaware, New Castle, FIPS 10003
+Target Cases, MAE 159.8, RMSE 191.61, SMAPE 0.77726. NNSE 0.8394.
+Target Deaths, MAE 1.5333, RMSE 2.2361, SMAPE 0.77778. NNSE 0.58502.
+
+
+County Delaware, Sussex, FIPS 10005
+Target Cases, MAE 91, RMSE 122.9, SMAPE 0.83456. NNSE 0.68095.
+Target Deaths, MAE 0.66667, RMSE 0.96609, SMAPE 0.64889. NNSE 0.58824.
+
+
+County Alabama, Autauga, FIPS 1001
+Target Cases, MAE 9.8, RMSE 13.173, SMAPE 0.92098. NNSE 0.62114.
+Target Deaths, MAE 0, RMSE 0, SMAPE 0. NNSE nan.
+
+
+County Alabama, Baldwin, FIPS 1003
+Target Cases, MAE 40.4, RMSE 62.389, SMAPE 1.0288. NNSE 0.51802.
+Target Deaths, MAE 0.13333, RMSE 0.36515, SMAPE 0.26667. NNSE 0.46429.
+
+
+Variables: static ['AgeDist', 'HealthDisp'], encoder ['LinearSpace', 'SinWeekly', 'CosWeekly', 'DiseaseSpread', 'Transmission', 'VaccinationFull', 'SocialDist', 'Cases', 'Deaths'], decoder ['LinearSpace', 'SinWeekly', 'CosWeekly'].
+Weekdays when these attentions are maximum: [(-13, 'Fri'), (-12, 'Fri'), (-11, 'Fri'), (-10, 'Fri'), (-9, 'Fri'), (-8, 'Fri'), (-7, 'Fri'), (-6, 'Fri'), (-5, 'Fri'), (-4, 'Fri'), (-3, 'Fri'), (-2, 'Fri'), (-1, 'Fri')]
+Interpreting train predictions
+attention tensor([0.1176, 0.0710, 0.0661, 0.0690, 0.0717, 0.0743, 0.0769, 0.0755, 0.0754,
+        0.0759, 0.0768, 0.0778, 0.0808])
+static_variables tensor([1196958.3750,  729087.8125])
+encoder_variables tensor([121798.2266, 141332.0625,  20407.2734, 174520.4531, 125863.2031,
+        125764.0312,  85213.0938, 754100.5625, 377047.2812])
+decoder_variables tensor([755586.9375, 568796.1250, 601662.8125])
+encoder_length_histogram tensor([      0,       0,       0,       0,       0,       0,       0,       0,
+              0,       0,       0,       0,       0, 1926046])
+decoder_length_histogram tensor([      0,       0,       0,       0,       0,       0,       0,       0,
+              0,       0,       0,       0,       0,       0, 1926046])
+Ended at 2022-09-02 20:13:42.934219. Elapsed time 9:47:23.187030

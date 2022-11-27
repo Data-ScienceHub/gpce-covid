@@ -317,5 +317,5 @@ merged_df = pd.concat([val_prediction_df, test_prediction_df], axis=0)
 merged_df.drop(columns=['TimeFromStart'], inplace=True)
 
 merged_df.to_csv(os.path.join(output_folder, 'predictions.csv'), index=False)
-
+print(f'Ended at {datetime.now()}. Elapsed time {datetime.now() - start}')
 

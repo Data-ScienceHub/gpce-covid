@@ -1,0 +1,137 @@
+cuda
+Started at 2022-09-02 10:38:35.313873
+(2541878, 15)
+There are 3142 unique counties in the dataset.
+Train samples 2010880, validation samples 87976, test samples 87976
+640 days of training, 15 days of validation data, 15 days of test data.
+Scaling static and dynamic input features: ['AgeDist', 'HealthDisp', 'DiseaseSpread', 'Transmission', 'VaccinationFull', 'SocialDist']
+Scaling targets ['Cases', 'Deaths']
+Number of parameters in network: 231.8k
+Creating folder ../results/total_target_cleaned_scaled_old/figures_best_2
+
+---Training results--
+
+Target Cases, MAE 13.754, RMSE 78.485, SMAPE 0.90577. NNSE 0.73984.
+Target Deaths, MAE 0.18847, RMSE 1.3076, SMAPE 0.11832. NNSE 0.75359.
+
+Target Cases, MAE 0.00066708, RMSE 0.0038066, SMAPE 0.90577. NNSE 0.73984.
+Target Deaths, MAE 0.00061794, RMSE 0.0042873, SMAPE 0.11832. NNSE 0.75359.
+
+Day 1
+Target Cases, MAE 13.348, RMSE 78.889, SMAPE 0.87384. NNSE 0.73891.
+Target Deaths, MAE 0.1835, RMSE 1.2023, SMAPE 0.11427. NNSE 0.78603.
+
+
+---Validation results--
+
+Target Cases, MAE 25.904, RMSE 110.21, SMAPE 0.95777. NNSE 0.63586.
+Target Deaths, MAE 0.20755, RMSE 1.2948, SMAPE 0.12784. NNSE 0.61944.
+
+
+---Test results--
+
+Target Cases, MAE 44.428, RMSE 251.35, SMAPE 1.0034. NNSE 0.62064.
+Target Deaths, MAE 0.24982, RMSE 1.526, SMAPE 0.13442. NNSE 0.59315.
+
+Day 1
+Target Cases, MAE 20.138, RMSE 71.442, SMAPE 0.63067. NNSE 0.82043.
+Target Deaths, MAE 0.3197, RMSE 2.0227, SMAPE 0.11395. NNSE 0.62769.
+
+Day 2
+Target Cases, MAE 18.546, RMSE 103.83, SMAPE 0.65691. NNSE 0.7709.
+Target Deaths, MAE 0.18873, RMSE 1.0915, SMAPE 0.11518. NNSE 0.56962.
+
+Day 3
+Target Cases, MAE 29.116, RMSE 222.39, SMAPE 0.62837. NNSE 0.63437.
+Target Deaths, MAE 0.23775, RMSE 1.2182, SMAPE 0.1192. NNSE 0.77222.
+
+Day 4
+Target Cases, MAE 31.283, RMSE 136.43, SMAPE 1.4127. NNSE 0.65181.
+Target Deaths, MAE 0.236, RMSE 1.3453, SMAPE 0.1453. NNSE 0.44263.
+
+Day 5
+Target Cases, MAE 28.349, RMSE 120.67, SMAPE 1.4709. NNSE 0.67662.
+Target Deaths, MAE 0.19733, RMSE 1.0575, SMAPE 0.14715. NNSE 0.37761.
+
+Day 6
+Target Cases, MAE 52.235, RMSE 221.83, SMAPE 0.83349. NNSE 0.65846.
+Target Deaths, MAE 0.21929, RMSE 0.98056, SMAPE 0.1361. NNSE 0.6143.
+
+Day 7
+Target Cases, MAE 26.883, RMSE 162.39, SMAPE 0.6524. NNSE 0.68026.
+Target Deaths, MAE 0.26719, RMSE 2.0839, SMAPE 0.11332. NNSE 0.61143.
+
+Day 8
+Target Cases, MAE 35.538, RMSE 198.81, SMAPE 0.67419. NNSE 0.69678.
+Target Deaths, MAE 0.23059, RMSE 1.6765, SMAPE 0.11334. NNSE 0.64532.
+
+Day 9
+Target Cases, MAE 48.156, RMSE 266.87, SMAPE 0.95071. NNSE 0.63495.
+Target Deaths, MAE 0.27403, RMSE 1.4632, SMAPE 0.1431. NNSE 0.56594.
+
+Day 10
+Target Cases, MAE 67.717, RMSE 464.31, SMAPE 1.3022. NNSE 0.55692.
+Target Deaths, MAE 0.26194, RMSE 1.5175, SMAPE 0.143. NNSE 0.534.
+
+Day 11
+Target Cases, MAE 36.944, RMSE 167.06, SMAPE 1.4984. NNSE 0.59208.
+Target Deaths, MAE 0.21515, RMSE 1.1954, SMAPE 0.17084. NNSE 0.040893.
+
+Day 12
+Target Cases, MAE 42.061, RMSE 249.38, SMAPE 1.5172. NNSE 0.61653.
+Target Deaths, MAE 0.19001, RMSE 1.0447, SMAPE 0.15926. NNSE 0.31645.
+
+Day 13
+Target Cases, MAE 80.333, RMSE 317.02, SMAPE 1.0314. NNSE 0.60696.
+Target Deaths, MAE 0.25477, RMSE 1.5914, SMAPE 0.12432. NNSE 0.59423.
+
+Day 14
+Target Cases, MAE 61.63, RMSE 283.24, SMAPE 0.87848. NNSE 0.6127.
+Target Deaths, MAE 0.33577, RMSE 2.0795, SMAPE 0.14183. NNSE 0.59134.
+
+Day 15
+Target Cases, MAE 87.489, RMSE 419.97, SMAPE 0.91271. NNSE 0.60281.
+Target Deaths, MAE 0.31906, RMSE 1.817, SMAPE 0.13038. NNSE 0.631.
+
+
+---Per county test results--
+
+County Delaware, Kent, FIPS 10001
+Target Cases, MAE 108.97, RMSE 163.15, SMAPE 0.88569. NNSE 0.50912.
+Target Deaths, MAE 0.8, RMSE 1.2111, SMAPE 0.85778. NNSE 0.59259.
+
+
+County Delaware, New Castle, FIPS 10003
+Target Cases, MAE 338.4, RMSE 462.78, SMAPE 0.89943. NNSE 0.47257.
+Target Deaths, MAE 2.4, RMSE 2.7809, SMAPE 1.4489. NNSE 0.47685.
+
+
+County Delaware, Sussex, FIPS 10005
+Target Cases, MAE 136.07, RMSE 194.48, SMAPE 0.86873. NNSE 0.46014.
+Target Deaths, MAE 1, RMSE 1.2383, SMAPE 1.1378. NNSE 0.46512.
+
+
+County Alabama, Autauga, FIPS 1001
+Target Cases, MAE 13.467, RMSE 18.294, SMAPE 1.0679. NNSE 0.45949.
+Target Deaths, MAE 0, RMSE 0, SMAPE 0. NNSE nan.
+
+
+County Alabama, Baldwin, FIPS 1003
+Target Cases, MAE 50.533, RMSE 71.26, SMAPE 1.132. NNSE 0.45171.
+Target Deaths, MAE 0.13333, RMSE 0.36515, SMAPE 0.26667. NNSE 0.46429.
+
+
+Variables: static ['AgeDist', 'HealthDisp'], encoder ['SinWeekly', 'CosWeekly', 'LinearSpace', 'DiseaseSpread', 'Transmission', 'VaccinationFull', 'SocialDist', 'Cases', 'Deaths'], decoder ['SinWeekly', 'CosWeekly', 'LinearSpace'].
+Weekdays when these attentions are maximum: [(-13, 'Fri'), (-12, 'Sun'), (-11, 'Sat'), (-10, 'Sat'), (-9, 'Sat'), (-8, 'Sun'), (-7, 'Sun'), (-6, 'Sun'), (-5, 'Sun'), (-4, 'Sun'), (-3, 'Sun'), (-2, 'Sun'), (-1, 'Sun')]
+Interpreting train predictions
+attention tensor([0.1410, 0.0915, 0.0775, 0.0730, 0.0710, 0.0699, 0.0694, 0.0689, 0.0682,
+        0.0679, 0.0678, 0.0680, 0.0683])
+static_variables tensor([ 751309.0000, 1174736.7500])
+encoder_variables tensor([190302.5625, 110939.9219,  23028.6641, 140233.4844, 176746.8438,
+        168625.1250, 107448.4141, 628764.5000, 379956.5938])
+decoder_variables tensor([936813.7500, 594305.3750, 394926.8125])
+encoder_length_histogram tensor([      0,       0,       0,       0,       0,       0,       0,       0,
+              0,       0,       0,       0,       0, 1926046])
+decoder_length_histogram tensor([      0,       0,       0,       0,       0,       0,       0,       0,
+              0,       0,       0,       0,       0,       0, 1926046])
+Ended at 2022-09-02 11:46:08.625659. Elapsed time 1:07:33.311853
