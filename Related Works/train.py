@@ -20,19 +20,12 @@ SEED = 7
 tf.random.set_seed(SEED)
 SHOW_IMAGE = False
 VERBOSE = 2
-Split = Split_1
-
-# %% [markdown]
-# ## Google Colab
-
-# %%
-# from google.colab import drive
-
-# drive.mount('/content/drive')
-# %cd /content/drive/My Drive/Colab Datasets
+Split = Baseline
 
 # %% [markdown]
 # ## Result folder
+
+# %%
 output_folder = 'results'
 if not os.path.exists(output_folder):
     os.makedirs(output_folder, exist_ok=True)
@@ -41,9 +34,12 @@ if not os.path.exists(output_folder):
 # # Preprocessing
 
 # %%
-df = pd.read_csv('../TFT-pytorch/2022_May_cleaned/Total.csv')
-df['Date'] = to_datetime(df['Date'])
-df.head()
+df = pd.read_csv('../TFT-pytorch/2022_May_cleaned/Top_100.csv')
+df['Date'] = pd.to_datetime(df['Date'])
+print(df.head(3))
+
+# %% [markdown]
+# ## Config
 
 # %%
 @dataclass
@@ -59,9 +55,9 @@ class Config:
     selected_columns = features + targets
     input_sequence_length = 13
     output_sequence_length = 15
-    batch_size = 128
+    batch_size = 64
     buffer_size = 1000
-    epochs = 200
+    epochs = 1
     learning_rate = 1e-6
     early_stopping_patience = 5
     loss = 'mse'
@@ -113,16 +109,13 @@ test_data = cache_data(
 # # Training
 
 # %% [markdown]
-# ## Utils
-
-# %%
-
+# ## Model
 
 # %%
 output_size = len(targets) * output_sequence_length
 model = build_LSTM(
-    input_shape=x_train.shape[1:], output_size=output_size, loss=Config.loss, 
-    summarize=False, learning_rate=Config.learning_rate
+    x_train.shape[1:], output_size=output_size, loss=Config.loss, 
+    summarize=True, learning_rate=Config.learning_rate
 )
 early_stopping = EarlyStopping(
     patience = Config.early_stopping_patience, 
@@ -133,6 +126,7 @@ model_checkpoint = ModelCheckpoint(
     save_best_only=True, save_weights_only=True
 )
 
+# %%
 start = datetime.now()
 print(f'\n----Training started at {start}----\n')
 history = model.fit(
@@ -143,9 +137,11 @@ history = model.fit(
 gc.collect()
 end = datetime.now()
 print(f'\n----Training ended at {end}, elapsed time {end-start}.')
-print(f'Best model by validation loss saved at {model_checkpoint.best_model_path}.')
+
+# %%
+print(f'Best model by validation loss saved at {model_checkpoint.filepath}.')
 print(f'Loading best model.')
-model.load_weights(model_checkpoint.best_model_path)
+model.load_weights(model_checkpoint.filepath)
 
 # %% [markdown]
 # ## History
@@ -256,3 +252,5 @@ test_prediction_df['Split'] = 'test'
 merged_df = pd.concat([train_prediction_df, val_prediction_df, test_prediction_df], axis=0)
 merged_df.to_csv(os.path.join(output_folder, 'predictions.csv'), index=False)
 print(f'Ended at {datetime.now()}. Elapsed time {datetime.now() - start}')
+
+
