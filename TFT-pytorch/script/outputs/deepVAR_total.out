@@ -1,0 +1,57 @@
+2022-11-26 18:53:27.499378: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcudart.so.10.1
+Global seed set to 7
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+
+  | Name                   | Type           | Params
+----------------------------------------------------------
+0 | loss                   | MultiLoss      | 0     
+1 | logging_metrics        | ModuleList     | 0     
+2 | embeddings             | MultiEmbedding | 0     
+3 | rnn                    | LSTM           | 84.7 K
+4 | distribution_projector | ModuleList     | 780   
+----------------------------------------------------------
+85.5 K    Trainable params
+0         Non-trainable params
+85.5 K    Total params
+0.342     Total estimated model params size (MB)
+Metric val_loss improved. New best score: -1987.348
+Metric val_loss improved by 16.285 >= min_delta = 0. New best score: -2003.633
+Metric val_loss improved by 6.671 >= min_delta = 0. New best score: -2010.304
+Metric val_loss improved by 93.159 >= min_delta = 0. New best score: -2103.463
+Monitored metric val_loss did not improve in the last 3 records. Best score: -2103.463. Signaling Trainer to stop.
+cuda
+(2541878, 12)
+There are 3142 unique counties in the dataset.
+Train samples 2010880, validation samples 87976, test samples 87976
+640 days of training, 15 days of validation data, 15 days of test data.
+Scaling static and dynamic input features: ['AgeDist', 'HealthDisp', 'DiseaseSpread', 'Transmission', 'VaccinationFull', 'SocialDist']
+Scaling targets ['Cases']
+Number of parameters in network: 85.5k
+
+----Training started at 2022-11-26 18:54:02.629646----
+
+
+----Training ended at 2022-11-26 22:33:44.801733, elapsed time 3:39:42.172087
+Best model by validation loss saved at /gpfs/gpfs0/scratch/mi3se/gpce-covid/TFT-pytorch/scratch/DeepVAR_total/checkpoints/best-epoch=6.ckpt
+Loading best model from /gpfs/gpfs0/scratch/mi3se/gpce-covid/TFT-pytorch/scratch/DeepVAR_total/checkpoints/best-epoch=6.ckpt
+Creating folder ../scratch/DeepVAR_total/figures
+
+---Training results--
+
+Target Cases, MAE 13.133, RMSE 75.187, SMAPE 0.87846. NNSE 0.75602.
+
+
+---Validation results--
+
+Target Cases, MAE 24.789, RMSE 100.03, SMAPE 0.95795. NNSE 0.67944.
+
+
+---Test results--
+
+Target Cases, MAE 41.825, RMSE 235.3, SMAPE 1.0051. NNSE 0.65118.
+
+Ended at 2022-11-27 04:13:07.058649. Elapsed time 9:19:04.429026

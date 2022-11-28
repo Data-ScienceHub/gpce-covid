@@ -1,0 +1,78 @@
+2022-11-27 16:16:26.244352: I tensorflow/core/platform/cpu_feature_guard.cc:193] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F AVX512_VNNI FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2022-11-27 16:16:26.346427: I tensorflow/core/util/util.cc:169] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2022-11-27 16:16:26.373024: E tensorflow/stream_executor/cuda/cuda_blas.cc:2981] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2022-11-27 16:16:27.177528: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libnvinfer.so.7'; dlerror: libnvinfer.so.7: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /sw/centos-7.4/anaconda3/current/lib:/u/mi3se/anaconda3/envs/ml/lib/:/u/mi3se/anaconda3/envs/ml/lib
+2022-11-27 16:16:27.177756: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libnvinfer_plugin.so.7'; dlerror: libnvinfer_plugin.so.7: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /sw/centos-7.4/anaconda3/current/lib:/u/mi3se/anaconda3/envs/ml/lib/:/u/mi3se/anaconda3/envs/ml/lib
+2022-11-27 16:16:27.177761: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Cannot dlopen some TensorRT libraries. If you would like to use Nvidia GPU with TensorRT, please make sure the missing libraries mentioned above are installed properly.
+2022-11-27 16:21:20.776692: I tensorflow/core/platform/cpu_feature_guard.cc:193] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F AVX512_VNNI FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2022-11-27 16:21:21.116130: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1616] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 13199 MB memory:  -> device: 0, name: NVIDIA A16, pci bus id: 0000:ce:00.0, compute capability: 8.6
+Shapes: train (2296802, 14), validation (94260, 14), test (94260, 14).
+Shapes: data (2211968, 13, 10), labels (2211968, 15).
+Shapes: data (9426, 13, 10), labels (9426, 15).
+Shapes: data (9426, 13, 10), labels (9426, 15).
+
+----Training started at 2022-11-27 16:21:23.162039----
+
+Epoch 1/200
+2022-11-27 16:21:29.980624: I tensorflow/stream_executor/cuda/cuda_dnn.cc:384] Loaded cuDNN version 8201
+2022-11-27 16:21:30.859982: I tensorflow/stream_executor/cuda/cuda_blas.cc:1614] TensorFloat-32 will be used for the matrix multiplication. This will only be logged once.
+34562/34562 - 215s - loss: 0.9613 - val_loss: 0.1131 - 215s/epoch - 6ms/step
+Epoch 2/200
+34562/34562 - 203s - loss: 0.8250 - val_loss: 0.1182 - 203s/epoch - 6ms/step
+Epoch 3/200
+34562/34562 - 204s - loss: 0.7646 - val_loss: 0.1176 - 204s/epoch - 6ms/step
+Epoch 4/200
+34562/34562 - 204s - loss: 0.7225 - val_loss: 0.1175 - 204s/epoch - 6ms/step
+Epoch 5/200
+34562/34562 - 205s - loss: 0.6890 - val_loss: 0.1179 - 205s/epoch - 6ms/step
+Epoch 6/200
+34562/34562 - 203s - loss: 0.6632 - val_loss: 0.1195 - 203s/epoch - 6ms/step
+
+----Training ended at 2022-11-27 16:41:58.408982, elapsed time 0:20:35.246943.
+Best model by validation loss saved at results_LSTM_split_3/model.h5.
+Loading best model.
+
+Train prediction
+34562/34562 - 94s - 94s/epoch - 3ms/step
+               FIPS         Cases  Predicted_Cases
+count  2.249672e+06  2.249672e+06     2.249672e+06
+mean   3.038365e+04  2.926275e+01     2.237617e+01
+std    1.516010e+04  1.814576e+02     4.332087e+01
+min    1.001000e+03  0.000000e+00     0.000000e+00
+25%    1.817700e+04  0.000000e+00     2.000000e+00
+50%    2.917600e+04  2.000000e+00     8.000000e+00
+75%    4.508100e+04  1.300000e+01     2.100000e+01
+max    5.604500e+04  2.061825e+04     3.190000e+02
+Target Cases, MAE 23.125, RMSE 164.62, RMSLE 1.4603, SMAPE 1.0002. NNSE 0.54853.
+
+
+Validation prediction
+148/148 - 0s - 419ms/epoch - 3ms/step
+               FIPS         Cases  Predicted_Cases
+count  47130.000000  47130.000000     47130.000000
+mean   30383.649268     11.205103        20.858583
+std    15160.256142     62.660459        34.929744
+min     1001.000000      0.000000         0.000000
+25%    18177.000000      0.000000         3.000000
+50%    29176.000000      0.000000        11.000000
+75%    45081.000000      5.000000        24.000000
+max    56045.000000   4467.000000       434.000000
+Target Cases, MAE 18.182, RMSE 57.245, RMSLE 1.9175, SMAPE 1.2808. NNSE 0.54506.
+
+
+Test prediction
+148/148 - 0s - 427ms/epoch - 3ms/step
+               FIPS         Cases  Predicted_Cases
+count  47130.000000  47130.000000     47130.000000
+mean   30383.649268      9.437428        15.702822
+std    15160.256142     94.176476        24.067112
+min     1001.000000      0.000000         0.000000
+25%    18177.000000      0.000000         2.000000
+50%    29176.000000      0.000000        10.000000
+75%    45081.000000      2.000000        21.000000
+max    56045.000000   8467.000000       429.000000
+Target Cases, MAE 16.294, RMSE 89.449, RMSLE 1.9442, SMAPE 1.3216. NNSE 0.52572.
+
+Ended at 2022-11-27 17:03:18.403673. Elapsed time 0:41:55.241687

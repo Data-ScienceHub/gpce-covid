@@ -1,0 +1,55 @@
+2022-11-27 00:08:54.297380: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcudart.so.10.1
+Global seed set to 7
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+
+  | Name                   | Type           | Params
+----------------------------------------------------------
+0 | loss                   | MultiLoss      | 0     
+1 | logging_metrics        | ModuleList     | 0     
+2 | embeddings             | MultiEmbedding | 0     
+3 | rnn                    | LSTM           | 84.7 K
+4 | distribution_projector | ModuleList     | 780   
+----------------------------------------------------------
+85.5 K    Trainable params
+0         Non-trainable params
+85.5 K    Total params
+0.342     Total estimated model params size (MB)
+Metric val_loss improved. New best score: -1708.548
+Metric val_loss improved by 47.939 >= min_delta = 0. New best score: -1756.486
+Monitored metric val_loss did not improve in the last 3 records. Best score: -1756.486. Signaling Trainer to stop.
+cuda
+(2541878, 12)
+There are 3142 unique counties in the dataset.
+Train samples 2111424, validation samples 87976, test samples 87976
+672 days of training, 15 days of validation data, 15 days of test data.
+Scaling static and dynamic input features: ['AgeDist', 'HealthDisp', 'DiseaseSpread', 'Transmission', 'VaccinationFull', 'SocialDist']
+Scaling targets ['Cases']
+Number of parameters in network: 85.5k
+
+----Training started at 2022-11-27 00:09:47.706595----
+
+
+----Training ended at 2022-11-27 02:51:16.023772, elapsed time 2:41:28.317177
+Best model by validation loss saved at /gpfs/gpfs0/scratch/mi3se/gpce-covid/TFT-pytorch/scratch/DeepVAR_split_1/checkpoints/best-epoch=1.ckpt
+Loading best model from /gpfs/gpfs0/scratch/mi3se/gpce-covid/TFT-pytorch/scratch/DeepVAR_split_1/checkpoints/best-epoch=1.ckpt
+Creating folder ../scratch/DeepVAR_split_1/figures
+
+---Training results--
+
+Target Cases, MAE 14.985, RMSE 91.054, SMAPE 0.90202. NNSE 0.7116.
+
+
+---Validation results--
+
+Target Cases, MAE 87.383, RMSE 342.88, SMAPE 1.1267. NNSE 0.73197.
+
+
+---Test results--
+
+Target Cases, MAE 81.765, RMSE 304.31, SMAPE 0.94793. NNSE 0.72886.
+
+Ended at 2022-11-27 10:50:55.334988. Elapsed time 10:41:07.628420

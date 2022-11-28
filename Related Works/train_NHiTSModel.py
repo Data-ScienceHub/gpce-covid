@@ -55,8 +55,8 @@ class Config:
     selected_columns = features + targets
     input_sequence_length = 13
     output_sequence_length = 15
-    batch_size = 128
-    epochs = 4
+    batch_size = 64
+    epochs = 60
     learning_rate = 1e-3
     early_stopping_patience = 5
     seed = 7
@@ -259,7 +259,7 @@ def historical_forecast(
 # %%
 # for target in targets:
 #     plot_predition(
-#         train_prediction_df, target, show_image=SHOW_IMAGE,
+#         train_prediction_df, target, plot_error=True, show_image=SHOW_IMAGE,
 #         figure_path=os.path.join(output_folder, f'Summed_{target}_Train.jpg')
 #     )
 
@@ -279,7 +279,7 @@ print(val_prediction_df.describe())
 # %%
 for target in targets:
     plot_predition(
-        val_prediction_df, target, plot_error=True, show_image=SHOW_IMAGE,
+        val_prediction_df, target, show_image=SHOW_IMAGE,
         figure_path=os.path.join(output_folder, f'Summed_{target}_Validation.jpg')
     )
 
