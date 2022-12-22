@@ -4,19 +4,55 @@ from tensorflow.keras.layers import MultiHeadAttention, GlobalAveragePooling1D, 
 from tensorflow.keras import optimizers, Sequential, Input, Model
 from typing import Tuple
 
-
 def build_LSTM(
-    input_shape: Tuple[int], output_size:int, loss:str='mse', 
-    summarize:bool=False, learning_rate:float=1e-5
+    input_shape: Tuple[int], output_size:int, loss:str='mse', hidden_size:int=64,
+    dropout:float=0.1, summarize:bool=False, learning_rate:float=1e-5, layers:int=3
     ):
-    model = Sequential([
-        LSTM(64, input_shape=input_shape, return_sequences=True),
-        Dropout(0.1),
-        LSTM(64, return_sequences=True),
-        LSTM(32),
-        Dense(64),
-        Dense(output_size)
-    ])
+    assert layers>0, "layers number must be positive"
+    model = Sequential()
+    for layer in range(layers-1):
+        if layer ==0:
+            model.add(
+                LSTM(hidden_size, input_shape=input_shape, return_sequences=True)
+            )
+        else:
+            model.add(
+                LSTM(hidden_size, return_sequences=True)
+            )
+        model.add(Dropout(dropout))
+    
+    model.add(LSTM(hidden_size))
+    model.add(Dense(64))
+    model.add(Dense(output_size))
+
+    if summarize:
+        model.summary()
+    
+    adam = optimizers.Adam(learning_rate=learning_rate)
+    model.compile(loss=loss, optimizer=adam)
+    return model
+
+def build_BiLSTM(
+    input_shape: Tuple[int], output_size:int, loss:str='mse', hidden_size:int=64,
+    dropout:float=0.1, summarize:bool=False, learning_rate:float=1e-5, layers:int=3
+    ):
+    assert layers>0, "layers number must be positive"
+    model = Sequential()
+    for layer in range(layers-1):
+        if layer ==0:
+            model.add(
+                Bidirectional(LSTM(hidden_size, input_shape=input_shape, return_sequences=True)) 
+            )
+        else:
+            model.add(
+                Bidirectional(LSTM(hidden_size, return_sequences=True))
+            )
+        model.add(Dropout(dropout))
+    
+    model.add(Bidirectional(LSTM(hidden_size)))
+    model.add(Dense(64))
+    model.add(Dense(output_size))
+
     if summarize:
         model.summary()
     
@@ -52,44 +88,6 @@ def build_LSTM_(
             recurrent_activation=lstm_recurrent_activation
         ),
         Dense(dense_nodes, activation=lstm_activation),
-        Dense(output_size)
-    ])
-    if summarize:
-        model.summary()
-    
-    adam = optimizers.Adam(learning_rate=learning_rate)
-    model.compile(loss=loss, optimizer=adam)
-    return model
-
-def build_BiLSTM(
-    input_shape: Tuple[int], output_size:int, loss:str='mse', 
-    summarize:bool=False, learning_rate:float=1e-5
-    ):
-    model = Sequential([
-        Bidirectional(LSTM(64, input_shape=input_shape, return_sequences=True)),
-        Dropout(0.1),
-        Bidirectional(LSTM(64, return_sequences=True)),
-        Bidirectional(LSTM(32)),
-        Dense(64),
-        Dense(output_size)
-    ])
-    if summarize:
-        model.summary()
-    
-    adam = optimizers.Adam(learning_rate=learning_rate)
-    model.compile(loss=loss, optimizer=adam)
-    return model
-
-def build_GRU(
-    input_shape: Tuple[int], output_size:int, loss:str='mse', 
-    summarize:bool=False, learning_rate:float=1e-5
-    ):
-    model = Sequential([
-        GRU(64, input_shape=input_shape, return_sequences=True),
-        Dropout(0.1),
-        GRU(64, return_sequences=True),
-        GRU(32),
-        Dense(64),
         Dense(output_size)
     ])
     if summarize:
