@@ -59,6 +59,7 @@ class Config:
     epochs = 200
     early_stopping_patience = 5
     loss = 'mse'
+    n_trials = 2
 
 targets = Config.targets
 group_id = Config.group_id
@@ -149,7 +150,7 @@ study = optuna.create_study(
     study_name=study_name, storage=storage_name, direction='minimize', load_if_exists=True
 )
 study.optimize(
-    objective, n_trials=25, n_jobs=-1, 
+    objective, n_trials=Config.n_trials,
     gc_after_trial=True, show_progress_bar=(VERBOSE==1)
 )
 

@@ -59,6 +59,7 @@ class Config:
     learning_rate = 1e-6
     early_stopping_patience = 5
     loss = 'mse'
+    n_trials = 2
 
 targets = Config.targets
 group_id = Config.group_id
@@ -95,7 +96,7 @@ x_val, y_val = prepare_dataset(
 # %%
 def create_model(trial):
     learning_rate = trial.suggest_float("learning_rate", 1e-5, 1e-3, log=True)
-    hidden_size = trial.suggest_int("hidden_size", 32, 128, step=16)
+    hidden_size = trial.suggest_categorical("hidden_size", [32, 64, 128])
     dropout = trial.suggest_float("dropout", 0, 0.3, step=0.1)
     layers = trial.suggest_int("layers", 2, 4, step=1)
 
@@ -149,7 +150,7 @@ study = optuna.create_study(
     study_name=study_name, storage=storage_name, direction='minimize', load_if_exists=True
 )
 study.optimize(
-    objective, n_trials=25, n_jobs=-1, 
+    objective, n_trials=Config.n_trials, 
     gc_after_trial=True, show_progress_bar=(VERBOSE==1)
 )
 

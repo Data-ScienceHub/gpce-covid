@@ -14,11 +14,11 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error, mean_square
 def calculate_result(y_true, y_pred):
     mae = mean_absolute_error(y_true, y_pred)
     rmse = np.sqrt(mean_squared_error(y_true, y_pred))
-    # msle = mean_squared_log_error(y_true, y_pred)
+    msle = np.sqrt(mean_squared_log_error(y_true, y_pred))
     smape = symmetric_mean_absolute_percentage(y_true, y_pred)
     nnse = normalized_nash_sutcliffe_efficiency(y_true, y_pred)
 
-    return mae, rmse, smape, nnse
+    return mae, rmse, msle, smape, nnse
 
 def remove_outliers(original_df, use_median=False, multiplier=7.5, verbose=False):
     df = original_df.copy()
@@ -100,8 +100,8 @@ def show_result(df: pd.DataFrame, targets:List[str]):
         predicted_column = f'Predicted_{target}'
         y_true, y_pred = df[target].values, df[predicted_column].values
 
-        mae, rmse, smape, nnse = calculate_result(y_true, y_pred)
-        print(f'Target {target}, MAE {mae:.5g}, RMSE {rmse:.5g}, SMAPE {smape:0.5g}. NNSE {nnse:0.5g}.')
+        mae, rmse, rmsle, smape, nnse = calculate_result(y_true, y_pred)
+        print(f'Target {target}, MAE {mae:.5g}, RMSE {rmse:.5g}, RMSLE {rmsle:0.5g}, SMAPE {smape:0.5g}. NNSE {nnse:0.5g}.')
     print()
 
 
