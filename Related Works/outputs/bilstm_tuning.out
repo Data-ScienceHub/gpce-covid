@@ -1,0 +1,47 @@
+2022-12-23 07:03:26.466868: I tensorflow/core/platform/cpu_feature_guard.cc:193] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2022-12-23 07:03:26.711949: E tensorflow/stream_executor/cuda/cuda_blas.cc:2981] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2022-12-23 07:03:29.702348: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libnvinfer.so.7'; dlerror: libnvinfer.so.7: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /sw/centos-7.4/anaconda3/current/lib:/sw/centos-7.4/cudnn/current/lib64:/sw/centos-7.4/cuda/current/extras/CUPTI/lib64:/sw/centos-7.4/cuda/current/lib64:/u/mi3se/anaconda3/envs/ml/lib/:/home/mi3se/anaconda3/envs/ml/lib
+2022-12-23 07:03:29.702551: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libnvinfer_plugin.so.7'; dlerror: libnvinfer_plugin.so.7: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /sw/centos-7.4/anaconda3/current/lib:/sw/centos-7.4/cudnn/current/lib64:/sw/centos-7.4/cuda/current/extras/CUPTI/lib64:/sw/centos-7.4/cuda/current/lib64:/u/mi3se/anaconda3/envs/ml/lib/:/home/mi3se/anaconda3/envs/ml/lib
+2022-12-23 07:03:29.702576: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Cannot dlopen some TensorRT libraries. If you would like to use Nvidia GPU with TensorRT, please make sure the missing libraries mentioned above are installed properly.
+[32m[I 2022-12-23 07:11:43,618][0m Using an existing study with name 'BiLSTM' instead of creating a new one.[0m
+2022-12-23 07:11:44.014966: E tensorflow/stream_executor/cuda/cuda_driver.cc:265] failed call to cuInit: CUDA_ERROR_UNKNOWN: unknown error
+2022-12-23 07:11:44.015240: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:169] retrieving CUDA diagnostic information for host: lynx10
+2022-12-23 07:11:44.015254: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:176] hostname: lynx10
+2022-12-23 07:11:44.015399: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:200] libcuda reported version is: 418.87.0
+2022-12-23 07:11:44.015449: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:204] kernel reported version is: 418.87.0
+2022-12-23 07:11:44.015458: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:310] kernel version seems to match DSO: 418.87.0
+2022-12-23 07:11:44.015971: I tensorflow/core/platform/cpu_feature_guard.cc:193] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+[32m[I 2022-12-23 07:45:15,483][0m Trial 2 finished with value: 0.6599147319793701 and parameters: {'learning_rate': 3.977514721385189e-05, 'hidden_size': 32, 'dropout': 0.2, 'layers': 2, 'batch_size': 32}. Best is trial 0 with value: 0.6547868847846985.[0m
+[32m[I 2022-12-23 08:05:21,563][0m Trial 3 finished with value: 0.6867883801460266 and parameters: {'learning_rate': 9.586521178269444e-05, 'hidden_size': 32, 'dropout': 0.0, 'layers': 2, 'batch_size': 64}. Best is trial 0 with value: 0.6547868847846985.[0m
+[32m[I 2022-12-23 09:56:21,557][0m Trial 4 finished with value: 0.6490345001220703 and parameters: {'learning_rate': 0.00013699889468056842, 'hidden_size': 96, 'dropout': 0.3, 'layers': 3, 'batch_size': 64}. Best is trial 4 with value: 0.6490345001220703.[0m
+[32m[I 2022-12-23 15:22:39,249][0m Trial 5 finished with value: 0.6920180320739746 and parameters: {'learning_rate': 3.334575647161048e-05, 'hidden_size': 128, 'dropout': 0.1, 'layers': 4, 'batch_size': 32}. Best is trial 4 with value: 0.6490345001220703.[0m
+[32m[I 2022-12-23 16:03:15,769][0m Trial 6 finished with value: 0.6748257279396057 and parameters: {'learning_rate': 1.5616957009772438e-05, 'hidden_size': 32, 'dropout': 0.3, 'layers': 4, 'batch_size': 64}. Best is trial 4 with value: 0.6490345001220703.[0m
+[32m[I 2022-12-23 18:11:56,957][0m Trial 7 finished with value: 0.6872235536575317 and parameters: {'learning_rate': 0.0009808099940018008, 'hidden_size': 96, 'dropout': 0.0, 'layers': 3, 'batch_size': 32}. Best is trial 4 with value: 0.6490345001220703.[0m
+[32m[I 2022-12-23 18:41:33,231][0m Trial 8 finished with value: 0.7175065279006958 and parameters: {'learning_rate': 4.603120849931602e-05, 'hidden_size': 32, 'dropout': 0.1, 'layers': 3, 'batch_size': 64}. Best is trial 4 with value: 0.6490345001220703.[0m
+[32m[I 2022-12-23 19:09:24,561][0m Trial 9 finished with value: 0.7024741768836975 and parameters: {'learning_rate': 0.00015507763493317352, 'hidden_size': 32, 'dropout': 0.3, 'layers': 4, 'batch_size': 128}. Best is trial 4 with value: 0.6490345001220703.[0m
+[32m[I 2022-12-23 21:42:58,788][0m Trial 10 finished with value: 0.6423613429069519 and parameters: {'learning_rate': 0.00041102015119757904, 'hidden_size': 128, 'dropout': 0.2, 'layers': 3, 'batch_size': 64}. Best is trial 10 with value: 0.6423613429069519.[0m
+[32m[I 2022-12-24 00:24:06,889][0m Trial 11 finished with value: 0.6629730463027954 and parameters: {'learning_rate': 0.0004331940200244679, 'hidden_size': 128, 'dropout': 0.2, 'layers': 3, 'batch_size': 64}. Best is trial 10 with value: 0.6423613429069519.[0m
+[32m[I 2022-12-24 03:35:34,255][0m Trial 12 finished with value: 0.667689859867096 and parameters: {'learning_rate': 0.000289862782071094, 'hidden_size': 128, 'dropout': 0.2, 'layers': 3, 'batch_size': 64}. Best is trial 10 with value: 0.6423613429069519.[0m
+[32m[I 2022-12-24 04:36:16,802][0m Trial 13 finished with value: 0.6905640959739685 and parameters: {'learning_rate': 0.00036008024688778244, 'hidden_size': 64, 'dropout': 0.3, 'layers': 3, 'batch_size': 64}. Best is trial 10 with value: 0.6423613429069519.[0m
+[32m[I 2022-12-24 05:37:00,170][0m Trial 14 finished with value: 0.6577991843223572 and parameters: {'learning_rate': 0.0009428038638991056, 'hidden_size': 64, 'dropout': 0.2, 'layers': 3, 'batch_size': 64}. Best is trial 10 with value: 0.6423613429069519.[0m
+[32m[I 2022-12-24 07:12:27,462][0m Trial 15 finished with value: 0.6474478244781494 and parameters: {'learning_rate': 0.0001851354308010472, 'hidden_size': 128, 'dropout': 0.3, 'layers': 2, 'batch_size': 64}. Best is trial 10 with value: 0.6423613429069519.[0m
+[32m[I 2022-12-24 08:22:57,464][0m Trial 16 finished with value: 0.6412175297737122 and parameters: {'learning_rate': 0.00022846178938772292, 'hidden_size': 128, 'dropout': 0.2, 'layers': 2, 'batch_size': 128}. Best is trial 16 with value: 0.6412175297737122.[0m
+[32m[I 2022-12-24 09:33:28,517][0m Trial 17 finished with value: 0.6449669003486633 and parameters: {'learning_rate': 0.0005137809837834463, 'hidden_size': 128, 'dropout': 0.2, 'layers': 2, 'batch_size': 128}. Best is trial 16 with value: 0.6412175297737122.[0m
+[32m[I 2022-12-24 10:43:42,974][0m Trial 18 finished with value: 0.6355656385421753 and parameters: {'learning_rate': 0.000245935067592071, 'hidden_size': 128, 'dropout': 0.1, 'layers': 2, 'batch_size': 128}. Best is trial 18 with value: 0.6355656385421753.[0m
+[32m[I 2022-12-24 11:15:40,736][0m Trial 19 finished with value: 0.6971496343612671 and parameters: {'learning_rate': 6.153324375509919e-05, 'hidden_size': 64, 'dropout': 0.1, 'layers': 2, 'batch_size': 128}. Best is trial 18 with value: 0.6355656385421753.[0m
+[32m[I 2022-12-24 12:02:01,981][0m Trial 20 finished with value: 0.6733930110931396 and parameters: {'learning_rate': 0.00021924626038328002, 'hidden_size': 96, 'dropout': 0.0, 'layers': 2, 'batch_size': 128}. Best is trial 18 with value: 0.6355656385421753.[0m
+[32m[I 2022-12-24 13:12:34,808][0m Trial 21 finished with value: 0.6514110565185547 and parameters: {'learning_rate': 0.0005269985863426235, 'hidden_size': 128, 'dropout': 0.1, 'layers': 2, 'batch_size': 128}. Best is trial 18 with value: 0.6355656385421753.[0m
+Shapes: train (2010880, 14), validation (94260, 14), test (94260, 14).
+Shapes: data (1926046, 13, 10), labels (1926046, 15).
+Shapes: data (9426, 13, 10), labels (9426, 15).
+Number of finished trials:  22
+Best trial:
+  Value:  0.6355656385421753
+  Parameters: 
+    batch_size: 128
+    dropout: 0.1
+    hidden_size: 128
+    layers: 2
+    learning_rate: 0.000245935067592071

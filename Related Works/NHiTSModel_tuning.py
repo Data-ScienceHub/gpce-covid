@@ -273,4 +273,8 @@ print("  Params: ")
 for key, value in trial.params.items():
     print("    {}: {}".format(key, value))
 
+optuna.visualization.plot_optimization_history(study)
+optuna.visualization.plot_param_importances(study)
 
+df = study.trials_dataframe(attrs=("number", "value", "params", "state"))
+df.round(6).to_csv(os.path.join(output_folder, 'trials.csv'), index=False)
