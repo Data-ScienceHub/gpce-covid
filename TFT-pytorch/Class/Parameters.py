@@ -106,7 +106,7 @@ class DataParameters:
 class ModelParameters:
     def __init__(
         self, data:dict, hidden_layer_size, dropout_rate, input_sequence_length, target_sequence_length,
-        output_size, epochs, attention_head_size, optimizer, learning_rate, clipnorm,
+        epochs, attention_head_size, optimizer, learning_rate, clipnorm,
         early_stopping_patience, seed, batch_size
     ) :
         self.data = data
@@ -115,7 +115,6 @@ class ModelParameters:
         self.dropout_rate = dropout_rate
         self.input_sequence_length = input_sequence_length
         self.target_sequence_length = target_sequence_length
-        self.output_size = output_size
 
         self.epochs = epochs
 

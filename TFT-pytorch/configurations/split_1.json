@@ -4,7 +4,6 @@
         "dropout_rate": 0.2,
         "input_sequence_length": 13,
         "target_sequence_length": 15,
-        "output_size": 2,
         "epochs": 60,
         "attention_head_size":4,
 
