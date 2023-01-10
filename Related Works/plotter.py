@@ -29,7 +29,7 @@ plt.rcParams['ytick.major.width'] = 2 # 0.8
 plt.rcParams['lines.linewidth'] = 2.5
 
 DPI = 200
-FIGSIZE = (12, 7)
+FIGSIZE = (11.5, 7)
 DATE_TICKS = 5
 
 def plot_train_history(
