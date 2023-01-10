@@ -114,7 +114,7 @@ class PlotResults:
             y_true, y_pred = merged_df[target].values, merged_df[predicted_column].values
             
             mae, rmse, rmsle, smape, nnse = calculate_result(y_true, y_pred)
-            title = f'{target} MAE {mae:0.3g}, RMSE {rmse:0.4g}, RMSLE {rmsle:0.3g}, SMAPE {smape:0.3g}, NNSE {nnse:0.3g}'
+            title = f'MAE {mae:0.3g}, RMSE {rmse:0.4g}, RMSLE {rmsle:0.3g}, SMAPE {smape:0.3g}, NNSE {nnse:0.3g}'
             
             if (summed_df[target].max() - summed_df[target].min()) >= 1e3:
                 scale = 1e3

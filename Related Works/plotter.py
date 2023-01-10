@@ -23,8 +23,8 @@ plt.rc('axes', titlepad=15)
 plt.rcParams['xtick.major.size'] = 15 # default 3.5
 plt.rcParams['xtick.major.width'] = 2 # default 0.8 
 
-plt.rcParams['ytick.major.size'] = 15 # default 3.5
-plt.rcParams['ytick.major.width'] = 2 # 0.8 
+plt.rcParams['ytick.major.size'] = 14 # default 3.5
+plt.rcParams['ytick.major.width'] = 2.4 # 0.8 
 
 plt.rcParams['lines.linewidth'] = 2.5
 
@@ -68,7 +68,7 @@ def plot_predition(
 
     # make sure to do this before the aggregation
     mae, rmse, rmsle, smape, nnse = calculate_result(df[target].values, df[predicted].values)
-    title = f'{target} MAE {mae:0.3g}, RMSE {rmse:0.4g}, RMSLE {rmsle:0.3g}, SMAPE {smape:0.3g}, NNSE {nnse:0.3g}'
+    title = f'MAE {mae:0.3g}, RMSE {rmse:0.4g}, RMSLE {rmsle:0.3g}, SMAPE {smape:0.3g}, NNSE {nnse:0.3g}'
 
     df = df.groupby('Date')[
         [target, predicted]

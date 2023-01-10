@@ -65,7 +65,7 @@ from dataclasses import dataclass
 
 @dataclass
 class args:
-    result_folder = '../results/total/'
+    result_folder = '../scratch/total/'
     figPath = os.path.join(result_folder, 'figures')
     checkpoint_folder = os.path.join(result_folder, 'checkpoints')
     input_filePath = '../2022_May_cleaned/Total.csv'
@@ -121,7 +121,6 @@ if running_on_colab:
 
 max_prediction_length = tft_params.target_sequence_length
 max_encoder_length = tft_params.input_sequence_length
-# parameters.data.time_varying_known_features.append('LinearSpace')
 
 # %% [markdown]
 # # Seed
@@ -241,14 +240,12 @@ logger = TensorBoardLogger(args.result_folder)  # logging results to a tensorboa
 trainer = pl.Trainer(
     max_epochs = tft_params.epochs,
     accelerator = 'auto',
-    weights_summary = "top",
+    enable_model_summary=True,
     gradient_clip_val = tft_params.clipnorm,
     callbacks = [early_stop_callback, best_checkpoint, latest_checkpoint],
     logger = logger,
     enable_progress_bar = args.show_progress_bar,
-    check_val_every_n_epoch = 1,
-    # max_time="00:12:00:00",
-    # auto_scale_batch_size = False 
+    check_val_every_n_epoch = 1
 )
 
 # %% [markdown]
@@ -323,17 +320,18 @@ tft = TemporalFusionTransformer.load_from_checkpoint(best_model_path)
 # ### Average
 
 # %%
-print('\n---Training results--\n')
+print('\n---Training prediction--\n')
 train_raw_predictions, train_index = tft.predict(
     train_dataloader, mode="raw", return_index=True, show_progress_bar=args.show_progress_bar
 )
 
-print('\nTrain raw prediction shapes')
+print('\nTrain raw prediction shapes\n')
 for key in train_raw_predictions.keys():
     item = train_raw_predictions[key]
     if type(item) == list: print(key, f'list of length {len(item)}', item[0].shape)
     else: print(key, item.shape)
 
+print('\n---Training results--\n')
 train_predictions = upscale_prediction(targets, train_raw_predictions['prediction'], target_scaler, max_prediction_length)
 train_result_merged = processor.align_result_with_dataset(train_data, train_predictions, train_index)
 
@@ -394,7 +392,7 @@ train_result_merged['split'] = 'train'
 validation_result_merged['split'] = 'validation'
 test_result_merged['split'] = 'test'
 df = pd.concat([train_result_merged, validation_result_merged, test_result_merged])
-df.to_csv(os.path.join(plotter.figPath, f"predictions_{'_'.join(targets)}.csv"), index=False)
+df.to_csv(os.path.join(plotter.figPath, 'predictions.csv'), index=False)
 
 df.head()
 

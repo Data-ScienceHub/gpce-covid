@@ -210,14 +210,12 @@ logger = TensorBoardLogger(args.outputPath)  # logging results to a tensorboard
 trainer = pl.Trainer(
     max_epochs = tft_params.epochs,
     accelerator = 'auto',
-    weights_summary = "top",
+    enable_model_summary=True,
     gradient_clip_val = tft_params.clipnorm,
     callbacks = [early_stop_callback, best_checkpoint, latest_checkpoint],
     logger = logger,
     enable_progress_bar = args.show_progress_bar,
-    check_val_every_n_epoch = 1,
-    # max_time="00:12:00:00",
-    # auto_scale_batch_size = False 
+    check_val_every_n_epoch = 1
 )
 
 # %% [markdown]

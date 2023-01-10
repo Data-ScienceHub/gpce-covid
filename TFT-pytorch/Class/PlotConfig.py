@@ -21,8 +21,8 @@ plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
 plt.rc('axes', titlepad=15)
 
 # set tick width
-plt.rcParams['xtick.major.size'] = 17.5 # default 3.5
-plt.rcParams['xtick.major.width'] = 2.4 # default 0.8 
+plt.rcParams['xtick.major.size'] = 15 # default 3.5
+plt.rcParams['xtick.major.width'] = 2 # default 0.8 
 
 plt.rcParams['ytick.major.size'] = 14 # default 3.5
 plt.rcParams['ytick.major.width'] = 2.4 # 0.8 
