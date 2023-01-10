@@ -23,20 +23,6 @@ device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cp
 print(device)
 
 # %% [markdown]
-# ## Google colab
-# 
-# Uncomment the following if you are running on google colab. They don't have these libraries installed by default. Only uncomment the pip install part if you are on rivanna, using a default pytorch kernel.
-
-# %%
-# !pip install pytorch_lightning
-# !pip install pytorch_forecasting
-
-# from google.colab import drive
-
-# drive.mount('/content/drive')
-# %cd /content/drive/My Drive/TFT-pytorch/notebook
-
-# %% [markdown]
 # ## Pytorch lightning and forecasting
 
 # %%
@@ -51,7 +37,7 @@ from dataclasses import dataclass
 
 @dataclass
 class args:
-    result_folder = '../results/total' # '../results/top_100_early_stopped_target_cleaned_scaled' 
+    result_folder = '../results/TFT_baseline'
     figPath = os.path.join(result_folder, 'figures')
     checkpoint_folder = os.path.join(result_folder, 'checkpoints')
     input_filePath = '../2022_May_cleaned/Total.csv'
@@ -59,7 +45,7 @@ class args:
     configPath = '../configurations/baseline.json'
     # configPath = '../config_2022_August.json'
 
-    model_path = os.path.join(checkpoint_folder, 'latest-epoch=59.ckpt')
+    model_path = os.path.join(checkpoint_folder, 'latest-epoch=0.ckpt')
 
     # set this to false when submitting batch script, otherwise it prints a lot of lines
     show_progress_bar = False
@@ -224,13 +210,13 @@ gc.collect()
 # ### By future days
 
 # %%
-gc.collect()
-for day in range(1, max_prediction_length+1):
-    print(f'Day {day}')
-    df = processor.align_result_with_dataset(train_data, train_predictions, train_index, target_time_step = day)
-    show_result(df, targets)
-    plotter.summed_plot(df, type=f'Train_day_{day}')
-    break
+# gc.collect()
+# for day in range(1, max_prediction_length+1):
+#     print(f'Day {day}')
+#     df = processor.align_result_with_dataset(train_data, train_predictions, train_index, target_time_step = day)
+#     show_result(df, targets)
+#     plotter.summed_plot(df, type=f'Train_day_{day}')
+#     break
 
 # %% [markdown]
 # ## Validation results
@@ -266,16 +252,6 @@ plotter.summed_plot(test_result_merged, 'Test')
 gc.collect()
 
 # %% [markdown]
-# ### By future days
-
-# %%
-for day in range(1, max_prediction_length+1):
-    print(f'Day {day}')
-    df = processor.align_result_with_dataset(test_data, test_predictions, test_index, target_time_step = day)
-    show_result(df, targets)
-    # plotter.summed_plot(df, type=f'Test_day_{day}')
-
-# %% [markdown]
 # ## Dump results
 
 # %%
@@ -283,7 +259,7 @@ train_result_merged['split'] = 'train'
 validation_result_merged['split'] = 'validation'
 test_result_merged['split'] = 'test'
 df = pd.concat([train_result_merged, validation_result_merged, test_result_merged])
-df.to_csv(os.path.join(plotter.figPath, f"predictions_{'_'.join(targets)}.csv"), index=False)
+df.to_csv(os.path.join(plotter.figPath, 'predictions.csv'), index=False)
 
 df.head()
 
