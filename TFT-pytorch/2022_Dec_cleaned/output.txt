@@ -1,0 +1,62 @@
+Config file loaded from ../config_2022_Dec.json
+Unique counties present 3142
+Merging feature Age Distribution.csv with length 3142
+Merging feature Health Disparities.csv with length 3142
+
+Merged static features have 3142 counties
+Removing outliers from dynamic inputs.
+Reading Disease Spread.csv
+Outliers found 8305, percent 0.255
+Min date 2020-02-29 00:00:00, max date 2022-12-30 00:00:00
+Filtering out dynamic features outside range 2020-02-29 00:00:00 and 2022-12-30 00:00:00.
+Length 3255112.
+
+Reading Transmissible Cases.csv
+Outliers found 18722, percent 0.575
+Min date 2020-02-29 00:00:00, max date 2022-12-30 00:00:00
+Filtering out dynamic features outside range 2020-02-29 00:00:00 and 2022-12-30 00:00:00.
+Length 3255112.
+
+Reading Vaccination.csv
+Outliers found 23730, percent 1.300
+Min date 2021-06-13 00:00:00, max date 2022-12-30 00:00:00
+Filtering out dynamic features outside range 2020-02-29 00:00:00 and 2022-12-30 00:00:00.
+Length 1824784.
+
+Reading Social Distancing.csv
+Outliers found 121337, percent 3.738
+Min date 2020-02-29 00:00:00, max date 2022-12-30 00:00:00
+Filtering out dynamic features outside range 2020-02-29 00:00:00 and 2022-12-30 00:00:00.
+Length 3245686.
+
+Total dynamic feature shape (3301524, 6)
+Will remove outliers from target.
+Reading Cases.csv
+Outliers found 138495, percent 4.093
+Setting negative daily Cases counts to zero.
+Min date 2020-01-22 00:00:00, max date 2023-01-02 00:00:00
+Will filter out target data outside range 2020-02-29 00:00:00 and 2022-12-30 00:00:00.
+Length 3255112.
+
+Total target feature shape (3255112, 3)
+Merging all features
+Total merged data shape (3255112, 9)
+Missing percentage in total data
+VaccinationFull    45.37
+SocialDist          0.29
+FIPS                0.00
+AgeDist             0.00
+HealthDisp          0.00
+Date                0.00
+DiseaseSpread       0.00
+Transmission        0.00
+Cases               0.00
+dtype: float64
+Filling null values with 0
+Adding time based embeddings.
+Writing total data to ../2022_Dec_cleaned/Total.csv
+
+Slicing based on top 100 counties by population
+Slicing based on top 500 counties by population
+Writing top 100 populated counties data to ../2022_Dec_cleaned/Top_100.csv.
+Writing top 500 populated counties data to ../2022_Dec_cleaned/Top_500.csv.
