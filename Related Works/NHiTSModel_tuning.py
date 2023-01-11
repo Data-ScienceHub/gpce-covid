@@ -254,14 +254,20 @@ def objective(trial):
 # %%
 study_name = 'nhits'
 storage_name = f"sqlite:///{study_name}.db"
+load_only = False
 
-study = optuna.create_study(
-    study_name=study_name, storage=storage_name, direction='minimize', load_if_exists=True
-)
-study.optimize(
-    objective, n_trials=Config.n_trials, n_jobs=-1, 
-    gc_after_trial=True, show_progress_bar=VERBOSE
-)
+if load_only:
+    study = optuna.load_study(
+        study_name=study_name, storage=storage_name
+    )
+else:
+    study = optuna.create_study(
+        study_name=study_name, storage=storage_name, direction='minimize', load_if_exists=True
+    )
+    study.optimize(
+        objective, n_trials=Config.n_trials, n_jobs=-1, 
+        gc_after_trial=True, show_progress_bar=VERBOSE
+    )
 
 print("Number of finished trials: ", len(study.trials))
 print("Best trial:")

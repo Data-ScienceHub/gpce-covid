@@ -1,4 +1,4 @@
-from tensorflow.keras.layers import Dense, LSTM, Bidirectional, GRU, Dropout, Conv1D
+from tensorflow.keras.layers import Dense, LSTM, Bidirectional, Dropout, Conv1D
 
 from tensorflow.keras.layers import MultiHeadAttention, GlobalAveragePooling1D, LayerNormalization
 from tensorflow.keras import optimizers, Sequential, Input, Model
