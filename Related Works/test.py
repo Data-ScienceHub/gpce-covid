@@ -5,10 +5,9 @@
 import pandas as pd
 # disable chained assignments
 pd.options.mode.chained_assignment = None 
-import os, gc
+import os
 
 import tensorflow as tf
-from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 from datetime import datetime
 
 from models import *
@@ -19,14 +18,15 @@ from splits import *
 SEED = 7
 tf.random.set_seed(SEED)
 SHOW_IMAGE = False
-VERBOSE = 2
+VERBOSE = 1
 Split = Baseline
 
 # %% [markdown]
 # ## Result folder
 
 # %%
-output_folder = 'results'
+start = datetime.now()
+output_folder = 'scratch/results_LSTM'
 if not os.path.exists(output_folder):
     os.makedirs(output_folder, exist_ok=True)
 
@@ -115,42 +115,14 @@ test_data = cache_data(
 output_size = len(targets) * output_sequence_length
 model = build_LSTM(
     x_train.shape[1:], output_size=output_size, loss=Config.loss, 
-    summarize=True, learning_rate=Config.learning_rate
-)
-early_stopping = EarlyStopping(
-    patience = Config.early_stopping_patience, 
-    restore_best_weights=True
-)
-model_checkpoint = ModelCheckpoint(
-    filepath=os.path.join(output_folder, 'model.h5'), 
-    save_best_only=True, save_weights_only=True
+    summarize=False, learning_rate=Config.learning_rate
 )
 
 # %%
-start = datetime.now()
-print(f'\n----Training started at {start}----\n')
-history = model.fit(
-    train_data, epochs=Config.epochs, validation_data=val_data, 
-    callbacks=[early_stopping, model_checkpoint],
-    verbose=VERBOSE
-)
-gc.collect()
-end = datetime.now()
-print(f'\n----Training ended at {end}, elapsed time {end-start}.')
-
-# %%
-print(f'Best model by validation loss saved at {model_checkpoint.filepath}.')
+# print(f'Best model by validation loss saved at {model_checkpoint.filepath}.')
 print(f'Loading best model.')
-model.load_weights(model_checkpoint.filepath)
-
-# %% [markdown]
-# ## History
-
-# %%
-plot_train_history(
-    history, title='Multi-Step, Multi-Output Training and Validation Loss', 
-    figure_path=os.path.join(output_folder, 'history.jpg'), show_image=SHOW_IMAGE
-)
+model.build(x_train.shape)
+model.load_weights(os.path.join(output_folder, "model.h5"))
 
 # %% [markdown]
 # # Prediction
@@ -252,5 +224,3 @@ test_prediction_df['Split'] = 'test'
 merged_df = pd.concat([train_prediction_df, val_prediction_df, test_prediction_df], axis=0)
 merged_df.to_csv(os.path.join(output_folder, 'predictions.csv'), index=False)
 print(f'Ended at {datetime.now()}. Elapsed time {datetime.now() - start}')
-
-

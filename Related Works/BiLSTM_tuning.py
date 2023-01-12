@@ -63,7 +63,7 @@ class Config:
 
 targets = Config.targets
 group_id = Config.group_id
-input_sequence_length = Config.output_sequence_length
+input_sequence_length = Config.input_sequence_length
 output_sequence_length = Config.output_sequence_length
 output_size = len(targets) * output_sequence_length
 

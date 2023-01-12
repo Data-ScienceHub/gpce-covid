@@ -85,7 +85,7 @@ class args:
 
     # interpret_output has high memory requirement
     # results in out-of-memery for Total.csv and a model of hidden size 64, even with 64GB memory
-    interpret_train = True # 'Total.csv' not in input_filePath
+    interpret_train = 'Total.csv' not in input_filePath
 
 # %%
 total_data = pd.read_csv(args.input_filePath)
