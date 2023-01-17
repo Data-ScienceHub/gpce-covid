@@ -112,17 +112,8 @@ test_data = cache_data(
 # ## Model
 
 # %%
-output_size = len(targets) * output_sequence_length
-model = build_LSTM(
-    x_train.shape[1:], output_size=output_size, loss=Config.loss, 
-    summarize=False, learning_rate=Config.learning_rate
-)
-
-# %%
-# print(f'Best model by validation loss saved at {model_checkpoint.filepath}.')
-print(f'Loading best model.')
-model.build(x_train.shape)
-model.load_weights(os.path.join(output_folder, "model.h5"))
+model_path = os.path.join(output_folder, 'model.h5')
+model = tf.keras.models.load_model(model_path)
 
 # %% [markdown]
 # # Prediction

@@ -15,6 +15,7 @@ from models import *
 from plotter import *
 from utils import *
 from splits import *
+from best_config import *
 
 SEED = 7
 tf.random.set_seed(SEED)
@@ -55,12 +56,17 @@ class Config:
     selected_columns = features + targets
     input_sequence_length = 13
     output_sequence_length = 15
-    batch_size = 64
+    
     buffer_size = 1000
-    epochs = 1
-    learning_rate = 1e-6
     early_stopping_patience = 5
     loss = 'mse'
+
+    epochs = 1
+    learning_rate = 1e-6
+    batch_size = 64
+
+    # learning_rate = LstmConfig.learning_rate
+    # batch_size = LstmConfig.batch_size
 
 targets = Config.targets
 group_id = Config.group_id
@@ -123,7 +129,7 @@ early_stopping = EarlyStopping(
 )
 model_checkpoint = ModelCheckpoint(
     filepath=os.path.join(output_folder, 'model.h5'), 
-    save_best_only=True, save_weights_only=True
+    save_best_only=True
 )
 
 # %%
