@@ -1,0 +1,185 @@
+2023-01-21 10:03:16.636993: I tensorflow/core/platform/cpu_feature_guard.cc:193] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2023-01-21 10:03:19.953849: E tensorflow/stream_executor/cuda/cuda_blas.cc:2981] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2023-01-21 10:03:23.086826: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libnvinfer.so.7'; dlerror: libnvinfer.so.7: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /u/mi3se/anaconda3/envs/ml/lib:/sw/centos-7.4/anaconda3/current/lib:/sw/centos-7.4/cudnn/current/lib64:/sw/centos-7.4/cuda/current/extras/CUPTI/lib64:/sw/centos-7.4/cuda/current/lib64:/lib::/u/mi3se/anaconda3/envs/ml/lib/
+2023-01-21 10:03:23.087823: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libnvinfer_plugin.so.7'; dlerror: libnvinfer_plugin.so.7: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /u/mi3se/anaconda3/envs/ml/lib:/sw/centos-7.4/anaconda3/current/lib:/sw/centos-7.4/cudnn/current/lib64:/sw/centos-7.4/cuda/current/extras/CUPTI/lib64:/sw/centos-7.4/cuda/current/lib64:/lib::/u/mi3se/anaconda3/envs/ml/lib/
+2023-01-21 10:03:23.087850: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Cannot dlopen some TensorRT libraries. If you would like to use Nvidia GPU with TensorRT, please make sure the missing libraries mentioned above are installed properly.
+2023-01-21 10:14:22.852813: I tensorflow/core/platform/cpu_feature_guard.cc:193] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2023-01-21 10:14:26.132693: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1616] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 10407 MB memory:  -> device: 0, name: NVIDIA GeForce GTX 1080 Ti, pci bus id: 0000:b2:00.0, compute capability: 6.1
+   FIPS  AgeDist  HealthDisp  ... LinearSpace  SinWeekly  CosWeekly
+0  1001   0.1611       4.202  ...         0.0    -0.9749    -0.2225
+1  1001   0.1611       4.202  ...         0.0    -0.7818     0.6235
+2  1001   0.1611       4.202  ...         0.0     0.0000     1.0000
+
+[3 rows x 14 columns]
+Shapes: train (2010880, 14), validation (87976, 14), test (87976, 14).
+Shapes: data (1926046, 13, 10), labels (1926046, 15).
+Shapes: data (3142, 13, 10), labels (3142, 15).
+Shapes: data (3142, 13, 10), labels (3142, 15).
+Model: "sequential"
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ lstm (LSTM)                 (None, 13, 64)            19200     
+                                                                 
+ dropout (Dropout)           (None, 13, 64)            0         
+                                                                 
+ lstm_1 (LSTM)               (None, 64)                33024     
+                                                                 
+ dense (Dense)               (None, 64)                4160      
+                                                                 
+ dense_1 (Dense)             (None, 15)                975       
+                                                                 
+=================================================================
+Total params: 57,359
+Trainable params: 57,359
+Non-trainable params: 0
+_________________________________________________________________
+
+----Training started at 2023-01-21 10:14:30.320868----
+
+Epoch 1/200
+2023-01-21 10:14:38.393145: I tensorflow/stream_executor/cuda/cuda_dnn.cc:384] Loaded cuDNN version 8201
+15048/15048 - 121s - loss: 0.6087 - val_loss: 0.7431 - 121s/epoch - 8ms/step
+Epoch 2/200
+15048/15048 - 103s - loss: 0.4570 - val_loss: 0.7207 - 103s/epoch - 7ms/step
+Epoch 3/200
+15048/15048 - 105s - loss: 0.4110 - val_loss: 0.7147 - 105s/epoch - 7ms/step
+Epoch 4/200
+15048/15048 - 104s - loss: 0.3818 - val_loss: 0.7062 - 104s/epoch - 7ms/step
+Epoch 5/200
+15048/15048 - 104s - loss: 0.3759 - val_loss: 0.7136 - 104s/epoch - 7ms/step
+Epoch 6/200
+15048/15048 - 104s - loss: 0.3423 - val_loss: 0.6898 - 104s/epoch - 7ms/step
+Epoch 7/200
+15048/15048 - 104s - loss: 0.3213 - val_loss: 0.6587 - 104s/epoch - 7ms/step
+Epoch 8/200
+15048/15048 - 106s - loss: 0.3213 - val_loss: 0.6305 - 106s/epoch - 7ms/step
+Epoch 9/200
+15048/15048 - 105s - loss: 0.3032 - val_loss: 0.6191 - 105s/epoch - 7ms/step
+Epoch 10/200
+15048/15048 - 104s - loss: 0.3094 - val_loss: 0.6033 - 104s/epoch - 7ms/step
+Epoch 11/200
+15048/15048 - 104s - loss: 0.2910 - val_loss: 0.5994 - 104s/epoch - 7ms/step
+Epoch 12/200
+15048/15048 - 104s - loss: 0.2744 - val_loss: 0.5874 - 104s/epoch - 7ms/step
+Epoch 13/200
+15048/15048 - 104s - loss: 0.2719 - val_loss: 0.5768 - 104s/epoch - 7ms/step
+Epoch 14/200
+15048/15048 - 105s - loss: 0.2768 - val_loss: 0.5618 - 105s/epoch - 7ms/step
+Epoch 15/200
+15048/15048 - 105s - loss: 0.2634 - val_loss: 0.5529 - 105s/epoch - 7ms/step
+Epoch 16/200
+15048/15048 - 105s - loss: 0.2527 - val_loss: 0.5472 - 105s/epoch - 7ms/step
+Epoch 17/200
+15048/15048 - 105s - loss: 0.2461 - val_loss: 0.5311 - 105s/epoch - 7ms/step
+Epoch 18/200
+15048/15048 - 103s - loss: 0.2438 - val_loss: 0.5379 - 103s/epoch - 7ms/step
+Epoch 19/200
+15048/15048 - 103s - loss: 0.2434 - val_loss: 0.5365 - 103s/epoch - 7ms/step
+Epoch 20/200
+15048/15048 - 103s - loss: 0.2443 - val_loss: 0.5314 - 103s/epoch - 7ms/step
+Epoch 21/200
+15048/15048 - 103s - loss: 0.2313 - val_loss: 0.5243 - 103s/epoch - 7ms/step
+Epoch 22/200
+15048/15048 - 103s - loss: 0.2302 - val_loss: 0.5233 - 103s/epoch - 7ms/step
+Epoch 23/200
+15048/15048 - 103s - loss: 0.2342 - val_loss: 0.5146 - 103s/epoch - 7ms/step
+Epoch 24/200
+15048/15048 - 103s - loss: 0.2308 - val_loss: 0.5258 - 103s/epoch - 7ms/step
+Epoch 25/200
+15048/15048 - 103s - loss: 0.2306 - val_loss: 0.5162 - 103s/epoch - 7ms/step
+Epoch 26/200
+15048/15048 - 103s - loss: 0.2200 - val_loss: 0.5248 - 103s/epoch - 7ms/step
+Epoch 27/200
+15048/15048 - 104s - loss: 0.2202 - val_loss: 0.5087 - 104s/epoch - 7ms/step
+Epoch 28/200
+15048/15048 - 104s - loss: 0.2185 - val_loss: 0.5105 - 104s/epoch - 7ms/step
+Epoch 29/200
+15048/15048 - 104s - loss: 0.2176 - val_loss: 0.5074 - 104s/epoch - 7ms/step
+Epoch 30/200
+15048/15048 - 104s - loss: 0.2124 - val_loss: 0.4967 - 104s/epoch - 7ms/step
+Epoch 31/200
+15048/15048 - 104s - loss: 0.2078 - val_loss: 0.5058 - 104s/epoch - 7ms/step
+Epoch 32/200
+15048/15048 - 104s - loss: 0.2110 - val_loss: 0.5072 - 104s/epoch - 7ms/step
+Epoch 33/200
+15048/15048 - 104s - loss: 0.2118 - val_loss: 0.4956 - 104s/epoch - 7ms/step
+Epoch 34/200
+15048/15048 - 104s - loss: 0.2097 - val_loss: 0.4905 - 104s/epoch - 7ms/step
+Epoch 35/200
+15048/15048 - 104s - loss: 0.2096 - val_loss: 0.4853 - 104s/epoch - 7ms/step
+Epoch 36/200
+15048/15048 - 106s - loss: 0.2034 - val_loss: 0.4805 - 106s/epoch - 7ms/step
+Epoch 37/200
+15048/15048 - 105s - loss: 0.2112 - val_loss: 0.4720 - 105s/epoch - 7ms/step
+Epoch 38/200
+15048/15048 - 104s - loss: 0.2022 - val_loss: 0.4775 - 104s/epoch - 7ms/step
+Epoch 39/200
+15048/15048 - 105s - loss: 0.1984 - val_loss: 0.4735 - 105s/epoch - 7ms/step
+Epoch 40/200
+15048/15048 - 104s - loss: 0.1975 - val_loss: 0.4746 - 104s/epoch - 7ms/step
+Epoch 41/200
+15048/15048 - 105s - loss: 0.1974 - val_loss: 0.4686 - 105s/epoch - 7ms/step
+Epoch 42/200
+15048/15048 - 106s - loss: 0.1945 - val_loss: 0.4788 - 106s/epoch - 7ms/step
+Epoch 43/200
+15048/15048 - 106s - loss: 0.1940 - val_loss: 0.4665 - 106s/epoch - 7ms/step
+Epoch 44/200
+15048/15048 - 106s - loss: 0.1911 - val_loss: 0.4693 - 106s/epoch - 7ms/step
+Epoch 45/200
+15048/15048 - 106s - loss: 0.1895 - val_loss: 0.4820 - 106s/epoch - 7ms/step
+Epoch 46/200
+15048/15048 - 106s - loss: 0.1902 - val_loss: 0.4676 - 106s/epoch - 7ms/step
+Epoch 47/200
+15048/15048 - 106s - loss: 0.1907 - val_loss: 0.4705 - 106s/epoch - 7ms/step
+Epoch 48/200
+15048/15048 - 107s - loss: 0.1876 - val_loss: 0.4670 - 107s/epoch - 7ms/step
+
+----Training ended at 2023-01-21 11:56:52.047696, elapsed time 1:42:21.726828.
+Best model by validation loss saved at scratch/results_LSTM/model.h5.
+Loading best model.
+
+Train prediction
+15048/15048 - 57s - 57s/epoch - 4ms/step
+               FIPS         Cases  Predicted_Cases
+count  1.963750e+06  1.963750e+06     1.963750e+06
+mean   3.038365e+04  2.314343e+01     2.491910e+01
+std    1.516010e+04  1.325581e+02     1.001128e+02
+min    1.001000e+03  0.000000e+00     0.000000e+00
+25%    1.817700e+04  0.000000e+00     4.000000e+00
+50%    2.917600e+04  2.000000e+00     7.000000e+00
+75%    4.508100e+04  1.100000e+01     1.700000e+01
+max    5.604500e+04  2.061825e+04     1.326600e+04
+Target Cases, MAE 12.51, RMSE 60.129, RMSLE 1.2962, SMAPE 1.1632. NNSE 0.82935.
+
+
+Validation prediction
+25/25 - 0s - 111ms/epoch - 4ms/step
+               FIPS         Cases  Predicted_Cases
+count  40846.000000  40846.000000     40846.000000
+mean   30383.649268     35.844495        34.280909
+std    15160.280886    149.521039        91.714393
+min     1001.000000      0.000000         0.000000
+25%    18177.000000      0.000000         7.000000
+50%    29176.000000      2.000000        14.000000
+75%    45081.000000     20.000000        28.000000
+max    56045.000000   8204.000000      5337.000000
+Target Cases, MAE 23.798, RMSE 91.836, RMSLE 1.7147, SMAPE 1.2198. NNSE 0.72608.
+
+
+Test prediction
+25/25 - 0s - 105ms/epoch - 4ms/step
+               FIPS         Cases  Predicted_Cases
+count  40846.000000  40846.000000     40846.000000
+mean   30383.649268     60.815104        45.064168
+std    15160.280886    338.594555       119.224685
+min     1001.000000      0.000000         0.000000
+25%    18177.000000      0.000000         7.000000
+50%    29176.000000      2.000000        15.000000
+75%    45081.000000     20.000000        37.000000
+max    56045.000000  20618.250000      5058.000000
+Target Cases, MAE 44.998, RMSE 270.84, RMSLE 1.7995, SMAPE 1.2555. NNSE 0.6098.
+
+Ended at 2023-01-21 12:56:40.641345. Elapsed time 2:42:10.320506
