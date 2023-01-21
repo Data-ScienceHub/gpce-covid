@@ -121,7 +121,9 @@ test_data = cache_data(
 output_size = len(targets) * output_sequence_length
 model = build_LSTM(
     x_train.shape[1:], output_size=output_size, loss=Config.loss, 
-    summarize=True, learning_rate=Config.learning_rate
+    summarize=True, learning_rate=Config.learning_rate,
+    # hidden_size=LstmConfig.hidden_size, dropout=LstmConfig.dropout, 
+    # layers=LstmConfig.layers
 )
 early_stopping = EarlyStopping(
     patience = Config.early_stopping_patience, 

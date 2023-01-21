@@ -1,0 +1,175 @@
+2023-01-12 09:21:55.966458: I tensorflow/core/platform/cpu_feature_guard.cc:193] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F AVX512_VNNI FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2023-01-12 09:21:59.380483: I tensorflow/core/util/util.cc:169] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2023-01-12 09:22:00.591734: E tensorflow/stream_executor/cuda/cuda_blas.cc:2981] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2023-01-12 09:22:14.133239: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libnvinfer.so.7'; dlerror: libnvinfer.so.7: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /sw/centos-7.4/anaconda3/current/lib:/sw/centos-7.4/cudnn/current/lib64:/sw/centos-7.4/cuda/current/extras/CUPTI/lib64:/sw/centos-7.4/cuda/current/lib64:/u/mi3se/anaconda3/envs/ml/lib/
+2023-01-12 09:22:14.135059: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libnvinfer_plugin.so.7'; dlerror: libnvinfer_plugin.so.7: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /sw/centos-7.4/anaconda3/current/lib:/sw/centos-7.4/cudnn/current/lib64:/sw/centos-7.4/cuda/current/extras/CUPTI/lib64:/sw/centos-7.4/cuda/current/lib64:/u/mi3se/anaconda3/envs/ml/lib/
+2023-01-12 09:22:14.135110: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Cannot dlopen some TensorRT libraries. If you would like to use Nvidia GPU with TensorRT, please make sure the missing libraries mentioned above are installed properly.
+Global seed set to 7
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+Missing logger folder: ../scratch/TFT_split_4/lightning_logs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [6]
+
+   | Name                               | Type                            | Params
+----------------------------------------------------------------------------------------
+0  | loss                               | MultiLoss                       | 0     
+1  | logging_metrics                    | ModuleList                      | 0     
+2  | input_embeddings                   | MultiEmbedding                  | 0     
+3  | prescalers                         | ModuleDict                      | 144   
+4  | static_variable_selection          | VariableSelectionNetwork        | 1.1 K 
+5  | encoder_variable_selection         | VariableSelectionNetwork        | 4.4 K 
+6  | decoder_variable_selection         | VariableSelectionNetwork        | 1.2 K 
+7  | static_context_variable_selection  | GatedResidualNetwork            | 1.1 K 
+8  | static_context_initial_hidden_lstm | GatedResidualNetwork            | 1.1 K 
+9  | static_context_initial_cell_lstm   | GatedResidualNetwork            | 1.1 K 
+10 | static_context_enrichment          | GatedResidualNetwork            | 1.1 K 
+11 | lstm_encoder                       | LSTM                            | 2.2 K 
+12 | lstm_decoder                       | LSTM                            | 2.2 K 
+13 | post_lstm_gate_encoder             | GatedLinearUnit                 | 544   
+14 | post_lstm_add_norm_encoder         | AddNorm                         | 32    
+15 | static_enrichment                  | GatedResidualNetwork            | 1.4 K 
+16 | multihead_attn                     | InterpretableMultiHeadAttention | 676   
+17 | post_attn_gate_norm                | GateAddNorm                     | 576   
+18 | pos_wise_ff                        | GatedResidualNetwork            | 1.1 K 
+19 | pre_output_gate_norm               | GateAddNorm                     | 576   
+20 | output_layer                       | Linear                          | 17    
+----------------------------------------------------------------------------------------
+20.4 K    Trainable params
+0         Non-trainable params
+20.4 K    Total params
+0.082     Total estimated model params size (MB)
+Metric val_loss improved. New best score: 1.196
+Monitored metric val_loss did not improve in the last 3 records. Best score: 1.196. Signaling Trainer to stop.
+cuda
+(3255112, 12)
+There are 3142 unique counties in the dataset.
+Train samples 3160852, validation samples 87976, test samples 87976
+1006 days of training, 15 days of validation data, 15 days of test data.
+Scaling static and dynamic input features: ['AgeDist', 'HealthDisp', 'DiseaseSpread', 'Transmission', 'VaccinationFull', 'SocialDist']
+Scaling targets ['Cases']
+Number of parameters in network: 20.4k
+
+----Training started at 2023-01-12 09:23:39.986074----
+
+
+----Training ended at 2023-01-12 14:08:31.597739, elapsed time 4:44:51.611665
+Best model by validation loss saved at /u/mi3se/Git/gpce-covid/TFT-pytorch/scratch/TFT_split_4/checkpoints/best-epoch=0.ckpt
+Creating folder ../scratch/TFT_split_4/figures
+Loading best model from /u/mi3se/Git/gpce-covid/TFT-pytorch/scratch/TFT_split_4/checkpoints/best-epoch=0.ckpt
+
+---Training prediction--
+
+
+Train raw prediction shapes
+
+prediction list of length 1 torch.Size([3075968, 15, 1])
+encoder_attention torch.Size([3075968, 15, 4, 13])
+decoder_attention torch.Size([3075968, 15, 4, 15])
+static_variables torch.Size([3075968, 1, 2])
+encoder_variables torch.Size([3075968, 13, 1, 7])
+decoder_variables torch.Size([3075968, 15, 1, 2])
+decoder_lengths torch.Size([3075968])
+encoder_lengths torch.Size([3075968])
+
+---Training results--
+
+Target Cases, MAE 12.4, RMSE 88.988, RMSLE 0.95272, SMAPE 0.69. NNSE 0.7918.
+
+
+---Validation results--
+
+Target Cases, MAE 21.259, RMSE 192.54, RMSLE 1.4561, SMAPE 0.72492. NNSE 0.50468.
+
+
+---Test results--
+
+Target Cases, MAE 14.441, RMSE 149.27, RMSLE 1.1889, SMAPE 0.60373. NNSE 0.52937.
+
+Day 1
+Target Cases, MAE 32.709, RMSE 170.19, RMSLE 1.4432, SMAPE 0.74518. NNSE 0.60941.
+
+Day 2
+Target Cases, MAE 1.1626, RMSE 5.7005, RMSLE 0.73135, SMAPE 0.39791. NNSE 0.037741.
+
+Day 3
+Target Cases, MAE 0.69605, RMSE 4.6314, RMSLE 0.55925, SMAPE 0.18778. NNSE 0.
+
+Day 4
+Target Cases, MAE 15.854, RMSE 263.14, RMSLE 0.52984, SMAPE 0.1485. NNSE 0.67849.
+
+Day 5
+Target Cases, MAE 16.659, RMSE 154.15, RMSLE 1.0564, SMAPE 0.54191. NNSE 0.54022.
+
+Day 6
+Target Cases, MAE 41.231, RMSE 237.67, RMSLE 1.6535, SMAPE 0.9641. NNSE 0.51922.
+
+Day 7
+Target Cases, MAE 18.498, RMSE 202.24, RMSLE 1.2913, SMAPE 0.84542. NNSE 0.13131.
+
+Day 8
+Target Cases, MAE 14.259, RMSE 104.89, RMSLE 1.6485, SMAPE 0.89648. NNSE 0.10883.
+
+Day 9
+Target Cases, MAE 3.4545, RMSE 32.304, RMSLE 0.9567, SMAPE 0.54988. NNSE 0.48405.
+
+Day 10
+Target Cases, MAE 1.6365, RMSE 16.456, RMSLE 0.68196, SMAPE 0.21153. NNSE 0.46434.
+
+Day 11
+Target Cases, MAE 14.673, RMSE 283.04, RMSLE 0.84403, SMAPE 0.24201. NNSE 0.0046847.
+
+Day 12
+Target Cases, MAE 10.426, RMSE 56.39, RMSLE 1.2656, SMAPE 0.64689. NNSE 0.18161.
+
+Day 13
+Target Cases, MAE 10.313, RMSE 63.513, RMSLE 1.3647, SMAPE 0.86559. NNSE 0.59389.
+
+Day 14
+Target Cases, MAE 14.186, RMSE 84.774, RMSLE 1.233, SMAPE 0.88053. NNSE 0.89918.
+
+Day 15
+Target Cases, MAE 20.853, RMSE 89.242, RMSLE 1.6369, SMAPE 0.93226. NNSE 0.61786.
+
+
+---Per county test results--
+
+FIPS 10001
+Target Cases, MAE 39.867, RMSE 77.767, RMSLE 1.8827, SMAPE 1.3112. NNSE 0.5599.
+
+
+FIPS 10003
+Target Cases, MAE 93.4, RMSE 180.59, RMSLE 2.273, SMAPE 1.3015. NNSE 0.59157.
+
+
+FIPS 10005
+Target Cases, MAE 57.533, RMSE 115.47, RMSLE 1.9048, SMAPE 0.62565. NNSE 0.60999.
+
+
+FIPS 1001
+Target Cases, MAE 16.8, RMSE 34.751, RMSLE 1.7724, SMAPE 1.2683. NNSE 0.51336.
+
+
+FIPS 1003
+Target Cases, MAE 46.667, RMSE 89.097, RMSLE 2.5366, SMAPE 1.665. NNSE 0.51947.
+
+
+Variables:
+Static ['AgeDist', 'HealthDisp'] 
+Encoder ['SinWeekly', 'CosWeekly', 'DiseaseSpread', 'Transmission', 'VaccinationFull', 'SocialDist', 'Cases'] 
+Decoder ['SinWeekly', 'CosWeekly'].
+Interpreting test predictions
+attention tensor([2.3029e-02, 7.7063e-03, 1.1256e-02, 1.5531e-03, 3.5399e-04, 8.2190e-02,
+        7.4254e-01, 1.5013e-02, 1.1350e-02, 1.4535e-02, 1.8907e-03, 4.3285e-04,
+        9.8581e-02])
+static_variables tensor([1460.2903, 1681.7097])
+encoder_variables tensor([ 685.6205,  471.7429,  410.9957,   90.0974,  289.7429,  123.6640,
+        1070.1367])
+decoder_variables tensor([2100.4468, 1041.5536])
+encoder_length_histogram tensor([   0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+           0, 3142])
+decoder_length_histogram tensor([   0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+           0,    0, 3142])
+Ended at 2023-01-12 14:47:16.146886. Elapsed time 5:23:36.160826
