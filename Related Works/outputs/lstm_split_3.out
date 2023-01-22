@@ -1,12 +1,12 @@
-2023-01-21 12:44:47.189474: I tensorflow/core/platform/cpu_feature_guard.cc:193] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F FMA
+2023-01-21 22:35:51.936946: I tensorflow/core/platform/cpu_feature_guard.cc:193] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
 To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
-2023-01-21 12:44:47.477354: E tensorflow/stream_executor/cuda/cuda_blas.cc:2981] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
-2023-01-21 12:44:48.974109: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libnvinfer.so.7'; dlerror: libnvinfer.so.7: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /u/mi3se/anaconda3/envs/ml/lib:/sw/centos-7.4/anaconda3/current/lib:/sw/centos-7.4/cudnn/current/lib64:/sw/centos-7.4/cuda/current/extras/CUPTI/lib64:/sw/centos-7.4/cuda/current/lib64:/lib::/u/mi3se/anaconda3/envs/ml/lib/
-2023-01-21 12:44:48.974278: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libnvinfer_plugin.so.7'; dlerror: libnvinfer_plugin.so.7: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /u/mi3se/anaconda3/envs/ml/lib:/sw/centos-7.4/anaconda3/current/lib:/sw/centos-7.4/cudnn/current/lib64:/sw/centos-7.4/cuda/current/extras/CUPTI/lib64:/sw/centos-7.4/cuda/current/lib64:/lib::/u/mi3se/anaconda3/envs/ml/lib/
-2023-01-21 12:44:48.974297: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Cannot dlopen some TensorRT libraries. If you would like to use Nvidia GPU with TensorRT, please make sure the missing libraries mentioned above are installed properly.
-2023-01-21 12:56:47.522291: I tensorflow/core/platform/cpu_feature_guard.cc:193] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F FMA
+2023-01-21 22:35:52.095624: E tensorflow/stream_executor/cuda/cuda_blas.cc:2981] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2023-01-21 22:35:53.089393: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libnvinfer.so.7'; dlerror: libnvinfer.so.7: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /u/mi3se/anaconda3/envs/ml/lib:/sw/centos-7.4/anaconda3/current/lib:/sw/centos-7.4/cudnn/current/lib64:/sw/centos-7.4/cuda/current/extras/CUPTI/lib64:/sw/centos-7.4/cuda/current/lib64:/lib::/u/mi3se/anaconda3/envs/ml/lib/
+2023-01-21 22:35:53.089489: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libnvinfer_plugin.so.7'; dlerror: libnvinfer_plugin.so.7: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /u/mi3se/anaconda3/envs/ml/lib:/sw/centos-7.4/anaconda3/current/lib:/sw/centos-7.4/cudnn/current/lib64:/sw/centos-7.4/cuda/current/extras/CUPTI/lib64:/sw/centos-7.4/cuda/current/lib64:/lib::/u/mi3se/anaconda3/envs/ml/lib/
+2023-01-21 22:35:53.089499: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Cannot dlopen some TensorRT libraries. If you would like to use Nvidia GPU with TensorRT, please make sure the missing libraries mentioned above are installed properly.
+2023-01-21 22:42:51.765629: I tensorflow/core/platform/cpu_feature_guard.cc:193] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
 To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
-2023-01-21 12:56:49.112011: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1616] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 10407 MB memory:  -> device: 0, name: NVIDIA GeForce GTX 1080 Ti, pci bus id: 0000:b1:00.0, compute capability: 6.1
+2023-01-21 22:42:52.217046: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1616] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 38266 MB memory:  -> device: 0, name: NVIDIA A100-PCIE-40GB, pci bus id: 0000:81:00.0, compute capability: 8.0
    FIPS  AgeDist  HealthDisp  ... LinearSpace  SinWeekly  CosWeekly
 0  1001   0.1611       4.202  ...         0.0    -0.9749    -0.2225
 1  1001   0.1611       4.202  ...         0.0    -0.7818     0.6235
@@ -27,75 +27,80 @@ _________________________________________________________________
                                                                  
  lstm_1 (LSTM)               (None, 64)                33024     
                                                                  
- dense (Dense)               (None, 64)                4160      
-                                                                 
- dense_1 (Dense)             (None, 15)                975       
+ dense (Dense)               (None, 15)                975       
                                                                  
 =================================================================
-Total params: 57,359
-Trainable params: 57,359
+Total params: 53,199
+Trainable params: 53,199
 Non-trainable params: 0
 _________________________________________________________________
 
-----Training started at 2023-01-21 12:56:53.123958----
+----Training started at 2023-01-21 22:42:53.704312----
 
 Epoch 1/200
-2023-01-21 12:56:59.195499: I tensorflow/stream_executor/cuda/cuda_dnn.cc:384] Loaded cuDNN version 8201
-17281/17281 - 134s - loss: 0.5816 - val_loss: 0.1542 - 134s/epoch - 8ms/step
+2023-01-21 22:42:56.781761: I tensorflow/stream_executor/cuda/cuda_dnn.cc:384] Loaded cuDNN version 8201
+2023-01-21 22:42:57.588734: I tensorflow/stream_executor/cuda/cuda_blas.cc:1614] TensorFloat-32 will be used for the matrix multiplication. This will only be logged once.
+17281/17281 - 69s - loss: 0.7392 - val_loss: 0.1083 - 69s/epoch - 4ms/step
 Epoch 2/200
-17281/17281 - 121s - loss: 0.4038 - val_loss: 0.2260 - 121s/epoch - 7ms/step
+17281/17281 - 60s - loss: 0.5909 - val_loss: 0.1171 - 60s/epoch - 3ms/step
 Epoch 3/200
-17281/17281 - 122s - loss: 0.3648 - val_loss: 0.2962 - 122s/epoch - 7ms/step
+17281/17281 - 65s - loss: 0.5385 - val_loss: 0.1083 - 65s/epoch - 4ms/step
 Epoch 4/200
-17281/17281 - 120s - loss: 0.3489 - val_loss: 0.3637 - 120s/epoch - 7ms/step
+17281/17281 - 65s - loss: 0.5061 - val_loss: 0.1067 - 65s/epoch - 4ms/step
 Epoch 5/200
-17281/17281 - 120s - loss: 0.3436 - val_loss: 0.3664 - 120s/epoch - 7ms/step
+17281/17281 - 61s - loss: 0.4827 - val_loss: 0.1192 - 61s/epoch - 4ms/step
 Epoch 6/200
-17281/17281 - 119s - loss: 0.3286 - val_loss: 0.5091 - 119s/epoch - 7ms/step
+17281/17281 - 62s - loss: 0.4621 - val_loss: 0.1340 - 62s/epoch - 4ms/step
+Epoch 7/200
+17281/17281 - 67s - loss: 0.4460 - val_loss: 0.1286 - 67s/epoch - 4ms/step
+Epoch 8/200
+17281/17281 - 61s - loss: 0.4330 - val_loss: 0.1317 - 61s/epoch - 4ms/step
+Epoch 9/200
+17281/17281 - 61s - loss: 0.4195 - val_loss: 0.1297 - 61s/epoch - 4ms/step
 
-----Training ended at 2023-01-21 13:09:45.056498, elapsed time 0:12:51.932540.
-Best model by validation loss saved at scratch/results_LSTM_split_3/model.h5.
+----Training ended at 2023-01-21 22:53:45.593662, elapsed time 0:10:51.889350.
+Best model by validation loss saved at scratch/results_lstm_split_3/model.h5.
 Loading best model.
 
 Train prediction
-17281/17281 - 64s - 64s/epoch - 4ms/step
+17281/17281 - 34s - 34s/epoch - 2ms/step
                FIPS         Cases  Predicted_Cases
 count  2.249672e+06  2.249672e+06     2.249672e+06
-mean   3.038365e+04  2.926275e+01     2.905724e+01
-std    1.516010e+04  1.814576e+02     1.123606e+02
+mean   3.038365e+04  2.926275e+01     2.999965e+01
+std    1.516010e+04  1.814576e+02     1.049389e+02
 min    1.001000e+03  0.000000e+00     0.000000e+00
-25%    1.817700e+04  0.000000e+00     1.000000e+00
+25%    1.817700e+04  0.000000e+00     2.000000e+00
 50%    2.917600e+04  2.000000e+00     7.000000e+00
-75%    4.508100e+04  1.300000e+01     2.100000e+01
-max    5.604500e+04  2.061825e+04     4.283000e+03
-Target Cases, MAE 19.354, RMSE 120.07, RMSLE 1.3941, SMAPE 0.96111. NNSE 0.69548.
+75%    4.508100e+04  1.300000e+01     1.900000e+01
+max    5.604500e+04  2.061825e+04     2.810000e+03
+Target Cases, MAE 18.694, RMSE 124.25, RMSLE 1.3433, SMAPE 1.0022. NNSE 0.68079.
 
 
 Validation prediction
-25/25 - 0s - 96ms/epoch - 4ms/step
+25/25 - 0s - 57ms/epoch - 2ms/step
                FIPS         Cases  Predicted_Cases
 count  40846.000000  40846.000000     40846.000000
-mean   30383.649268     10.534740        35.933237
-std    15160.280886     62.302951        72.141864
+mean   30383.649268     10.534740        20.554693
+std    15160.280886     62.302951        57.296757
 min     1001.000000      0.000000         0.000000
-25%    18177.000000      0.000000         8.000000
-50%    29176.000000      0.000000        21.000000
-75%    45081.000000      4.000000        40.000000
-max    56045.000000   4467.000000      2398.000000
-Target Cases, MAE 30.318, RMSE 70.328, RMSLE 2.3667, SMAPE 1.4904. NNSE 0.43971.
+25%    18177.000000      0.000000         0.000000
+50%    29176.000000      0.000000         6.000000
+75%    45081.000000      4.000000        19.000000
+max    56045.000000   4467.000000      1906.000000
+Target Cases, MAE 17.011, RMSE 58.562, RMSLE 1.6591, SMAPE 1.0845. NNSE 0.53091.
 
 
 Test prediction
-25/25 - 0s - 106ms/epoch - 4ms/step
+25/25 - 0s - 57ms/epoch - 2ms/step
                FIPS         Cases  Predicted_Cases
 count  40846.000000  40846.000000     40846.000000
-mean   30383.649268      9.559088        39.675048
-std    15160.280886     98.512097        63.245662
+mean   30383.649268      9.559088        24.578245
+std    15160.280886     98.512097        60.847417
 min     1001.000000      0.000000         0.000000
-25%    18177.000000      0.000000        14.000000
-50%    29176.000000      0.000000        29.000000
-75%    45081.000000      2.000000        47.000000
-max    56045.000000   8467.000000      2074.000000
-Target Cases, MAE 36.173, RMSE 99.837, RMSLE 2.7891, SMAPE 1.6639. NNSE 0.49332.
+25%    18177.000000      0.000000         2.000000
+50%    29176.000000      0.000000        11.000000
+75%    45081.000000      2.000000        27.000000
+max    56045.000000   8467.000000      1523.000000
+Target Cases, MAE 22.42, RMSE 96.38, RMSLE 2.0875, SMAPE 1.3514. NNSE 0.51093.
 
-Ended at 2023-01-21 14:17:42.122005. Elapsed time 1:20:48.998092
+Ended at 2023-01-21 23:20:50.189328. Elapsed time 0:37:56.485041

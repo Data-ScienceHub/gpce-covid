@@ -18,7 +18,7 @@ class BiLstmConfig:
 
 @dataclass
 class NbeatsConfig:
-    learning_rate = 1e-3
+    learning_rate = 5.1e-5
     batch_size = 64
     layers = 2
     dropout = 0.2
