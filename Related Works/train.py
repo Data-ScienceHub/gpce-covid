@@ -56,12 +56,13 @@ class Config:
     selected_columns = features + targets
     input_sequence_length = 13
     output_sequence_length = 15
-    batch_size = 64
     buffer_size = 1000
-    epochs = 1
-    learning_rate = 1e-6
+    
     early_stopping_patience = 5
     loss = 'mse'
+    epochs = 200
+    batch_size = 64
+    learning_rate = 1e-6
 
     # learning_rate = LstmConfig.learning_rate
     # batch_size = LstmConfig.batch_size

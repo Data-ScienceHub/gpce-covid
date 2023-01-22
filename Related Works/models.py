@@ -48,7 +48,7 @@ def build_BiLSTM(
             Bidirectional(LSTM(hidden_size, return_sequences=True)) 
         )
 
-    for layer in range(layers-1):
+    for layer in range(1, layers):
         model.add(Dropout(dropout))
         if layer + 1 < layers:
             model.add(Bidirectional(LSTM(hidden_size, return_sequences=True)))

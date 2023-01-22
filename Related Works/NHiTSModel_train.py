@@ -26,6 +26,7 @@ warnings.filterwarnings('ignore', category=FutureWarning)
 from utils import *
 from splits import *
 from plotter import *
+from best_config import NhitsConfig
 
 # make sure to set these False for scripts, otherwise it'll print lots of logs
 SHOW_IMAGE = False
@@ -55,11 +56,13 @@ class Config:
     selected_columns = features + targets
     input_sequence_length = 13
     output_sequence_length = 15
-    batch_size = 64
+    
     epochs = 60
-    learning_rate = 1e-3
     early_stopping_patience = 5
     seed = 7
+
+    learning_rate = NhitsConfig.learning_rate
+    batch_size = NhitsConfig.batch_size
 
 seed_everything(Config.seed)
 targets = Config.targets
@@ -135,7 +138,8 @@ model = NHiTSModel(
     output_chunk_length=output_sequence_length,
     batch_size=Config.batch_size, loss_fn=MSELoss(),
     optimizer_cls=Adam,    
-    optimizer_kwargs={'lr': Config.learning_rate}
+    optimizer_kwargs={'lr': Config.learning_rate},
+    num_layers=NhitsConfig.layers, dropout=NhitsConfig.dropout
 )
 
 # %% [markdown]
