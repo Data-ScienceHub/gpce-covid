@@ -1,63 +1,67 @@
-from tensorflow.keras.layers import Dense, LSTM, Bidirectional, Dropout, Conv1D
+from tensorflow.keras.layers import Dense, LSTM, Bidirectional, Dropout, Conv1D, Input
 
 from tensorflow.keras.layers import MultiHeadAttention, GlobalAveragePooling1D, LayerNormalization
 from tensorflow.keras import optimizers, Sequential, Input, Model
 from typing import Tuple
 
 def build_LSTM(
-    input_shape: Tuple[int], output_size:int, loss:str='mse', hidden_size:int=64,
-    dropout:float=0.1, summarize:bool=False, learning_rate:float=1e-5, layers:int=3
+        input_shape:Tuple[int], output_size:int, loss:str='mse', hidden_size:int=64,
+        dropout:float=0.1, summarize:bool=True, learning_rate:float=1e-5, layers:int=3
     ):
     assert layers>0, "layers number must be positive"
     model = Sequential()
-    for layer in range(layers-1):
-        if layer ==0:
-            model.add(
-                LSTM(hidden_size, input_shape=input_shape, return_sequences=True)
-            )
-        else:
-            model.add(
-                LSTM(hidden_size, return_sequences=True)
-            )
+    model.add(Input(input_shape))
+
+    if layers==1:
+        model.add(LSTM(hidden_size))
+    else:
+        model.add(LSTM(hidden_size, return_sequences=True))
+
+    for layer in range(1, layers):
         model.add(Dropout(dropout))
+        if layer + 1 < layers:
+            model.add(LSTM(hidden_size, return_sequences=True))
+        else:
+            model.add(LSTM(hidden_size))
     
-    model.add(LSTM(hidden_size))
-    model.add(Dense(64))
     model.add(Dense(output_size))
 
-    if summarize:
-        model.summary()
-    
     adam = optimizers.Adam(learning_rate=learning_rate)
     model.compile(loss=loss, optimizer=adam)
+    if summarize:
+        model.summary()
+
     return model
 
 def build_BiLSTM(
-    input_shape: Tuple[int], output_size:int, loss:str='mse', hidden_size:int=64,
-    dropout:float=0.1, summarize:bool=False, learning_rate:float=1e-5, layers:int=3
+        input_shape:Tuple[int], output_size:int, loss:str='mse', hidden_size:int=64,
+        dropout:float=0.1, summarize:bool=True, learning_rate:float=1e-5, layers:int=3
     ):
     assert layers>0, "layers number must be positive"
     model = Sequential()
-    for layer in range(layers-1):
-        if layer ==0:
-            model.add(
-                Bidirectional(LSTM(hidden_size, input_shape=input_shape, return_sequences=True)) 
-            )
-        else:
-            model.add(
-                Bidirectional(LSTM(hidden_size, return_sequences=True))
-            )
-        model.add(Dropout(dropout))
-    
-    model.add(Bidirectional(LSTM(hidden_size)))
-    model.add(Dense(64))
-    model.add(Dense(output_size))
+    model.add(Input(input_shape))
 
-    if summarize:
-        model.summary()
+    if layers==1:
+        model.add(Bidirectional(LSTM(hidden_size)))
+    else:
+        model.add(
+            Bidirectional(LSTM(hidden_size, return_sequences=True)) 
+        )
+
+    for layer in range(layers-1):
+        model.add(Dropout(dropout))
+        if layer + 1 < layers:
+            model.add(Bidirectional(LSTM(hidden_size, return_sequences=True)))
+        else:
+            model.add(Bidirectional(LSTM(hidden_size)))
+    
+    model.add(Dense(output_size))
     
     adam = optimizers.Adam(learning_rate=learning_rate)
     model.compile(loss=loss, optimizer=adam)
+    if summarize:
+        model.summary()
+
     return model
 
 def build_LSTM_(
@@ -116,7 +120,7 @@ def transformer_encoder(
     x = LayerNormalization(epsilon=1e-6)(x)
     return x + res
 
-def build_model(
+def build_transformer(
     input_shape: Tuple[int],
     output_size:int,
     head_size:int=64,

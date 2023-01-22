@@ -98,8 +98,8 @@ def cache_data(
 ):
     data = tf.data.Dataset.from_tensor_slices((x, y))
     if buffer_size is None:
-        return data.cache().batch(batch_size)
-    return data.cache().shuffle(buffer_size).batch(batch_size)
+        return data.batch(batch_size).cache()
+    return data.batch(batch_size).shuffle(buffer_size).cache()
 
 def process_prediction(
     target_df:DataFrame, y_pred:np.ndarray,

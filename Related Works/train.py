@@ -27,7 +27,7 @@ Split = Baseline
 # ## Result folder
 
 # %%
-output_folder = 'results'
+output_folder = 'scratch/top_100'
 if not os.path.exists(output_folder):
     os.makedirs(output_folder, exist_ok=True)
 
@@ -56,14 +56,12 @@ class Config:
     selected_columns = features + targets
     input_sequence_length = 13
     output_sequence_length = 15
-    
+    batch_size = 64
     buffer_size = 1000
-    early_stopping_patience = 5
-    loss = 'mse'
-
     epochs = 1
     learning_rate = 1e-6
-    batch_size = 64
+    early_stopping_patience = 5
+    loss = 'mse'
 
     # learning_rate = LstmConfig.learning_rate
     # batch_size = LstmConfig.batch_size
@@ -120,8 +118,8 @@ test_data = cache_data(
 # %%
 output_size = len(targets) * output_sequence_length
 model = build_LSTM(
-    x_train.shape[1:], output_size=output_size, loss=Config.loss, 
-    summarize=True, learning_rate=Config.learning_rate,
+    input_shape=x_train.shape[1:], output_size=output_size, loss=Config.loss, 
+    learning_rate=Config.learning_rate,
     # hidden_size=LstmConfig.hidden_size, dropout=LstmConfig.dropout, 
     # layers=LstmConfig.layers
 )
@@ -157,7 +155,8 @@ model.load_weights(model_checkpoint.filepath)
 # %%
 plot_train_history(
     history, title='Multi-Step, Multi-Output Training and Validation Loss', 
-    figure_path=os.path.join(output_folder, 'history.jpg'), show_image=SHOW_IMAGE
+    figure_path=os.path.join(output_folder, 'history.jpg'), 
+    show_image=SHOW_IMAGE
 )
 
 # %% [markdown]
