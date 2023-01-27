@@ -451,26 +451,26 @@ if args.interpret_train:
 # ## Variable importance and mean attention
 
 # %%
+print(f"Variables:\nStatic {tft.static_variables} \nEncoder {tft.encoder_variables} \nDecoder {tft.decoder_variables}.")
+
+# %%
 if args.interpret_train:
     print("Interpreting train predictions")
     interpretation = tft.interpret_output(train_raw_predictions, reduction="mean")
-    for key in interpretation.keys():
-        print(key, interpretation[key])
-
-    figures = plotWeights.plot_interpretation(interpretation)
-    for key in figures.keys():
-        figure = figures[key]
-        figure.savefig(os.path.join(plotter.figPath, f'Train_{key}.jpg'), dpi=DPI)    
 else:
     print("Interpreting test predictions")
     interpretation = tft.interpret_output(test_raw_predictions, reduction="mean")
-    for key in interpretation.keys():
-        print(key, interpretation[key])
-        
-    figures = plotWeights.plot_interpretation(interpretation)
-    for key in figures.keys():
-        figure = figures[key]
-        figure.savefig(os.path.join(plotter.figPath, f'Test_{key}.jpg'), dpi=DPI) 
+
+for key in interpretation.keys():
+    print(key, interpretation[key]/torch.sum(interpretation[key]))
+
+figures = plotWeights.plot_interpretation(interpretation)
+for key in figures.keys():
+    figure = figures[key]
+    if args.interpret_train:
+        figure.savefig(os.path.join(plotter.figPath, f'Train_{key}.jpg'), dpi=DPI) 
+    else:
+        figure.savefig(os.path.join(plotter.figPath, f'Test_{key}.jpg'), dpi=DPI)
 
 # %% [markdown]
 # # End

@@ -177,7 +177,7 @@ class PlotWeights:
         self.encoder_variables = model.encoder_variables 
         self.decoder_variables = model.decoder_variables
 
-        print(f"Variables:\nStatic {self.static_variables} \nEncoder {self.encoder_variables} \nDecoder {self.decoder_variables}.")
+        # print(f"Variables:\nStatic {self.static_variables} \nEncoder {self.encoder_variables} \nDecoder {self.decoder_variables}.")
         self.max_encoder_length = max_encoder_length
         self.show = show
         self.weight_formatter = StrMethodFormatter('{x:,.2f}')

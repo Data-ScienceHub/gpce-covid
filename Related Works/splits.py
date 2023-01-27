@@ -28,3 +28,10 @@ class Split_3:
     validation_start = to_datetime("2022-03-01")
     test_start = to_datetime("2022-03-16")
     test_end = to_datetime("2022-03-30")
+
+@dataclass
+class Split_Dec:
+    train_start = to_datetime("2020-02-29")
+    validation_start = to_datetime("2022-12-01")
+    test_start = to_datetime("2022-12-16")
+    test_end = to_datetime("2022-12-30")

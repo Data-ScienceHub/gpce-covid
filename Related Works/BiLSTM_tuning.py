@@ -96,7 +96,7 @@ x_val, y_val = prepare_dataset(
 # %%
 def create_model(trial):
     learning_rate = trial.suggest_float("learning_rate", 1e-5, 1e-3, log=True)
-    hidden_size = trial.suggest_int("hidden_size", 32, 128, step=32)
+    hidden_size = trial.suggest_int("hidden_size", [32, 64, 128])
     dropout = trial.suggest_float("dropout", 0, 0.3, step=0.1)
     layers = trial.suggest_int("layers", 2, 4, step=1)
 
