@@ -37,9 +37,13 @@ print(device)
 running_on_colab = False
 
 # if running_on_colab:
-#     !pip install pytorch_lightning
-#     !pip install pytorch_forecasting
+#     !pip install torch==1.11.0
+#     # !pip install torch==1.11.0+cu113 torchvision==0.12.0+cu113 torchaudio==0.11.0+cu113 -f https://download.pytorch.org/whl/torch_stable.html
+#     !pip install pytorch_lightning==1.8.1
+#     !pip install pytorch_forecasting==0.10.3
+#     !pip install pandas==1.4.1
 
+# %%
 #     from google.colab import drive
 
 #     drive.mount('/content/drive')
