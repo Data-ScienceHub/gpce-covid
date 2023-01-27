@@ -4,3 +4,44 @@ To enable them in other operations, rebuild TensorFlow with the appropriate comp
 2023-01-22 23:55:32.789284: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libnvinfer.so.7'; dlerror: libnvinfer.so.7: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /u/mi3se/anaconda3/envs/ml/lib:/sw/centos-7.4/anaconda3/current/lib:/sw/centos-7.4/cudnn/current/lib64:/sw/centos-7.4/cuda/current/extras/CUPTI/lib64:/sw/centos-7.4/cuda/current/lib64:/u/mi3se/anaconda3/envs/ml/lib/
 2023-01-22 23:55:32.790481: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libnvinfer_plugin.so.7'; dlerror: libnvinfer_plugin.so.7: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /u/mi3se/anaconda3/envs/ml/lib:/sw/centos-7.4/anaconda3/current/lib:/sw/centos-7.4/cudnn/current/lib64:/sw/centos-7.4/cuda/current/extras/CUPTI/lib64:/sw/centos-7.4/cuda/current/lib64:/u/mi3se/anaconda3/envs/ml/lib/
 2023-01-22 23:55:32.790519: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Cannot dlopen some TensorRT libraries. If you would like to use Nvidia GPU with TensorRT, please make sure the missing libraries mentioned above are installed properly.
+   FIPS  AgeDist  HealthDisp  ... LinearSpace  SinWeekly  CosWeekly
+0  1001   0.1611       4.202  ...         0.0    -0.9749    -0.2225
+1  1001   0.1611       4.202  ...         0.0    -0.7818     0.6235
+2  1001   0.1611       4.202  ...         0.0     0.0000     1.0000
+
+[3 rows x 14 columns]
+Shapes: train (2296802, 14), validation (87976, 14), test (87976, 14).
+
+----Training started at 2023-01-22 23:57:55.661432----
+
+
+----Training ended at 2023-01-24 12:26:39.923800, elapsed time 1 day, 12:28:44.262368.
+Best model by validation loss saved at /u/mi3se/Git/gpce-covid/Related Works/scratch/results_NBEATS_split_3/best-epoch=10-v1.ckpt.
+Loading best model.
+
+Validation prediction
+Target Cases, MAE 14.898, RMSE 51.322, RMSLE 1.836, SMAPE 1.3432. NNSE 0.59846.
+
+               FIPS  TimeFromStart  Predicted_Cases         Cases
+count  47130.000000    47130.00000     47130.000000  47130.000000
+mean   30383.649268      738.00000        17.080818     11.188542
+std    15160.256142        4.32054        41.292530     62.655272
+min     1001.000000      731.00000         0.000000      0.000000
+25%    18177.000000      734.00000         6.000000      0.000000
+50%    29176.000000      738.00000        10.000000      0.000000
+75%    45081.000000      742.00000        16.000000      5.000000
+max    56045.000000      745.00000      2280.000000   4467.000000
+
+Test prediction
+Target Cases, MAE 13.242, RMSE 84.705, RMSLE 1.7834, SMAPE 1.4066. NNSE 0.55277.
+
+               FIPS  TimeFromStart  Predicted_Cases         Cases
+count  47130.000000    47130.00000     47130.000000  47130.000000
+mean   30383.649268      753.00000        12.648908      9.425992
+std    15160.256142        4.32054        35.337147     94.172369
+min     1001.000000      746.00000         0.000000      0.000000
+25%    18177.000000      749.00000         4.000000      0.000000
+50%    29176.000000      753.00000         8.000000      0.000000
+75%    45081.000000      757.00000        12.000000      2.000000
+max    56045.000000      760.00000      2275.000000   8467.000000
+Ended at 2023-01-24 12:33:02.295285. Elapsed time 1 day, 12:35:06.633879

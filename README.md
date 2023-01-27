@@ -22,7 +22,6 @@ Note that, past values target and known futures are also used as observed inputs
 | Social Distancing      | Dynamic    |
 | Transmissible Cases    | Dynamic    |
 | Vaccination Full Dose   | Dynamic    |
-| Linear Space | Known Future | 
 | SinWeekly | Known Future |
 | CosWeekly | Known Future | 
 

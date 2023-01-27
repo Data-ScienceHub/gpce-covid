@@ -173,7 +173,6 @@ Most of the features are results from the [COVID-19 Pandemic Vulnerability Index
 | Social Distancing      | Dynamic    |
 | Transmissible Cases    | Dynamic    |
 | Vaccination Full Dose   | Dynamic    |
-| LinearSpace | TimeEmbedding | 
 | SinWeekly | TimeEmbedding |
 | CosWeekly | TimeEmbedding | 
 

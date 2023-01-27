@@ -1,0 +1,175 @@
+2023-01-24 16:42:06.019192: I tensorflow/core/platform/cpu_feature_guard.cc:193] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2023-01-24 16:42:06.211103: E tensorflow/stream_executor/cuda/cuda_blas.cc:2981] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2023-01-24 16:42:07.215629: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libnvinfer.so.7'; dlerror: libnvinfer.so.7: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /u/mi3se/anaconda3/envs/ml/lib:/sw/centos-7.4/anaconda3/current/lib:/sw/centos-7.4/cudnn/current/lib64:/sw/centos-7.4/cuda/current/extras/CUPTI/lib64:/sw/centos-7.4/cuda/current/lib64:/u/mi3se/anaconda3/envs/ml/lib/
+2023-01-24 16:42:07.215752: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libnvinfer_plugin.so.7'; dlerror: libnvinfer_plugin.so.7: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /u/mi3se/anaconda3/envs/ml/lib:/sw/centos-7.4/anaconda3/current/lib:/sw/centos-7.4/cudnn/current/lib64:/sw/centos-7.4/cuda/current/extras/CUPTI/lib64:/sw/centos-7.4/cuda/current/lib64:/u/mi3se/anaconda3/envs/ml/lib/
+2023-01-24 16:42:07.215765: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Cannot dlopen some TensorRT libraries. If you would like to use Nvidia GPU with TensorRT, please make sure the missing libraries mentioned above are installed properly.
+2023-01-24 16:54:47.726179: E tensorflow/stream_executor/cuda/cuda_driver.cc:265] failed call to cuInit: CUDA_ERROR_UNKNOWN: unknown error
+2023-01-24 16:54:47.726887: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:169] retrieving CUDA diagnostic information for host: lynx10
+2023-01-24 16:54:47.726909: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:176] hostname: lynx10
+2023-01-24 16:54:47.727110: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:200] libcuda reported version is: 418.87.0
+2023-01-24 16:54:47.727173: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:204] kernel reported version is: 418.87.0
+2023-01-24 16:54:47.727184: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:310] kernel version seems to match DSO: 418.87.0
+2023-01-24 16:54:47.727876: I tensorflow/core/platform/cpu_feature_guard.cc:193] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2023-01-24 16:54:47.728640: W tensorflow/core/framework/cpu_allocator_impl.cc:82] Allocation of 3199058720 exceeds 10% of free system memory.
+   FIPS  AgeDist  HealthDisp  ... TimeFromStart  SinWeekly  CosWeekly
+0  1001   0.1611       4.202  ...             0    -0.9749    -0.2225
+1  1001   0.1611       4.202  ...             1    -0.7818     0.6235
+2  1001   0.1611       4.202  ...             2     0.0000     1.0000
+
+[3 rows x 12 columns]
+Shapes: train (3160852, 12), validation (87976, 12), test (87976, 12).
+Shapes: data (3076018, 13, 10), labels (3076018, 15).
+Shapes: data (3142, 13, 10), labels (3142, 15).
+Shapes: data (3142, 13, 10), labels (3142, 15).
+Model: "sequential"
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ lstm (LSTM)                 (None, 13, 64)            19200     
+                                                                 
+ dropout (Dropout)           (None, 13, 64)            0         
+                                                                 
+ lstm_1 (LSTM)               (None, 64)                33024     
+                                                                 
+ dense (Dense)               (None, 15)                975       
+                                                                 
+=================================================================
+Total params: 53,199
+Trainable params: 53,199
+Non-trainable params: 0
+_________________________________________________________________
+2023-01-24 16:54:51.603422: W tensorflow/core/framework/cpu_allocator_impl.cc:82] Allocation of 3199058720 exceeds 10% of free system memory.
+
+----Training started at 2023-01-24 16:54:51.590040----
+
+Epoch 1/200
+24032/24032 - 884s - loss: 0.7502 - val_loss: 1.1808 - 884s/epoch - 37ms/step
+Epoch 2/200
+24032/24032 - 872s - loss: 0.6150 - val_loss: 1.1650 - 872s/epoch - 36ms/step
+Epoch 3/200
+24032/24032 - 878s - loss: 0.5665 - val_loss: 1.1472 - 878s/epoch - 37ms/step
+Epoch 4/200
+24032/24032 - 886s - loss: 0.5361 - val_loss: 1.1373 - 886s/epoch - 37ms/step
+Epoch 5/200
+24032/24032 - 892s - loss: 0.5146 - val_loss: 1.1283 - 892s/epoch - 37ms/step
+Epoch 6/200
+24032/24032 - 892s - loss: 0.4954 - val_loss: 1.1230 - 892s/epoch - 37ms/step
+Epoch 7/200
+24032/24032 - 898s - loss: 0.4773 - val_loss: 1.1215 - 898s/epoch - 37ms/step
+Epoch 8/200
+24032/24032 - 903s - loss: 0.4622 - val_loss: 1.1208 - 903s/epoch - 38ms/step
+Epoch 9/200
+24032/24032 - 907s - loss: 0.4492 - val_loss: 1.1076 - 907s/epoch - 38ms/step
+Epoch 10/200
+24032/24032 - 910s - loss: 0.4375 - val_loss: 1.0997 - 910s/epoch - 38ms/step
+Epoch 11/200
+24032/24032 - 912s - loss: 0.4268 - val_loss: 1.0988 - 912s/epoch - 38ms/step
+Epoch 12/200
+24032/24032 - 916s - loss: 0.4173 - val_loss: 1.0886 - 916s/epoch - 38ms/step
+Epoch 13/200
+24032/24032 - 919s - loss: 0.4093 - val_loss: 1.0817 - 919s/epoch - 38ms/step
+Epoch 14/200
+24032/24032 - 927s - loss: 0.4020 - val_loss: 1.0680 - 927s/epoch - 39ms/step
+Epoch 15/200
+24032/24032 - 925s - loss: 0.3957 - val_loss: 1.0742 - 925s/epoch - 39ms/step
+Epoch 16/200
+24032/24032 - 928s - loss: 0.3909 - val_loss: 1.0669 - 928s/epoch - 39ms/step
+Epoch 17/200
+24032/24032 - 931s - loss: 0.3852 - val_loss: 1.0627 - 931s/epoch - 39ms/step
+Epoch 18/200
+24032/24032 - 934s - loss: 0.3797 - val_loss: 1.0591 - 934s/epoch - 39ms/step
+Epoch 19/200
+24032/24032 - 936s - loss: 0.3767 - val_loss: 1.0534 - 936s/epoch - 39ms/step
+Epoch 20/200
+24032/24032 - 937s - loss: 0.3726 - val_loss: 1.0504 - 937s/epoch - 39ms/step
+Epoch 21/200
+24032/24032 - 943s - loss: 0.3686 - val_loss: 1.0519 - 943s/epoch - 39ms/step
+Epoch 22/200
+24032/24032 - 945s - loss: 0.3654 - val_loss: 1.0503 - 945s/epoch - 39ms/step
+Epoch 23/200
+24032/24032 - 872s - loss: 0.3626 - val_loss: 1.0544 - 872s/epoch - 36ms/step
+Epoch 24/200
+24032/24032 - 830s - loss: 0.3587 - val_loss: 1.0500 - 830s/epoch - 35ms/step
+Epoch 25/200
+24032/24032 - 833s - loss: 0.3557 - val_loss: 1.0507 - 833s/epoch - 35ms/step
+Epoch 26/200
+24032/24032 - 833s - loss: 0.3511 - val_loss: 1.0485 - 833s/epoch - 35ms/step
+Epoch 27/200
+24032/24032 - 833s - loss: 0.3495 - val_loss: 1.0497 - 833s/epoch - 35ms/step
+Epoch 28/200
+24032/24032 - 805s - loss: 0.3464 - val_loss: 1.0462 - 805s/epoch - 33ms/step
+Epoch 29/200
+24032/24032 - 797s - loss: 0.3456 - val_loss: 1.0573 - 797s/epoch - 33ms/step
+Epoch 30/200
+24032/24032 - 799s - loss: 0.3417 - val_loss: 1.0460 - 799s/epoch - 33ms/step
+Epoch 31/200
+24032/24032 - 800s - loss: 0.3397 - val_loss: 1.0535 - 800s/epoch - 33ms/step
+Epoch 32/200
+24032/24032 - 801s - loss: 0.3371 - val_loss: 1.0461 - 801s/epoch - 33ms/step
+Epoch 33/200
+24032/24032 - 801s - loss: 0.3349 - val_loss: 1.0520 - 801s/epoch - 33ms/step
+Epoch 34/200
+24032/24032 - 800s - loss: 0.3371 - val_loss: 1.0539 - 800s/epoch - 33ms/step
+Epoch 35/200
+24032/24032 - 802s - loss: 0.3324 - val_loss: 1.0459 - 802s/epoch - 33ms/step
+Epoch 36/200
+24032/24032 - 800s - loss: 0.3298 - val_loss: 1.0510 - 800s/epoch - 33ms/step
+Epoch 37/200
+24032/24032 - 802s - loss: 0.3277 - val_loss: 1.0544 - 802s/epoch - 33ms/step
+Epoch 38/200
+24032/24032 - 804s - loss: 0.3271 - val_loss: 1.0470 - 804s/epoch - 33ms/step
+Epoch 39/200
+24032/24032 - 803s - loss: 0.3235 - val_loss: 1.0486 - 803s/epoch - 33ms/step
+Epoch 40/200
+24032/24032 - 800s - loss: 0.3217 - val_loss: 1.0493 - 800s/epoch - 33ms/step
+2023-01-25 02:33:05.436250: W tensorflow/core/framework/cpu_allocator_impl.cc:82] Allocation of 3199058720 exceeds 10% of free system memory.
+2023-01-25 02:33:10.338339: W tensorflow/core/framework/cpu_allocator_impl.cc:82] Allocation of 3199058720 exceeds 10% of free system memory.
+
+----Training ended at 2023-01-25 02:33:05.063517, elapsed time 9:38:13.473477.
+Best model by validation loss saved at scratch/results_LSTM_split_dec/model.h5.
+Loading best model.
+
+Train prediction
+24032/24032 - 298s - 298s/epoch - 12ms/step
+               FIPS         Cases  Predicted_Cases
+count  3.113722e+06  3.113722e+06     3.113722e+06
+mean   3.038365e+04  2.552625e+01     2.682517e+01
+std    1.516010e+04  1.737102e+02     1.206301e+02
+min    1.001000e+03  0.000000e+00     0.000000e+00
+25%    1.817700e+04  0.000000e+00     2.000000e+00
+50%    2.917600e+04  0.000000e+00     5.000000e+00
+75%    4.508100e+04  9.000000e+00     1.500000e+01
+max    5.604500e+04  2.232350e+04     7.452000e+03
+Target Cases, MAE 14.488, RMSE 97.799, RMSLE 1.3231, SMAPE 1.1971. NNSE 0.75932.
+
+
+Validation prediction
+25/25 - 0s - 352ms/epoch - 14ms/step
+               FIPS         Cases  Predicted_Cases
+count  40846.000000  40846.000000     40846.000000
+mean   30383.649268     12.520112        12.105151
+std    15160.280886    200.647278        73.030790
+min     1001.000000      0.000000         0.000000
+25%    18177.000000      0.000000         0.000000
+50%    29176.000000      0.000000         2.000000
+75%    45081.000000      0.000000         5.000000
+max    56045.000000  22323.500000      4147.000000
+Target Cases, MAE 18.593, RMSE 183.02, RMSLE 1.6585, SMAPE 1.4112. NNSE 0.54585.
+
+
+Test prediction
+25/25 - 0s - 351ms/epoch - 14ms/step
+               FIPS         Cases  Predicted_Cases
+count  40846.000000  40846.000000     40846.000000
+mean   30383.649268     12.656258        14.765975
+std    15160.280886    159.287351        94.486415
+min     1001.000000      0.000000         0.000000
+25%    18177.000000      0.000000         1.000000
+50%    29176.000000      0.000000         3.000000
+75%    45081.000000      0.000000         7.000000
+max    56045.000000  19054.000000      3351.000000
+Target Cases, MAE 16.876, RMSE 138.14, RMSLE 1.6596, SMAPE 1.3798. NNSE 0.57073.
+
+Ended at 2023-01-25 03:31:18.975470. Elapsed time 10:36:27.385460

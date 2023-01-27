@@ -1,0 +1,41 @@
+2023-01-24 16:44:25.561516: I tensorflow/core/platform/cpu_feature_guard.cc:193] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2023-01-24 16:44:34.001110: E tensorflow/stream_executor/cuda/cuda_blas.cc:2981] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2023-01-24 16:44:51.384553: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libnvinfer.so.7'; dlerror: libnvinfer.so.7: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /u/mi3se/anaconda3/envs/ml/lib:/sw/centos-7.4/anaconda3/current/lib:/sw/centos-7.4/cudnn/current/lib64:/sw/centos-7.4/cuda/current/extras/CUPTI/lib64:/sw/centos-7.4/cuda/current/lib64:/u/mi3se/anaconda3/envs/ml/lib/
+2023-01-24 16:44:51.385682: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libnvinfer_plugin.so.7'; dlerror: libnvinfer_plugin.so.7: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /u/mi3se/anaconda3/envs/ml/lib:/sw/centos-7.4/anaconda3/current/lib:/sw/centos-7.4/cudnn/current/lib64:/sw/centos-7.4/cuda/current/extras/CUPTI/lib64:/sw/centos-7.4/cuda/current/lib64:/u/mi3se/anaconda3/envs/ml/lib/
+2023-01-24 16:44:51.385713: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Cannot dlopen some TensorRT libraries. If you would like to use Nvidia GPU with TensorRT, please make sure the missing libraries mentioned above are installed properly.
+Shapes: train (3160852, 12), validation (87976, 12), test (87976, 12).
+
+----Training started at 2023-01-24 16:47:22.234008----
+
+
+----Training ended at 2023-01-25 07:46:12.580308, elapsed time 14:58:50.346300.
+Best model by validation loss saved at /u/mi3se/Git/gpce-covid/Related Works/scratch/results_NHiTS_split_dec/best-epoch=6.ckpt.
+Loading best model.
+
+Validation prediction
+Target Cases, MAE 22.759, RMSE 181.23, RMSLE 2.0019, SMAPE 1.6106. NNSE 0.53488.
+
+               FIPS  TimeFromStart  Predicted_Cases         Cases
+count  47130.000000    47130.00000     47130.000000  47130.000000
+mean   30383.649268     1013.00000        17.298876     12.965776
+std    15160.256142        4.32054       107.377350    194.344373
+min     1001.000000     1006.00000         0.000000      0.000000
+25%    18177.000000     1009.00000         1.000000      0.000000
+50%    29176.000000     1013.00000         4.000000      0.000000
+75%    45081.000000     1017.00000        12.000000      0.000000
+max    56045.000000     1020.00000      8902.000000  22323.000000
+
+Test prediction
+Target Cases, MAE 16.74, RMSE 141.35, RMSLE 1.644, SMAPE 1.5621. NNSE 0.55636.
+
+               FIPS  TimeFromStart  Predicted_Cases         Cases
+count  47130.000000    47130.00000     47130.000000  47130.000000
+mean   30383.649268     1028.00000        15.549013     13.620963
+std    15160.256142        4.32054       135.442307    158.295082
+min     1001.000000     1021.00000         0.000000      0.000000
+25%    18177.000000     1024.00000         1.000000      0.000000
+50%    29176.000000     1028.00000         3.000000      0.000000
+75%    45081.000000     1032.00000         6.000000      0.000000
+max    56045.000000     1035.00000      9761.000000  19054.000000
+Ended at 2023-01-25 07:50:17.407018. Elapsed time 15:02:55.173035
