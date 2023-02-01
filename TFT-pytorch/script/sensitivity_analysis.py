@@ -62,15 +62,18 @@ from dataclasses import dataclass
 @dataclass
 class args:
     result_folder = '../results/TFT_baseline/' 
-    figPath = os.path.join(result_folder, 'figures')
+    figPath = os.path.join(result_folder, 'figures_morris')
     checkpoint_folder = os.path.join(result_folder, 'checkpoints')
-    input_filePath = '../2022_May_cleaned/Total.csv'
+    input_filePath = '../2022_May_cleaned/Top_100.csv'
 
     configPath = '../configurations/baseline.json'
     model_path = os.path.join(checkpoint_folder, 'best-epoch=4.ckpt')
 
     # set this to false when submitting batch script, otherwise it prints a lot of lines
     show_progress_bar = False
+
+if not os.path.exists(args.figPath):
+    os.makedirs(args.figPath, exist_ok=True)
 
 # %%
 start = datetime.now()
@@ -211,11 +214,9 @@ train_raw_predictions, train_index = tft.predict(
     train_dataloader, return_index=True, show_progress_bar=args.show_progress_bar
 )
 
-train_predictions = upscale_prediction(targets, train_raw_predictions, target_scaler, max_prediction_length)
-train_result_merged = processor.align_result_with_dataset(train_data, train_predictions, train_index)
-show_result(train_result_merged, targets)
-
-plotter.summed_plot(train_result_merged, type='Train_error', plot_error=True, save=False)
+train_predictions = upscale_prediction(
+    targets, train_raw_predictions, target_scaler, max_prediction_length
+)
 gc.collect()
 
 # %% [markdown]
@@ -241,7 +242,8 @@ standard_scaler.fit(train_data[features])
 # ## Calculate
 
 # %%
-delta_values = [1e-2, 1e-3, 5e-3, 9e-3, 5e-4, 1e-4, 5e-5, 1e-5]
+# delta_values = [1e-2, 1e-3, 5e-3, 9e-3, 5e-4, 1e-4, 5e-5, 1e-5]
+delta_values = [1e-2, 1e-3, 1e-4]
 results = {
     'Delta': [],
     'Feature': [],
@@ -249,41 +251,37 @@ results = {
     'Morris_sensitivity':[] 
 }
 
-# %% [markdown]
-# ### Version 1
-
-# %%
-preds = pd.DataFrame({
-    targets[i]: train_predictions[i].flatten() for i in range(len(targets))
-})
-preds[targets] = target_minmax_scaler.transform(preds[targets])
-
 # %%
 for delta in delta_values:
     print(f'Delta {delta}.')
     for index, feature in enumerate(features):
+        # this mimics how TF1 did it
         data = train_minmax_scaled.copy()
         data[index] += delta
-        data = minmax_scaler.inverse_transform(data)
+        data = minmax_scaler.inverse_transform(data) # return to original scale
 
+        # replace the value in normalized data
         data = standard_scaler.transform(data)
-        train_scaled.loc[:, feature] = data[:, index]
+        train_scaled_copy = train_scaled.copy()
+        train_scaled_copy[feature] = data[:, index]
 
-        dataloader = prepare_data(train_scaled, parameters)
+        # inference on delta changed data
+        dataloader = prepare_data(train_scaled_copy, parameters)
         new_predictions = tft.predict(
             dataloader, show_progress_bar=args.show_progress_bar
         )
         new_predictions = upscale_prediction(
             targets, new_predictions, target_scaler, max_prediction_length
         )
-        new_preds = pd.DataFrame({
-            targets[i]: new_predictions[i].flatten() for i in range(len(targets))
-        })
-        new_preds[targets] = target_minmax_scaler.transform(new_preds[targets])
-        
-        prediction_change = np.sum((preds[targets] - new_preds[targets]).abs().sum().values)
+
+        # sum up the change in prediction
+        prediction_change = np.sum([
+            abs(train_predictions[target_index] - new_predictions[target_index])
+                for target_index in range(len(targets)) 
+        ])
         mu_star = prediction_change / (data.shape[0]*delta)
 
+        # since delta is added to min max normalized value, std from same scaling is needed
         standard_deviation = train_minmax_scaled[:, index].std()
         scaled_morris_index = mu_star * standard_deviation
 
@@ -297,52 +295,12 @@ for delta in delta_values:
     # break
 
 # %% [markdown]
-# ### Version 2
-# 
-# This one shows changing mu star.
-
-# %%
-# for delta in delta_values:
-#     print(f'Delta {delta}.')
-#     for index, feature in enumerate(features):
-#         # this mimics how TF1 did it
-#         data = train_minmax_scaled.copy()
-#         data[index] += delta
-#         data = minmax_scaler.inverse_transform(data)
-
-#         data = standard_scaler.transform(data)
-#         train_scaled.loc[:, feature] = data[:, index]
-
-#         dataloader = prepare_data(train_scaled, parameters)
-#         new_predictions = tft.predict(
-#             dataloader, show_progress_bar=args.show_progress_bar
-#         )
-
-#         prediction_change = np.sum([
-#             abs(train_predictions[target_index] - new_predictions[target_index]) 
-#                 for target_index in range(targets) 
-#         ])
-#         mu_star = prediction_change / (data.shape[0]*delta)
-
-#         standard_deviation = train_minmax_scaled[:, index].std()
-#         scaled_morris_index = mu_star * standard_deviation
-
-#         print(f'Feature {feature}, mu_star {mu_star:0.5g}, sensitivity {scaled_morris_index:0.5g}')
-
-#         results['Delta'].append(delta)
-#         results['Feature'].append(feature)
-#         results['Mu_star'].append(mu_star)
-#         results['Morris_sensitivity'].append(scaled_morris_index)
-#     print()
-#     # break
-
-# %% [markdown]
 # ## Dump
 
 # %%
 import pandas as pd
 result_df = pd.DataFrame(results)
-result_df.to_csv(os.path.join(args.result_folder, 'Morris.csv'), index=False)
+result_df.to_csv(os.path.join(args.figPath, 'Morris.csv'), index=False)
 result_df
 
 # %% [markdown]
@@ -361,6 +319,7 @@ for delta in delta_values:
     plt.tight_layout()
     plt.savefig(os.path.join(args.figPath, f'delta_{delta}.jpg'), dpi=200)
     plt.show()
+    # break
 
 # %% [markdown]
 # # End
