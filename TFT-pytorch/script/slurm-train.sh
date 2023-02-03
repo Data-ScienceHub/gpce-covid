@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-#SBATCH --job-name="total_target_cleaned_scaled"
-#SBATCH --output=total_target_cleaned_scaled.out
+#SBATCH --job-name="train"
+#SBATCH --output=outputs/train.out
 #SBATCH --partition=gpu
-#SBATCH --time=1:00:00
+#SBATCH --time=24:00:00
 #SBATCH --gres=gpu:1
 #---SBATCH --nodelist=lynx01
 #SBATCH --mem=32GB
@@ -17,6 +17,7 @@ conda activate ml
 
 python train.py
 
+## The above script is for UVA CS server
 ## The following is for UVA Rivanna servers
 ## Note that there are some differences from the CS server script above
 ## It doesn't have same gpu models as Rivanna.
@@ -24,21 +25,24 @@ python train.py
 ## doesn't require library path exporting
 
 # #!/usr/bin/env bash
-# #SBATCH --job-name="total_target_cleaned_scaled"
-# #SBATCH --output=total_target_cleaned_scaled.out
+# #SBATCH --job-name="train"
+# #SBATCH --output=outputs/train.out
 # #SBATCH --partition=gpu
-# #SBATCH --time=1:00:00
+# #SBATCH --time=24:00:00
 # #SBATCH --gres=gpu:v100:1
-# #SBATCH --account=ds6011-sp22-002
-# #SBATCH --mem=24GB
+# #SBATCH --account=ds--6013
+# #SBATCH --mem=32GB
 
 # source /etc/profile.d/modules.sh
 # source ~/.bashrc
 
-# module load cuda cudnn anaconda
+# # 1. when you are using singularity
+# module load cuda cudnn singularity
+# singularity run --nv ../tft_pytorch.sif python train.py
 
+# # 2. when you have a working virtual env
+# module load cuda cudnn anaconda
 # conda deactivate
 # conda activate ml
-
-# export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/mi3se/.conda/envs/ml/lib
+# export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/.conda/envs/ml/lib
 # python train.py

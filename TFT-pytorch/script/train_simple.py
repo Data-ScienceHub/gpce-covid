@@ -287,3 +287,9 @@ test_predictions = upscale_prediction(targets, test_predictions, target_scaler, 
 
 test_result_merged = processor.align_result_with_dataset(test_data, test_predictions, test_index)
 show_result(test_result_merged, targets)
+
+# %% [markdown]
+# # End
+
+# %%
+print(f'Ended at {datetime.now()}. Elapsed time {datetime.now() - start}')

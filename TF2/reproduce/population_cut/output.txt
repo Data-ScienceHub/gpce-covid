@@ -1,4 +1,4 @@
-/var/spool/slurm/slurmd/job40410243/slurm_script: line 14: /home/mi3se/anaconda3/bin/activate: No such file or directory
+/var/spool/slurm/slurmd/job40410243/slurm_script: line 14: ~/anaconda3/bin/activate: No such file or directory
 ModuleCmd_Load.c(213):ERROR:105: Unable to locate a modulefile for 'cuda'
 ModuleCmd_Load.c(213):ERROR:105: Unable to locate a modulefile for 'cudnn'
 ModuleCmd_Load.c(213):ERROR:105: Unable to locate a modulefile for 'anaconda'
