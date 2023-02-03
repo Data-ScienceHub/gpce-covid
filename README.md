@@ -10,6 +10,11 @@ This work combines sensitivity analysis with heterogeneous time-series deep lear
 
 ## How to Reproduce
 
+### Virtual Environment
+To create the virtual environment
+* By pip, use the [requirement.txt](/requirements.txt).
+* By anaconda, use the [environment.yml](/environment.yml).
+
 ### Singularity
 You can either pull the singularity container from the remote library,
 ```bash

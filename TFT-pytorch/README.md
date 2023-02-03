@@ -78,7 +78,7 @@ If you want to run the data preparation notebook, upload the [CovidMay17-2022](.
 
 ### Rivanna/CS server
 
-On **Rivanna**, the default python environment doesn't have all the libraries we need. The [requirements.txt](requirements.txt) file contains a list of libraries we need. There are two ways you can run the training there
+On **Rivanna**, the default python environment doesn't have all the libraries we need. The [requirements.txt](../requirements.txt) file contains a list of libraries we need. There are two ways you can run the training there
 
 #### Default Environment
 
@@ -93,7 +93,7 @@ You can choose different kernels and install the additional libraries.
 
 #### Virtual Environment
 
-You can directly create a python virtual environment using the [environment.yml](environment.yml) file and Anaconda. Then you won't have to install the libraries each time. Copy this file to your home directory and run the following command,
+You can directly create a python virtual environment using the [environment.yml](../environment.yml) file and Anaconda. Then you won't have to install the libraries each time. Copy this file to your home directory and run the following command,
 
 ```bash
 conda create --name <env> --file <this file>
