@@ -76,14 +76,14 @@ class Embedding:
         # Set up linear time encoding
         dates = pd.to_datetime(data['Date'].unique())
 
-        LTE = Embedding.LinearTimeEncoding(dates)
-        P2E = Embedding.P2TimeEncoding(len(dates))
-        P3E = Embedding.P3TimeEncoding(len(dates))
-        P4E = Embedding.P4TimeEncoding(len(dates))
+        # LTE = Embedding.LinearTimeEncoding(dates)
+        # P2E = Embedding.P2TimeEncoding(len(dates))
+        # P3E = Embedding.P3TimeEncoding(len(dates))
+        # P4E = Embedding.P4TimeEncoding(len(dates))
 
         CosWeeklyTE, SinWeeklyTE = Embedding.WeeklyTimeEncoding(dates)
         feature_mapping = {
-            'LinearTime':LTE, 'P2Time': P2E, 'P3Time': P3E, 'P4Time': P4E,
+            # 'LinearTime':LTE, 'P2Time': P2E, 'P3Time': P3E, 'P4Time': P4E,
             'CosWeekly': CosWeeklyTE, 'SinWeekly': SinWeeklyTE
         }
 
@@ -119,11 +119,8 @@ class DataMerger:
             DataFrame: static features
         """
 
-        id_columns = ['FIPS']
-
+        id_columns = self.data_config.id
         static_df = self.get_population()[id_columns]
-        locs = static_df['FIPS'].nunique()
-        print(f'Unique counties present {locs}')
 
         """## Merge"""
 
@@ -235,10 +232,10 @@ class DataMerger:
         merge_keys = ['FIPS', 'Date']
         remove_target_outliers = self.parameters.preprocess.remove_target_outliers
         if remove_target_outliers:
-            print('Will remove outliers from target.')
+            print('Removing outliers from target.')
         moving_average = self.parameters.preprocess.target_moving_average_by_day
         if moving_average > 0:
-            print(f'Will process with {moving_average} days moving average.')
+            print(f'Taking {moving_average} days of moving average.')
 
         for file_name in self.data_config.target_map.keys():
             print(f'Reading {file_name}')
@@ -316,8 +313,9 @@ class DataMerger:
 
         # the joint types should be inner for consistency
         print('Merging all features')
-        total_df = dynamic_df.merge(target_df, how='outer', on=['FIPS', 'Date'])
-        total_df = static_df.merge(total_df, how='inner', on='FIPS')
+        
+        total_df = static_df.merge(target_df, how='inner', on='FIPS')
+        total_df = dynamic_df.merge(total_df, how='outer', on=['FIPS', 'Date'])
         total_df = total_df.reset_index(drop=True)
 
         # print('Merging population file for county names')
