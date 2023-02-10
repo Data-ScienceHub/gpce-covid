@@ -108,4 +108,4 @@ if dataMerger.need_population_cut():
         output_path_population_cut = os.path.join(args.outputPath, filename)
 
         print(f'Writing top {top_counties} populated counties data to {output_path_population_cut}.')
-        population_cuts[index].round(3).to_csv(output_path_population_cut, index=False)
+        population_cuts[index].round(4).to_csv(output_path_population_cut, index=False)
