@@ -87,7 +87,7 @@ class PlotResults:
         else:
             plt.legend(framealpha=0.3, edgecolor="black", ncol=2, loc='best')
             
-        fig.tight_layout()
+        # fig.tight_layout() # might change y axis values
 
         if figure_name is not None:
             plt.savefig(os.path.join(self.figPath, figure_name), dpi=DPI)
@@ -150,14 +150,14 @@ class PlotResults:
             predicted_column = f'Predicted_{target}'
             y_true, y_pred = df[target].values, df[predicted_column].values
             
-            mae, rmse, smape, nnse = calculate_result(y_true, y_pred)
+            mae, rmse, rmsle, smape, nnse = calculate_result(y_true, y_pred)
             if (df[target].max() - df[target].min())>=2e3: scale = 1e3
             else: scale = 1
 
             target_figure_name = None
             if save: target_figure_name = f'Individual_plot_{target}_{type}_FIPS_{fips}.jpg'
             
-            title = f'{target} MAE {mae:0.4g}, RMSE {rmse:0.4g}, SMAPE {smape:0.4g}, NNSE {nnse:0.4g}'
+            title = f'MAE {mae:0.3g}, RMSE {rmse:0.4g}, RMSLE {rmsle:0.3g}, SMAPE {smape:0.3g}, NNSE {nnse:0.3g}'
             fig = self.plot(df, target, title, scale, base, target_figure_name, plot_error)
             figures.append(fig)
 
@@ -193,7 +193,7 @@ class PlotWeights:
         ax.set_title(title)
 
         ax.set_xlabel("Importance in %")
-        fig.tight_layout()
+        # fig.tight_layout() # might change y axis values
 
         if self.show:
             plt.show()
@@ -256,7 +256,7 @@ class PlotWeights:
         if title is not None: ax.set_title(title)
         plt.gca().yaxis.set_major_formatter(self.weight_formatter)
         ax.xaxis.set_major_locator(MultipleLocator(base=1))
-        fig.tight_layout()
+        # fig.tight_layout() # might change y axis values
 
         if figure_name is not None:
             plt.savefig(os.path.join(self.figPath, figure_name), dpi=DPI)
@@ -347,7 +347,7 @@ class PlotWeights:
         if limit != 0:
             plt.legend()
 
-        fig.tight_layout()
+        # fig.tight_layout() # might change y axis values
 
         if figure_name is not None: 
             plt.savefig(os.path.join(self.figPath, f'{figure_name}.jpg'), dpi=DPI)
@@ -397,7 +397,7 @@ class PlotWeights:
         plt.gca().yaxis.set_major_formatter(self.weight_formatter)
         plt.legend()
 
-        fig.tight_layout()
+        # fig.tight_layout() # might change y axis values
 
         if figure_name is not None:
             plt.savefig(os.path.join(self.figPath, f'{figure_name}.jpg'), dpi=DPI)

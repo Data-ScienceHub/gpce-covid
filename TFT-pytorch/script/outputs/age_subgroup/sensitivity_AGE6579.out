@@ -1,0 +1,59 @@
+cuda
+Started at 2023-02-19 19:36:32.596643
+(2584600, 13)
+Static features ['AGE019', 'AGE2029', 'AGE3039', 'AGE4049', 'AGE5064', 'AGE6579', 'AGE80PLUS'].   Choosing feature AGE6579.
+There are 3224 unique counties in the dataset.
+Train samples 2039744, validation samples 90272, test samples 90272
+640 days of training, 15 days of validation data, 15 days of test data.
+Scaling static and dynamic input features: ['AGE6579', 'VaccinationFull']
+Scaling targets ['Cases']
+Number of parameters in network: 16.5k
+
+---Training results--
+
+Delta 0.001.
+Feature AGE6579, mu_star 0.0055453, sensitivity 0.00044423
+Feature VaccinationFull, mu_star 0.0037324, sensitivity 0.00070668
+
+Delta 0.002.
+Feature AGE6579, mu_star 0.0058269, sensitivity 0.00046679
+Feature VaccinationFull, mu_star 0.0026061, sensitivity 0.00049344
+
+Delta 0.003.
+Feature AGE6579, mu_star 0.0055344, sensitivity 0.00044336
+Feature VaccinationFull, mu_star 0.002358, sensitivity 0.00044645
+
+Delta 0.004.
+Feature AGE6579, mu_star 0.00528, sensitivity 0.00042298
+Feature VaccinationFull, mu_star 0.0020759, sensitivity 0.00039304
+
+Delta 0.005.
+Feature AGE6579, mu_star 0.0048404, sensitivity 0.00038776
+Feature VaccinationFull, mu_star 0.0018568, sensitivity 0.00035156
+
+Delta 0.006.
+Feature AGE6579, mu_star 0.0045254, sensitivity 0.00036253
+Feature VaccinationFull, mu_star 0.0016836, sensitivity 0.00031876
+
+Delta 0.007.
+Feature AGE6579, mu_star 0.0042427, sensitivity 0.00033988
+Feature VaccinationFull, mu_star 0.0015615, sensitivity 0.00029566
+
+Delta 0.008.
+Feature AGE6579, mu_star 0.0038366, sensitivity 0.00030735
+Feature VaccinationFull, mu_star 0.001486, sensitivity 0.00028136
+
+Delta 0.009.
+Feature AGE6579, mu_star 0.0035272, sensitivity 0.00028256
+Feature VaccinationFull, mu_star 0.0013977, sensitivity 0.00026465
+
+0.001
+0.002
+0.003
+0.004
+0.005
+0.006
+0.007
+0.008
+0.009
+Ended at 2023-02-20 02:26:42.331917. Elapsed time 6:50:09.735287

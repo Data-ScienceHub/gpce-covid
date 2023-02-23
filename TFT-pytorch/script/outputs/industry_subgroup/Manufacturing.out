@@ -1,0 +1,83 @@
+[rank: 0] Global seed set to 7
+2023-02-19 21:16:43.213960: I tensorflow/core/platform/cpu_feature_guard.cc:193] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2023-02-19 21:16:43.902950: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /.singularity.d/libs
+2023-02-19 21:16:43.903029: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+2023-02-19 21:16:43.975682: E tensorflow/stream_executor/cuda/cuda_blas.cc:2981] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2023-02-19 21:16:45.656207: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libnvinfer.so.7'; dlerror: libnvinfer.so.7: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /.singularity.d/libs
+2023-02-19 21:16:45.656401: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libnvinfer_plugin.so.7'; dlerror: libnvinfer_plugin.so.7: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /.singularity.d/libs
+2023-02-19 21:16:45.656447: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Cannot dlopen some TensorRT libraries. If you would like to use Nvidia GPU with TensorRT, please make sure the missing libraries mentioned above are installed properly.
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+Missing logger folder: ../scratch/Manufacturing/lightning_logs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+
+   | Name                               | Type                            | Params
+----------------------------------------------------------------------------------------
+0  | loss                               | MultiLoss                       | 0     
+1  | logging_metrics                    | ModuleList                      | 0     
+2  | input_embeddings                   | MultiEmbedding                  | 0     
+3  | prescalers                         | ModuleDict                      | 64    
+4  | static_variable_selection          | VariableSelectionNetwork        | 528   
+5  | encoder_variable_selection         | VariableSelectionNetwork        | 1.8 K 
+6  | decoder_variable_selection         | VariableSelectionNetwork        | 528   
+7  | static_context_variable_selection  | GatedResidualNetwork            | 1.1 K 
+8  | static_context_initial_hidden_lstm | GatedResidualNetwork            | 1.1 K 
+9  | static_context_initial_cell_lstm   | GatedResidualNetwork            | 1.1 K 
+10 | static_context_enrichment          | GatedResidualNetwork            | 1.1 K 
+11 | lstm_encoder                       | LSTM                            | 2.2 K 
+12 | lstm_decoder                       | LSTM                            | 2.2 K 
+13 | post_lstm_gate_encoder             | GatedLinearUnit                 | 544   
+14 | post_lstm_add_norm_encoder         | AddNorm                         | 32    
+15 | static_enrichment                  | GatedResidualNetwork            | 1.4 K 
+16 | multihead_attn                     | InterpretableMultiHeadAttention | 676   
+17 | post_attn_gate_norm                | GateAddNorm                     | 576   
+18 | pos_wise_ff                        | GatedResidualNetwork            | 1.1 K 
+19 | pre_output_gate_norm               | GateAddNorm                     | 576   
+20 | output_layer                       | Linear                          | 17    
+----------------------------------------------------------------------------------------
+16.5 K    Trainable params
+0         Non-trainable params
+16.5 K    Total params
+0.066     Total estimated model params size (MB)
+Metric val_loss improved. New best score: 0.506
+Metric val_loss improved by 0.098 >= min_delta = 0. New best score: 0.408
+Monitored metric val_loss did not improve in the last 3 records. Best score: 0.408. Signaling Trainer to stop.
+cuda
+(2584600, 10)
+Static features ['Health Care and Social Assistance', 'Manufacturing', 'Retail Trade', 'Accommodation and Food Services'].   Choosing feature Manufacturing.
+There are 3224 unique counties in the dataset.
+Train samples 2039744, validation samples 90272, test samples 90272
+640 days of training, 15 days of validation data, 15 days of test data.
+Scaling static and dynamic input features: ['Manufacturing', 'VaccinationFull']
+Scaling targets ['Cases']
+Number of parameters in network: 16.5k
+
+----Training started at 2023-02-19 21:16:48.365853----
+
+
+----Training ended at 2023-02-20 02:16:12.697802, elapsed time 4:59:24.331949
+Best model by validation loss saved at /gpfs/gpfs0/project/SDS/capstones/sdscap-ds6013/MLcommons/TFT-pytorch/scratch/Manufacturing/checkpoints/best-epoch=1.ckpt
+Creating folder ../scratch/Manufacturing/figures
+Loading best model from /gpfs/gpfs0/project/SDS/capstones/sdscap-ds6013/MLcommons/TFT-pytorch/scratch/Manufacturing/checkpoints/best-epoch=1.ckpt
+
+---Training prediction--
+
+
+---Training results--
+
+Target Cases, MAE 10.419, RMSE 57.767, RMSLE 0.89757, SMAPE 0.73189. NNSE 0.83815.
+
+
+---Validation results--
+
+Target Cases, MAE 18.387, RMSE 84.653, RMSLE 1.1578, SMAPE 0.75732. NNSE 0.74287.
+
+
+---Test results--
+
+Target Cases, MAE 35.827, RMSE 228.68, RMSLE 1.2999, SMAPE 0.81945. NNSE 0.65844.
+
+Ended at 2023-02-20 02:45:05.639515. Elapsed time 5:28:17.273694
