@@ -1,51 +1,51 @@
 cuda
-Started at 2023-02-20 13:34:22.428194
+Started at 2023-02-22 22:22:39.649254
 (2584600, 10)
-Static features ['Health Care and Social Assistance', 'Manufacturing', 'Retail Trade', 'Accommodation and Food Services'].   Choosing feature Accommodation and Food Services.
+Static features ['Health Care and Social Assistance', 'Manufacturing', 'Retail Trade', 'Accommodation and Food Services'].   Choosing feature Health Care and Social Assistance.
 There are 3224 unique counties in the dataset.
 Train samples 2039744, validation samples 90272, test samples 90272
 640 days of training, 15 days of validation data, 15 days of test data.
-Scaling static and dynamic input features: ['Accommodation and Food Services', 'VaccinationFull']
+Scaling static and dynamic input features: ['Health Care and Social Assistance', 'VaccinationFull']
 Scaling targets ['Cases']
 Number of parameters in network: 16.5k
 
 ---Training results--
 
 Delta 0.001.
-Feature Accommodation and Food Services, mu_star 0.0098869, sensitivity 0.00067251
-Feature VaccinationFull, mu_star 0.0032197, sensitivity 0.00060961
+Feature Health Care and Social Assistance, mu_star 0.0071262, sensitivity 0.00059358
+Feature VaccinationFull, mu_star 0.0034137, sensitivity 0.00064634
 
 Delta 0.002.
-Feature Accommodation and Food Services, mu_star 0.0087599, sensitivity 0.00059585
-Feature VaccinationFull, mu_star 0.0023678, sensitivity 0.00044831
+Feature Health Care and Social Assistance, mu_star 0.0094408, sensitivity 0.00078637
+Feature VaccinationFull, mu_star 0.0024822, sensitivity 0.00046997
 
 Delta 0.003.
-Feature Accommodation and Food Services, mu_star 0.0071256, sensitivity 0.00048469
-Feature VaccinationFull, mu_star 0.0021124, sensitivity 0.00039996
+Feature Health Care and Social Assistance, mu_star 0.00895, sensitivity 0.00074549
+Feature VaccinationFull, mu_star 0.0022101, sensitivity 0.00041846
 
 Delta 0.004.
-Feature Accommodation and Food Services, mu_star 0.0056589, sensitivity 0.00038492
-Feature VaccinationFull, mu_star 0.0018391, sensitivity 0.0003482
+Feature Health Care and Social Assistance, mu_star 0.0070687, sensitivity 0.00058879
+Feature VaccinationFull, mu_star 0.0019444, sensitivity 0.00036815
 
 Delta 0.005.
-Feature Accommodation and Food Services, mu_star 0.0047568, sensitivity 0.00032356
-Feature VaccinationFull, mu_star 0.0016359, sensitivity 0.00030973
+Feature Health Care and Social Assistance, mu_star 0.0058046, sensitivity 0.00048349
+Feature VaccinationFull, mu_star 0.0017276, sensitivity 0.0003271
 
 Delta 0.006.
-Feature Accommodation and Food Services, mu_star 0.0041214, sensitivity 0.00028034
-Feature VaccinationFull, mu_star 0.0014848, sensitivity 0.00028113
+Feature Health Care and Social Assistance, mu_star 0.0049063, sensitivity 0.00040867
+Feature VaccinationFull, mu_star 0.0015585, sensitivity 0.00029509
 
 Delta 0.007.
-Feature Accommodation and Food Services, mu_star 0.0036332, sensitivity 0.00024713
-Feature VaccinationFull, mu_star 0.0013748, sensitivity 0.0002603
+Feature Health Care and Social Assistance, mu_star 0.0044276, sensitivity 0.00036879
+Feature VaccinationFull, mu_star 0.0014398, sensitivity 0.00027261
 
 Delta 0.008.
-Feature Accommodation and Food Services, mu_star 0.0032593, sensitivity 0.0002217
-Feature VaccinationFull, mu_star 0.0013107, sensitivity 0.00024817
+Feature Health Care and Social Assistance, mu_star 0.0038936, sensitivity 0.00032432
+Feature VaccinationFull, mu_star 0.0013742, sensitivity 0.00026018
 
 Delta 0.009.
-Feature Accommodation and Food Services, mu_star 0.0029142, sensitivity 0.00019822
-Feature VaccinationFull, mu_star 0.0012348, sensitivity 0.0002338
+Feature Health Care and Social Assistance, mu_star 0.0034748, sensitivity 0.00028943
+Feature VaccinationFull, mu_star 0.0012915, sensitivity 0.00024454
 
 0.001
 0.002
@@ -56,4 +56,4 @@ Feature VaccinationFull, mu_star 0.0012348, sensitivity 0.0002338
 0.007
 0.008
 0.009
-Ended at 2023-02-20 20:58:21.469235. Elapsed time 7:23:59.041054
+Ended at 2023-02-23 05:49:56.048693. Elapsed time 7:27:16.399453
