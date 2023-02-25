@@ -147,7 +147,7 @@ def process_prediction(
     prediction_df = concat([target_df, prediction_df], axis=1)
 
     # drop the input_sequence_length timesteps, since prediction starts after that
-    prediction_start_date = prediction_df['Date'].min()+ to_timedelta(config.input_sequence_length + 1, unit='D')
+    prediction_start_date = prediction_df['Date'].min()+ to_timedelta(config.input_sequence_length - 1, unit='D')
     prediction_df = prediction_df[prediction_df['Date']>prediction_start_date]
 
     return prediction_df

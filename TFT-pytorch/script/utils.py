@@ -157,22 +157,6 @@ def train_validation_test_split(
 
     return train_data, validation_data, test_data
 
-def location_based_split(
-    df:DataFrame, parameters:Parameters, 
-    location:List[float], selected_columns:List
-):
-    train_data, validation_data, test_data = train_validation_test_split(df, parameters)
-    fips_codes = np.random.shuffle(df['FIPS'].unique())
-
-    num_train_counties = np.round(len(fips_codes) * location[0])
-    num_validation_counties = np.round(len(fips_codes) * location[1])
-
-    train_data = train_data[train_data['FIPS'].isin(fips_codes[:num_train_counties])]
-    validation_data = validation_data[validation_data['FIPS'].isin(fips_codes[num_train_counties : (num_train_counties + num_validation_counties)])]
-    test_data = test_data[test_data['FIPS'].isin(fips_codes[(num_train_counties + num_validation_counties): ])]
-
-    return train_data, validation_data, test_data
-
 def scale_data(
         train_data:DataFrame, validation_data:DataFrame, test_data:DataFrame, parameters:Parameters
     ):

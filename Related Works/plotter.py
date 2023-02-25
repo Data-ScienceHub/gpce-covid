@@ -96,9 +96,9 @@ def plot_predition(
 
     x_first_tick = df['Date'].min()
     x_last_tick = df['Date'].max()
-    ax.set_xticks(
-        [x_first_tick + (x_last_tick - x_first_tick) * i / (x_major_ticks - 1) for i in range(x_major_ticks)]
-    )
+    ax.set_xticks([
+        x_first_tick + (x_last_tick - x_first_tick) * i / (x_major_ticks - 1) for i in range(x_major_ticks)
+    ])
 
     if plot_error:
         plt.legend(framealpha=0.3, edgecolor="black", ncol=3)
