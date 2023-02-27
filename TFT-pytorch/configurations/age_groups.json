@@ -20,7 +20,7 @@
             "FIPS"
         ],
         "static_features_map": {
-            "Age Groups.csv": ["AGE019","AGE2029","AGE3039","AGE4049","AGE5064","AGE6579","AGE80PLUS"]
+            "Age Groups.csv": ["UNDER5", "AGE517","AGE1829","AGE3039","AGE4049","AGE5064","AGE6574","AGE75PLUS"]
         },
         "dynamic_features_map": {
             "Vaccination.csv": "VaccinationFull"
@@ -36,10 +36,10 @@
         "population": "Population.csv",
         "population_cut": [100, 500],
         "split": {
-            "train_start": "2020-02-29",
-            "validation_start": "2021-11-30",
-            "test_start": "2021-12-15",
-            "test_end": "2021-12-29",
+            "train_start": "2020-03-01",
+            "validation_start": "2021-11-28",
+            "test_start": "2021-12-13",
+            "test_end": "2021-12-27",
             "first_date":"2020-02-29",
             "last_date": "2022-05-17"
         }

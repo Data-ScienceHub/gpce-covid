@@ -275,8 +275,12 @@ for delta in delta_values:
         )
 
         # sum up the change in prediction
+        # prediction_change = np.sum([
+        #     abs(train_predictions[target_index] - new_predictions[target_index])
+        #         for target_index in range(len(targets)) 
+        # ])
         prediction_change = np.sum([
-            abs(train_predictions[target_index] - new_predictions[target_index])
+            (new_predictions[target_index] - train_predictions[target_index])
                 for target_index in range(len(targets)) 
         ])
         mu_star = prediction_change / (data.shape[0]*delta)

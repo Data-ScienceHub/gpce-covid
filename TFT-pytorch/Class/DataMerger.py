@@ -275,7 +275,7 @@ class DataMerger:
             print(f'Min date {df["Date"].min()}, max date {df["Date"].max()}')
             first_date = self.parameters.data.split.first_date
             last_date = self.parameters.data.split.last_date
-            print(f'Will filter out target data outside range {first_date} and {last_date}.')
+            print(f'Filtering out target data outside range {first_date} and {last_date}.')
             df = df[(first_date <= df['Date']) & (df['Date']<= last_date)]
 
             print(f'Length {df.shape[0]}.')
@@ -314,9 +314,12 @@ class DataMerger:
         # the joint types should be inner for consistency
         print('Merging all features')
         
-        total_df = static_df.merge(target_df, how='inner', on='FIPS')
-        total_df = dynamic_df.merge(total_df, how='outer', on=['FIPS', 'Date'])
-        total_df = total_df.reset_index(drop=True)
+        # total_df = static_df.merge(target_df, how='inner', on='FIPS')
+        # total_df = dynamic_df.merge(total_df, how='outer', on=['FIPS', 'Date'])
+        # total_df = total_df.reset_index(drop=True)
+
+        total_df = dynamic_df.merge(target_df, how='outer', on=['FIPS', 'Date'])
+        total_df = static_df.merge(total_df, how='inner', on='FIPS').reset_index(drop=True)
 
         # print('Merging population file for county names')
         # population = self.get_population()[['FIPS', 'Name']]
@@ -325,6 +328,7 @@ class DataMerger:
         print(f'Total merged data shape {total_df.shape}')
         print('Missing percentage in total data')
         print(missing_percentage(total_df))
+        # print(total_df[total_df[self.data_config.sta].isnull().any(axis=1)])
         
         print('Filling null values with 0')
         total_df.fillna(0, inplace=True)

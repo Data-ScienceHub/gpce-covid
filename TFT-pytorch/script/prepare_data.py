@@ -48,11 +48,11 @@ class args:
     # folder where the cleaned feature file are at
     dataPath = '../../dataset_raw/CovidMay17-2022'
     supportPath = '../../dataset_raw/Support files'
-    configPath = '../config_2022_Dec.json'
+    configPath = '../configurations/age_groups.json'
     cachePath = None # '../2022_May_cleaned/Total.csv'
 
     # choose this carefully
-    outputPath = '../2022_May_cleaned/'
+    outputPath = '../2022_May_age_groups/'
 
 # %%
 # create output path if it doesn't exist
