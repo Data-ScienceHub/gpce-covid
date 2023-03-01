@@ -193,7 +193,7 @@ class PlotWeights:
         ax.set_title(title)
 
         ax.set_xlabel("Importance in %")
-        # fig.tight_layout() # might change y axis values
+        fig.tight_layout() # might change y axis values
 
         if self.show:
             plt.show()
@@ -256,7 +256,7 @@ class PlotWeights:
         if title is not None: ax.set_title(title)
         plt.gca().yaxis.set_major_formatter(self.weight_formatter)
         ax.xaxis.set_major_locator(MultipleLocator(base=1))
-        # fig.tight_layout() # might change y axis values
+        fig.tight_layout() # might change y axis values
 
         if figure_name is not None:
             plt.savefig(os.path.join(self.figPath, figure_name), dpi=DPI)
@@ -340,7 +340,7 @@ class PlotWeights:
             # plt.xlim(attention_mean[x_column].min() - ONE_DAY, attention_mean[x_column].max() + ONE_DAY)
             ax.xaxis.set_major_locator(MultipleLocator(base=base))
         
-        plt.xticks(rotation = 15)
+        # plt.xticks(rotation = 15)
         
         plt.gca().yaxis.set_major_formatter(self.weight_formatter)
         plt.ylabel('Attention Weight')
@@ -397,7 +397,7 @@ class PlotWeights:
         plt.gca().yaxis.set_major_formatter(self.weight_formatter)
         plt.legend()
 
-        # fig.tight_layout() # might change y axis values
+        fig.tight_layout() # might change y axis values
 
         if figure_name is not None:
             plt.savefig(os.path.join(self.figPath, f'{figure_name}.jpg'), dpi=DPI)
