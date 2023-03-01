@@ -2,6 +2,7 @@
 # # Imports
 
 # %%
+# python .\sensitivity_analysis_subgroups.py --config=age_groups.json --output=../scratch/top_100 --show-progress=True
 import os, gc
 import torch
 from datetime import datetime
@@ -20,31 +21,7 @@ pd.set_option('display.max_columns', None)
 
 # %%
 device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
-print(device)
-
-# %% [markdown]
-# ## Google colab
-# 
-# Set `running_on_colab` to true if you are running on google colab. They don't have these libraries installed by default.Uncomment the codes too if needed. They might be commented out since in .py script inline commands show errors.
-# 
-# **Restart the kernel after installing the new libraries.**
-
-# %%
-# running_on_colab = True
-
-# if running_on_colab:
-#     !pip install torch==1.11.0
-#     # !pip install torch==1.11.0+cu113 torchvision==0.12.0+cu113 torchaudio==0.11.0+cu113 -f https://download.pytorch.org/whl/torch_stable.html
-#     !pip install pytorch_lightning==1.8.1
-#     !pip install pytorch_forecasting==0.10.3
-#     !pip install pandas==1.4.1
-
-# %%
-# if running_on_colab:
-#     from google.colab import drive
-
-#     drive.mount('/content/drive')
-#     %cd /content/drive/My Drive/TFT-pytorch/notebook
+print(f'Using {device} backend.')
 
 # %% [markdown]
 # ## Pytorch lightning and forecasting
@@ -69,34 +46,34 @@ parser = ArgumentParser(description='Sensitivity analysis using Morris method')
 
 parser.add_argument(
    '--config', help='config filename in the configurations folder',
-   default='baseline.json'
+   default='age_groups.json'
 )
 parser.add_argument(
-   '--input_file', help='path of the input feature file',
-   default='../2022_May_cleaned/Top_100.csv'
+   '--input-file', help='path of the input feature file',
+   default='../2022_May_age_groups/Top_100.csv'
 )
 parser.add_argument(
-   '--output', default='../results/TFT_baseline',
+   '--output', default='../scratch/age_groups',
    help='output result folder. Anything written in the scratch folder will be ignored by Git.'
 )
 parser.add_argument(
-   '--show_progress', help='show the progress bar.',
+   '--show-progress', help='show the progress bar.',
    default=False, type=bool
 )
 arguments = parser.parse_args()
 
 @dataclass
 class args:
-    result_folder = arguments['output']
+    result_folder = arguments.output
     figPath = os.path.join(result_folder, 'figures_morris')
     checkpoint_folder = os.path.join(result_folder, 'checkpoints')
-    input_filePath = arguments['input_file']
+    input_filePath = arguments.input_file
 
-    configPath = os.path.join('../configurations', 'baseline.json')
+    configPath = os.path.join('../configurations', arguments.config)
     model_path = get_best_model_path(checkpoint_folder)
 
     # set this to false when submitting batch script, otherwise it prints a lot of lines
-    show_progress_bar = arguments['show_progress']
+    show_progress_bar = arguments.show_progress
 
 if not os.path.exists(args.figPath):
     os.makedirs(args.figPath, exist_ok=True)
@@ -248,7 +225,9 @@ gc.collect()
 # %%
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
-features = parameters.data.static_features + parameters.data.dynamic_features
+# note that for subgroups, training was done using each subgroup as static feature
+# the config.json might have all static variables
+features = tft.static_variables + parameters.data.dynamic_features
 
 minmax_scaler = MinMaxScaler()
 train_minmax_scaled = minmax_scaler.fit_transform(train_data[features])
@@ -263,7 +242,8 @@ standard_scaler.fit(train_data[features])
 
 # %%
 # delta_values = [1e-2, 1e-3, 5e-3, 9e-3, 5e-4, 1e-4, 5e-5, 1e-5]
-delta_values = [0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009]
+# delta_values = [0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009]
+delta_values = [-0.001, -0.0001, 0.0001, 0.001]
 results = {
     'Delta': [],
     'Feature': [],
@@ -294,11 +274,6 @@ for delta in delta_values:
             targets, new_predictions, target_scaler, max_prediction_length
         )
 
-        # sum up the change in prediction
-        # prediction_change = np.sum([
-        #     abs(train_predictions[target_index] - new_predictions[target_index])
-        #         for target_index in range(len(targets)) 
-        # ])
         prediction_change = np.sum([
             (new_predictions[target_index] - train_predictions[target_index])
                 for target_index in range(len(targets)) 

@@ -43,24 +43,43 @@ from pytorch_forecasting.metrics import RMSE, MultiLoss
 
 # %%
 from dataclasses import dataclass
+from argparse import ArgumentParser
+
+parser = ArgumentParser(description='Train TFT model')
+
+parser.add_argument(
+   '--config', default='baseline.json',
+   help='config filename in the configurations folder'
+)
+
+parser.add_argument(
+   '--input_file', help='path of the input feature file',
+   default='../2022_May_cleaned/Top_100.csv'
+)
+parser.add_argument(
+   '--output', default='../scratch/TFT_baseline',
+   help='output result folder. Anything written in the scratch folder will be ignored by Git.'
+)
+parser.add_argument(
+   '--show-progress', default=False, type=bool,
+   help='show the progress bar.'
+)
+arguments = parser.parse_args()
 
 @dataclass
 class args:
-    outputPath = '../results/total'
-    checkpoint_folder = os.path.join(outputPath, 'checkpoints')
-    input_filePath = '../2022_May_cleaned/Total.csv'
-
-    # pass your intented configuration here
-    # input features are always normalized. But keeping the targets features unscaled improves results
-    # if you want to change some config, but not to create a new config file, just change the value
-    # of the corresponding parameter in the config section
-    configPath = '../configurations/baseline.json'
+    result_folder = arguments.output
+    figPath = os.path.join(result_folder, 'figures')
+    checkpoint_folder = os.path.join(result_folder, 'checkpoints')
+    input_filePath = arguments.input_file
+    
+    configPath = os.path.join('../configurations', arguments.config)
 
     # Path/URL of the checkpoint from which training is resumed
     ckpt_model_path = None # os.path.join(checkpoint_folder, 'latest-epoch=.ckpt')
     
     # set this to false when submitting batch script, otherwise it prints a lot of lines
-    show_progress_bar = False
+    show_progress_bar = arguments.show_progress
 
 # %%
 total_data = pd.read_csv(args.input_filePath)

@@ -2,6 +2,7 @@ import pandas as pd
 from pandas import to_datetime
 from typing import List
 import json
+
 class Preprocess:
     def __init__(
         self, data, remove_input_outliers, remove_target_outliers, 

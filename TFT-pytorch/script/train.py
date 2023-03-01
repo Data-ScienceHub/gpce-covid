@@ -24,30 +24,7 @@ pd.set_option('display.max_columns', None)
 
 # %%
 device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
-print(device)
-
-# %% [markdown]
-# ## Google colab
-# 
-# Set `running_on_colab` to true if you are running on google colab. They don't have these libraries installed by default. Uncomment the codes too if needed. They might be commented out since in .py script inline commands show errors.
-# 
-# Use only the pip install part if you are on rivanna, using a default tensorflow kernel.
-
-# %%
-running_on_colab = False
-
-# if running_on_colab:
-#     !pip install torch==1.11.0
-#     # !pip install torch==1.11.0+cu113 torchvision==0.12.0+cu113 torchaudio==0.11.0+cu113 -f https://download.pytorch.org/whl/torch_stable.html
-#     !pip install pytorch_lightning==1.8.1
-#     !pip install pytorch_forecasting==0.10.3
-#     !pip install pandas==1.4.1
-
-# %%
-#     from google.colab import drive
-
-#     drive.mount('/content/drive')
-#     %cd /content/drive/My Drive/TFT-pytorch/notebook
+print(f'Using {device} backend.')
 
 # %% [markdown]
 # ## Pytorch lightning and forecasting
@@ -66,26 +43,47 @@ from pytorch_forecasting.metrics import RMSE, MultiLoss
 
 # %%
 from dataclasses import dataclass
+from argparse import ArgumentParser
+
+parser = ArgumentParser(description='Train TFT model')
+
+parser.add_argument(
+   '--config', default='baseline.json',
+   help='config filename in the configurations folder'
+)
+
+parser.add_argument(
+   '--input_file', help='path of the input feature file',
+   default='../2022_May_cleaned/Top_100.csv'
+)
+parser.add_argument(
+   '--output', default='../scratch/TFT_baseline',
+   help='output result folder. Anything written in the scratch folder will be ignored by Git.'
+)
+parser.add_argument(
+   '--show-progress', default=False, type=bool,
+   help='show the progress bar.'
+)
+arguments = parser.parse_args()
 
 @dataclass
 class args:
-    result_folder = '../scratch/total/'
+    result_folder = arguments.output
     figPath = os.path.join(result_folder, 'figures')
     checkpoint_folder = os.path.join(result_folder, 'checkpoints')
-    input_filePath = '../2022_May_cleaned/Total.csv'
+    input_filePath = arguments.input_file
 
     # pass your intented configuration here
     # input features are always normalized. But keeping the targets features unscaled improves results
     # if you want to change some config, but not to create a new config file, just change the value
     # of the corresponding parameter in the config section
-    configPath = '../configurations/baseline.json'
-    # configPath = '../config_2022_Aug.json'
+    configPath = os.path.join('../configurations', arguments.config)
 
     # Path/URL of the checkpoint from which training is resumed
     ckpt_model_path = None # os.path.join(checkpoint_folder, 'latest-epoch=7.ckpt')
     
     # set this to false when submitting batch script, otherwise it prints a lot of lines
-    show_progress_bar = False
+    show_progress_bar = arguments.show_progress
 
     # interpret_output has high memory requirement
     # results in out-of-memery for Total.csv and a model of hidden size 64, even with 64GB memory
@@ -115,13 +113,6 @@ parameters = Parameters(config, **config)
 targets = parameters.data.targets
 time_idx = parameters.data.time_idx
 tft_params = parameters.model_parameters
-
-# google colab doesn't utilize GPU properly for pytorch
-# so increasing batch size forces more utilization
-# not needed on rivanna or your local machine
-
-if running_on_colab: 
-    tft_params.batch_size *= 4
 
 max_prediction_length = tft_params.target_sequence_length
 max_encoder_length = tft_params.input_sequence_length

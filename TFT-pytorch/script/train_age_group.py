@@ -5,6 +5,7 @@
 # # Imports
 
 # %%
+# python .\train_subgroups.py --config=age_groups.json --feature=UNDER5 --output=../scratch/top_100 --show-progress=True
 import os, gc
 import torch
 
@@ -22,7 +23,7 @@ pd.set_option('display.max_columns', None)
 
 # %%
 device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
-print(device)
+print(f'Using {device} backend.')
 
 # %% [markdown]
 # ## Pytorch lightning and forecasting
@@ -40,23 +41,48 @@ from pytorch_forecasting.metrics import RMSE, MultiLoss
 
 # %%
 from dataclasses import dataclass
+from argparse import ArgumentParser
+
+parser = ArgumentParser(description='Train TFT on age groups')
+
+parser.add_argument(
+   '--config', default='age_groups.json',
+   help='config filename in the configurations folder'
+)
+parser.add_argument(
+    '--feature', default=None,
+    help='name of the static subgroup feature. If None, all features are used',
+)
+
+parser.add_argument(
+   '--input_file', help='path of the input feature file',
+   default='../2022_May_age_groups/Top_100.csv'
+)
+parser.add_argument(
+   '--output', default='../scratch/age_groups',
+   help='output result folder. Anything written in the scratch folder will be ignored by Git.'
+)
+parser.add_argument(
+   '--show-progress', default=False, type=bool,
+   help='show the progress bar.'
+)
+
+arguments = parser.parse_args()
 
 @dataclass
 class args:
-    result_folder = '../scratch/total_age_group/'
+    result_folder = arguments.output
     figPath = os.path.join(result_folder, 'figures')
     checkpoint_folder = os.path.join(result_folder, 'checkpoints')
-    input_filePath = '../2022_May_age_groups/Top_100.csv'
+    input_filePath = arguments.input_file
 
-    configPath = '../configurations/age_groups.json'
+    configPath = os.path.join('../configurations', arguments.config)
 
     # Path/URL of the checkpoint from which training is resumed
     ckpt_model_path = None # os.path.join(checkpoint_folder, 'latest-epoch=0.ckpt')
     
     # set this to false when submitting batch script, otherwise it prints a lot of lines
-    show_progress_bar = False
-
-    static_feature_index = 0
+    show_progress_bar = arguments.show_progress
 
 # %%
 total_data = pd.read_csv(args.input_filePath)
@@ -78,10 +104,11 @@ with open(args.configPath, 'r') as input_file:
 
 parameters = Parameters(config, **config)
 
-print(f'Static features {parameters.data.static_features}. \
-  Choosing feature {parameters.data.static_features[args.static_feature_index]}.')
-# here we are going to train by one static feature at a time
-parameters.data.static_features = [parameters.data.static_features[args.static_feature_index]]
+if arguments.feature is not None:
+    print(f'Static features {parameters.data.static_features}. \
+    \nChoosing feature {arguments.feature} for subgroup.')
+    # here we are going to train by one static feature at a time
+    parameters.data.static_features = [arguments.feature]
 
 # %%
 targets = parameters.data.targets
