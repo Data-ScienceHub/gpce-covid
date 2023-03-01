@@ -19,3 +19,4 @@ predictions_case.csv
 predictions_case_death.csv
 attention.csv
 scratch/
+*.sif

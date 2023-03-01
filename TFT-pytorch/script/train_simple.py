@@ -45,7 +45,7 @@ from pytorch_forecasting.metrics import RMSE, MultiLoss
 from dataclasses import dataclass
 from argparse import ArgumentParser
 
-parser = ArgumentParser(description='Train TFT model')
+parser = ArgumentParser(description='Train TFT model without interpretation')
 
 parser.add_argument(
    '--config', default='baseline.json',
