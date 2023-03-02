@@ -56,7 +56,7 @@ parser.add_argument(
 
 parser.add_argument(
    '--input_file', help='path of the input feature file',
-   default='../2022_May_age_groups/Top_100.csv'
+   default='../2022_May_age_groups/Total.csv'
 )
 parser.add_argument(
    '--output', default='../scratch/age_groups',

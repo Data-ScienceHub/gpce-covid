@@ -23,30 +23,6 @@ device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cp
 print(device)
 
 # %% [markdown]
-# ## Google colab
-# 
-# Set `running_on_colab` to true if you are running on google colab. They don't have these libraries installed by default.Uncomment the codes too if needed. They might be commented out since in .py script inline commands show errors.
-# 
-# **Restart the kernel after installing the new libraries.**
-
-# %%
-# running_on_colab = True
-
-# if running_on_colab:
-#     !pip install torch==1.11.0
-#     # !pip install torch==1.11.0+cu113 torchvision==0.12.0+cu113 torchaudio==0.11.0+cu113 -f https://download.pytorch.org/whl/torch_stable.html
-#     !pip install pytorch_lightning==1.8.1
-#     !pip install pytorch_forecasting==0.10.3
-#     !pip install pandas==1.4.1
-
-# %%
-# if running_on_colab:
-#     from google.colab import drive
-
-#     drive.mount('/content/drive')
-#     %cd /content/drive/My Drive/TFT-pytorch/notebook
-
-# %% [markdown]
 # ## Pytorch lightning and forecasting
 
 # %%
@@ -73,7 +49,7 @@ parser.add_argument(
 )
 parser.add_argument(
    '--input_file', help='path of the input feature file',
-   default='../2022_May_cleaned/Top_100.csv'
+   default='../2022_May_cleaned/Total.csv'
 )
 parser.add_argument(
    '--output', default='../results/TFT_baseline',

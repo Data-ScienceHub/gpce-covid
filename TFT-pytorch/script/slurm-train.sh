@@ -30,7 +30,7 @@ python train.py
 # #SBATCH --partition=gpu
 # #SBATCH --time=24:00:00
 # #SBATCH --gres=gpu:v100:1
-# #SBATCH --account=ds--6013
+# #SBATCH --account=ds--6013 # bii_dsc_community
 # #SBATCH --mem=32GB
 
 # source /etc/profile.d/modules.sh

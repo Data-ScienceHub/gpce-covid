@@ -54,7 +54,7 @@ parser.add_argument(
 
 parser.add_argument(
    '--input_file', help='path of the input feature file',
-   default='../2022_May_cleaned/Top_100.csv'
+   default='../2022_May_cleaned/Total.csv'
 )
 parser.add_argument(
    '--output', default='../scratch/TFT_baseline',

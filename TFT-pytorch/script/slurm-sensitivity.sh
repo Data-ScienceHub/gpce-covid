@@ -21,12 +21,12 @@ python sensitivity_analysis.py
 ## Following script is for UVA Rivanna
 
 # #!/usr/bin/env bash
-# #SBATCH --job-name="inference"
-# #SBATCH --output=outputs/inference.out
+# #SBATCH --job-name="sensitivity"
+# #SBATCH --output=outputs/sensitivity.out
 # #SBATCH --partition=gpu
 # #SBATCH --time=1:00:00
 # #SBATCH --gres=gpu:v100:1
-# #SBATCH --account=ds--6013
+# #SBATCH --account=ds--6013 # bii_dsc_community
 # #SBATCH --mem=32GB
 
 # source /etc/profile.d/modules.sh

@@ -26,7 +26,7 @@ python inference.py
 # #SBATCH --partition=gpu
 # #SBATCH --time=2:00:00
 # #SBATCH --gres=gpu:v100:1
-# #SBATCH --account=ds--6013
+# #SBATCH --account=ds--6013 # bii_dsc_community
 # #SBATCH --mem=32GB
 
 # source /etc/profile.d/modules.sh
