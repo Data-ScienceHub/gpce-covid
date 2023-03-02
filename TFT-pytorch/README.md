@@ -178,9 +178,9 @@ Most of the features are results from the [COVID-19 Pandemic Vulnerability Index
 
 </div>
 
-<h3 class="accordion-toggle accordion-toggle-icon">Details of Features from PVI Model (11.2)</h4>
+<h2 class="accordion-toggle accordion-toggle-icon">Details of Features</h4>
 <div class="accordion-content">
-<table class="pop_up_table" summary="Datasets comprising the current PVI model">
+<table class="pop_up_table">
 <thead>
 <tr>
 <th scope="col">Data Domain  <br /> Component(s)</th>
@@ -199,8 +199,8 @@ Most of the features are results from the [COVID-19 Pandemic Vulnerability Index
 <td>% age 65 and over</td>
 <td>Static</td>
 <td style="background: #9A42C8;"></td>
-<td><em>Aged 65 or Older</em>. Older ages have been associated with more severe outcomes from COVID-19 infection.</td>
-<td><span><a href="https://svi.cdc.gov/Documents/Data/2020_SVI_Data/CSV/SVI2020_US_COUNTY.csv" target="_blank">2020 CDC Social Vulnerability Index</a></span></td>
+<td><em>Aged 65 or Older from 2016-2020 American Community Survey (ACS)</em>. Older ages have been associated with more severe outcomes from COVID-19 infection.</td>
+<td><span><a href="https://svi.cdc.gov/data-and-tools-download.html" target="_blank">2020 SVI</a></span></td>
 </tr>
 
 <tr>
@@ -210,8 +210,8 @@ Most of the features are results from the [COVID-19 Pandemic Vulnerability Index
 <td>Uninsured</td>
 <td>Static</td>
 <td style="background: #C885EC;"></td>
-<td><em>Percentage uninsured in the total civilian noninstitutionalized population estimate. </em>. Individuals without insurance are more likely to be undercounted in infection statistics, and may have more severe outcomes due to lack of treatment.</td>
-<td><span><a href="https://svi.cdc.gov/Documents/Data/2020_SVI_Data/CSV/SVI2020_US_COUNTY.csv" target="_blank">2020 CDC Social Vulnerability Index</a></span></td>
+<td><em>Percentage uninsured in the total civilian noninstitutionalized population estimate, 2016- 2020 ACS</em>. Individuals without insurance are more likely to be undercounted in infection statistics, and may have more severe outcomes due to lack of treatment.</td>
+<td><span><a href="https://svi.cdc.gov/data-and-tools-download.html" target="_blank">2020 SVI</a></span></td>
 </tr>
 
 <tr>
@@ -222,7 +222,7 @@ Most of the features are results from the [COVID-19 Pandemic Vulnerability Index
 <td>Daily</td>
 <td style="background: #CC3333;"></td>
 <td><em>Cases from the last 14 days per 100k population</em>. Because of the 14-day incubation period, the cases identified in that time period are the most likely to be transmissible. This metric is the number of such &ldquo;contagious&rdquo; individuals relative to the population, so a greater number indicates more likely continued spread of disease.</td>
-<td><span><span><a href="https://usafacts.org/issues/coronavirus/" target="_blank">USA Facts</a></span></span></td>
+<td><span><span><a href="https://usafacts.org/issues/coronavirus/" target="_blank">USA Facts</a> , <a href="https://svi.cdc.gov/data-and-tools-download.html" target="_blank">2020 SVI</a> (for population estimate)</span></span></td>
 </tr>
 <tr>
 <td colspan="5"><strong>Disease Spread</strong></td>
@@ -231,7 +231,7 @@ Most of the features are results from the [COVID-19 Pandemic Vulnerability Index
 <td></td>
 <td>Daily</td>
 <td style="background: #E64D4D;"></td>
-<td><em>Fraction of total cases that are from the last 14 days (one incubation period)</em>. Because COVID-19 is thought to have an incubation period of about 14 days, only a sustained decline in new infections over 2 weeks is sufficient to signal reduction in disease spread. This metric is always between 0 and 1, with values near 1 during exponential growth phase, and declining linearly to zero over 14 days if there are no new infections.</td>
+<td><em>Cases that are from the last 14 days (one incubation period) divided by cases from the last 28 days </em>. Because COVID-19 is thought to have an incubation period of about 14 days, only a sustained decline in new infections over 2 weeks is sufficient to signal reduction in disease spread. This metric is always between 0 and 1, with values near 1 during exponential growth phase, and declining linearly to zero over 14 days if there are no new infections.</td>
 <td><span><span><a href="https://usafacts.org/issues/coronavirus/" target="_blank">USA Facts</a></span></span></td>
 </tr>
 

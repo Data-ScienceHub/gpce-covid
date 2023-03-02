@@ -63,16 +63,16 @@ arguments = parser.parse_args()
 
 @dataclass
 class args:
-    result_folder = arguments['output']
+    result_folder = arguments.output
     figPath = os.path.join(result_folder, 'figures_morris')
     checkpoint_folder = os.path.join(result_folder, 'checkpoints')
-    input_filePath = arguments['input_file']
+    input_filePath = arguments.input_file
 
-    configPath = os.path.join('../configurations', 'baseline.json')
+    configPath = os.path.join('../configurations', arguments.config)
     model_path = get_best_model_path(checkpoint_folder)
 
     # set this to false when submitting batch script, otherwise it prints a lot of lines
-    show_progress_bar = arguments['show_progress']
+    show_progress_bar = arguments.show_progress
 
 if not os.path.exists(args.figPath):
     os.makedirs(args.figPath, exist_ok=True)
