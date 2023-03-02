@@ -199,8 +199,8 @@ Most of the features are results from the [COVID-19 Pandemic Vulnerability Index
 <td>% age 65 and over</td>
 <td>Static</td>
 <td style="background: #9A42C8;"></td>
-<td><em>Aged 65 or Older from 2014-2018 ACS</em>. Older ages have been associated with more severe outcomes from COVID-19 infection.</td>
-<td><span><a href="https://svi.cdc.gov/data-and-tools-download.html" target="_blank">2018 CDC Social Vulnerability Index</a></span></td>
+<td><em>Aged 65 or Older</em>. Older ages have been associated with more severe outcomes from COVID-19 infection.</td>
+<td><span><a href="https://svi.cdc.gov/Documents/Data/2020_SVI_Data/CSV/SVI2020_US_COUNTY.csv" target="_blank">2020 CDC Social Vulnerability Index</a></span></td>
 </tr>
 
 <tr>
@@ -210,8 +210,8 @@ Most of the features are results from the [COVID-19 Pandemic Vulnerability Index
 <td>Uninsured</td>
 <td>Static</td>
 <td style="background: #C885EC;"></td>
-<td><em>Percentage uninsured in the total civilian noninstitutionalized population estimate, 2014- 2018 ACS</em>. Individuals without insurance are more likely to be undercounted in infection statistics, and may have more severe outcomes due to lack of treatment.</td>
-<td><span><a href="https://svi.cdc.gov/data-and-tools-download.html" target="_blank">2018 CDC Social Vulnerability Index</a></span></td>
+<td><em>Percentage uninsured in the total civilian noninstitutionalized population estimate. </em>. Individuals without insurance are more likely to be undercounted in infection statistics, and may have more severe outcomes due to lack of treatment.</td>
+<td><span><a href="https://svi.cdc.gov/Documents/Data/2020_SVI_Data/CSV/SVI2020_US_COUNTY.csv" target="_blank">2020 CDC Social Vulnerability Index</a></span></td>
 </tr>
 
 <tr>
@@ -221,7 +221,7 @@ Most of the features are results from the [COVID-19 Pandemic Vulnerability Index
 <td></td>
 <td>Daily</td>
 <td style="background: #CC3333;"></td>
-<td><em>Population size divided by cases from the last 14 days</em>. Because of the 14-day incubation period, the cases identified in that time period are the most likely to be transmissible. This metric is the number of such &ldquo;contagious&rdquo; individuals relative to the population, so a greater number indicates more likely continued spread of disease.</td>
+<td><em>Cases from the last 14 days per 100k population</em>. Because of the 14-day incubation period, the cases identified in that time period are the most likely to be transmissible. This metric is the number of such &ldquo;contagious&rdquo; individuals relative to the population, so a greater number indicates more likely continued spread of disease.</td>
 <td><span><span><a href="https://usafacts.org/issues/coronavirus/" target="_blank">USA Facts</a></span></span></td>
 </tr>
 <tr>
