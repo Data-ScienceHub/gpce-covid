@@ -9,7 +9,7 @@ import sys
 sys.path.append( '..' )
 from Class.Parameters import Parameters
 
-from sklearn.metrics import mean_absolute_error, mean_squared_error, mean_squared_log_error
+from sklearn.metrics import mean_absolute_error, mean_squared_error, mean_squared_log_error, explained_variance_score
 
 def get_best_model_path(checkpoint_folder, prefix='best-epoch='):
         for item in os.listdir(checkpoint_folder):
@@ -22,11 +22,11 @@ def get_best_model_path(checkpoint_folder, prefix='best-epoch='):
 def calculate_result(y_true, y_pred):
     mae = mean_absolute_error(y_true, y_pred)
     rmse = np.sqrt(mean_squared_error(y_true, y_pred))
-    msle = np.sqrt(mean_squared_log_error(y_true, y_pred))
+    rmsle = np.sqrt(mean_squared_log_error(y_true, y_pred))
     smape = symmetric_mean_absolute_percentage(y_true, y_pred)
     nnse = normalized_nash_sutcliffe_efficiency(y_true, y_pred)
 
-    return mae, rmse, msle, smape, nnse
+    return mae, rmse, rmsle, smape, nnse
 
 def remove_outliers(original_df, use_median=False, multiplier=7.5, verbose=False):
     df = original_df.copy()
@@ -91,8 +91,12 @@ def root_mean_squared_error(y_true, y_pred):
     return np.sqrt(np.mean(np.square(y_true - y_pred)))
 
 # https://en.wikipedia.org/wiki/Nash%E2%80%93Sutcliffe_model_efficiency_coefficient
+# NSE is equivalent to https://scikit-learn.org/stable/modules/generated/sklearn.metrics.explained_variance_score.html#sklearn.metrics.explained_variance_score
 def normalized_nash_sutcliffe_efficiency(y_true, y_pred):
-    NSE = 1 - sum (np.square(y_true - y_pred) ) / sum( np.square(y_true - np.mean(y_true)) )
+    # numerator = sum (np.square(y_true - y_pred) )
+    # denominator = sum(np.square(y_true - np.mean(y_true)))
+    # NSE = 1 - numerator / denominator
+    NSE = explained_variance_score(y_true, y_pred)
     return 1 / ( 2 - NSE)
 
 # https://pytorch-forecasting.readthedocs.io/en/stable/api/pytorch_forecasting.metrics.point.SMAPE.html?highlight=smape
