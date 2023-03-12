@@ -361,11 +361,14 @@ gc.collect()
 print(f'\n---Test results--\n')
 
 test_raw_predictions, test_index = tft.predict(
-    test_dataloader, mode="raw", return_index=True, show_progress_bar=args.show_progress_bar
+    test_dataloader, mode="raw", return_index=True, 
+    show_progress_bar=args.show_progress_bar
 )
 test_predictions = upscale_prediction(targets, test_raw_predictions['prediction'], target_scaler, max_prediction_length)
 
-test_result_merged = processor.align_result_with_dataset(total_data, test_predictions, test_index)
+test_result_merged = processor.align_result_with_dataset(
+    total_data, test_predictions, test_index
+)
 show_result(test_result_merged, targets)
 plotter.summed_plot(test_result_merged, 'Test')
 gc.collect()
@@ -376,7 +379,9 @@ gc.collect()
 # %%
 for day in range(1, max_prediction_length+1):
     print(f'Day {day}')
-    df = processor.align_result_with_dataset(test_data, test_predictions, test_index, target_time_step = day)
+    df = processor.align_result_with_dataset(
+        test_data, test_predictions, test_index, target_time_step = day
+    )
     show_result(df, targets)
     # plotter.summed_plot(df, type=f'Test_day_{day}')
 
@@ -430,7 +435,8 @@ plotWeights = PlotWeights(
 # %%
 if args.interpret_train:
     attention_mean, attention = processor.get_mean_attention(
-        tft.interpret_output(train_raw_predictions), train_index, return_attention=True
+        tft.interpret_output(train_raw_predictions), 
+        train_index, return_attention=True
     )
     plotWeights.plot_attention(
         attention_mean, figure_name='Train_daily_attention', 
