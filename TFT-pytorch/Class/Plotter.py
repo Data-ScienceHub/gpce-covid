@@ -250,7 +250,7 @@ class PlotWeights:
         )
         # plt.ylim(attention.min())
         ax.set_ylim(0)
-        ax.set_xlabel("Time Index")
+        ax.set_xlabel("Position Index (n)")
         ax.set_ylabel("Attention Weight")
 
         if title is not None: ax.set_title(title)
@@ -266,7 +266,7 @@ class PlotWeights:
         return fig
 
     def plot_attention(
-        self, attention_mean:DataFrame, title:str='Attention comparison on different time index',
+        self, attention_mean:DataFrame, title:str='Attention comparison on different position index',
         figsize=(14, 8), step_size:int=1, figure_name:str=None, base:int=None, target_day:int=None, 
         limit:int=0, enable_markers=True
     ):
@@ -297,13 +297,13 @@ class PlotWeights:
             if enable_markers:
                 plt.plot(
                     attention_mean[x_column], attention_mean.loc[:, max_encoder_length + encoder_length], 
-                    label=f'Time Index {encoder_length}', 
+                    label=f'Position Index {encoder_length}', 
                     marker=markers[max_encoder_length + encoder_length]
                 )
             else:
                 plt.plot(
                     attention_mean[x_column], attention_mean.loc[:, max_encoder_length + encoder_length], 
-                    label=f'Time Index {encoder_length}'
+                    label=f'Position Index {encoder_length}'
                 )
             count -= 1
 
@@ -377,7 +377,7 @@ class PlotWeights:
 
             plt.plot(
                 attention_weekly['weekday'], attention_weekly.loc[:, self.max_encoder_length + encoder_length], 
-                label=f'Time Index {encoder_length}', 
+                label=f'Position Index {encoder_length}', 
                 marker=markers[encoder_length]
             )
             limit -= 1

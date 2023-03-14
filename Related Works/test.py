@@ -8,6 +8,7 @@ pd.options.mode.chained_assignment = None
 import os
 
 import tensorflow as tf
+from tensorflow.python.ops.math_ops import reduce_prod
 from datetime import datetime
 
 from models import *
@@ -34,7 +35,7 @@ if not os.path.exists(output_folder):
 # # Preprocessing
 
 # %%
-df = pd.read_csv('../TFT-pytorch/2022_May_cleaned/Top_100.csv')
+df = pd.read_csv('../TFT-pytorch/2022_May_cleaned/Total.csv')
 df['Date'] = pd.to_datetime(df['Date'])
 print(df.head(3))
 
@@ -55,8 +56,8 @@ class Config:
     selected_columns = features + targets
     input_sequence_length = 13
     output_sequence_length = 15
-    batch_size = 64
-    buffer_size = 1000
+    batch_size = 32
+    buffer_size = 64
     epochs = 1
     learning_rate = 1e-6
     early_stopping_patience = 5
