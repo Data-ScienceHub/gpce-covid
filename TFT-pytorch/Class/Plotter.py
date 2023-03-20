@@ -15,7 +15,7 @@ from script.utils import calculate_result
 from Class.PredictionProcessor import *
 from Class.PlotConfig import *
 
-from matplotlib.ticker import StrMethodFormatter, MultipleLocator
+from matplotlib.ticker import StrMethodFormatter, MultipleLocator, ScalarFormatter
 
 class PlotResults:
     def __init__(self, figPath:str, targets:List[str], figsize=FIGSIZE, show=True) -> None:
@@ -30,7 +30,8 @@ class PlotResults:
     
     def plot(
         self, df:DataFrame, target:str, title:str=None, scale=1, 
-        base:int=None, figure_name:str=None, plot_error:bool=False
+        base:int=None, figure_name:str=None, plot_error:bool=False,
+        legend_loc='best'
     ):
         fig, ax = plt.subplots(figsize=self.figsize)
         if title is not None: plt.title(title)
@@ -83,9 +84,9 @@ class PlotResults:
             plt.ylabel(f'Daily {target}')
             
         if plot_error:
-            plt.legend(framealpha=0.3, edgecolor="black", ncol=3, loc='best')
+            plt.legend(framealpha=0.3, edgecolor="black", ncol=3, loc=legend_loc)
         else:
-            plt.legend(framealpha=0.3, edgecolor="black", ncol=2, loc='best')
+            plt.legend(framealpha=0.3, edgecolor="black", ncol=2, loc=legend_loc)
             
         # fig.tight_layout() # might change y axis values
 
