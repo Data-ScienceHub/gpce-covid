@@ -83,7 +83,7 @@ print(f'Started at {start}')
 
 total_data = pd.read_csv(args.input_filePath)
 print(total_data.shape)
-total_data.head()
+print(total_data.head())
 
 # %% [markdown]
 # # Config
@@ -129,7 +129,7 @@ train_data, validation_data, test_data = train_validation_test_split(
 )
 
 # %%
-train_scaled, validation_scaled, test_scaled, target_scaler = scale_data(
+train_scaled, _, _, target_scaler = scale_data(
     train_data, validation_data, test_data, parameters
 )
 
@@ -163,10 +163,6 @@ def prepare_data(data: pd.DataFrame, pm: Parameters, train=False):
 
 # %%
 train_dataloader = prepare_data(train_scaled, parameters)
-validation_dataloader = prepare_data(validation_scaled, parameters)
-test_dataloader = prepare_data(test_scaled, parameters)
-
-# del validation_scaled, test_scaled
 gc.collect()
 
 # %% [markdown]
@@ -205,13 +201,13 @@ plotter = PlotResults(args.figPath, targets, show=args.show_progress_bar)
 # %%
 print(f'\n---Training results--\n')
 
-# [number of targets (2), number of examples, prediction length (15)]
-train_raw_predictions, train_index = tft.predict(
-    train_dataloader, return_index=True, show_progress_bar=args.show_progress_bar
+# [number of targets, number of examples, prediction length (15)]
+train_predictions = tft.predict(
+    train_dataloader, show_progress_bar=args.show_progress_bar
 )
 
 train_predictions = upscale_prediction(
-    targets, train_raw_predictions, target_scaler, max_prediction_length
+    targets, train_predictions, target_scaler, max_prediction_length
 )
 gc.collect()
 
@@ -229,10 +225,7 @@ features = parameters.data.static_features + parameters.data.dynamic_features
 minmax_scaler = MinMaxScaler()
 train_minmax_scaled = minmax_scaler.fit_transform(train_data[features])
 
-target_minmax_scaler = MinMaxScaler().fit(train_data[targets])
-
-standard_scaler = StandardScaler()
-standard_scaler.fit(train_data[features])
+standard_scaler = StandardScaler().fit(train_data[features])
 
 # %% [markdown]
 # ## Calculate
@@ -244,7 +237,11 @@ results = {
     'Delta': [],
     'Feature': [],
     'Mu_star':[],
-    'Morris_sensitivity':[] 
+    'Prediction_change':[],
+    'Morris_sensitivity':[],
+    'Absolute_mu_star': [],
+    'Absolute_prediction_change':[],
+    'Absolute_morris_sensitivity':[],
 }
 
 # %%
@@ -271,28 +268,34 @@ for delta in delta_values:
         )
 
         # sum up the change in prediction
-        # prediction_change = np.sum([
-        #     abs(train_predictions[target_index] - new_predictions[target_index])
-        #         for target_index in range(len(targets)) 
-        # ])
         prediction_change = np.sum([
-            (new_predictions[target_index] - train_predictions[target_index])
+            new_predictions[target_index] - train_predictions[target_index]
                 for target_index in range(len(targets)) 
         ])
-        mu_star = prediction_change / (data.shape[0]*delta)
+        mu_star = prediction_change / (len(new_predictions[0])*delta)
 
         # since delta is added to min max normalized value, std from same scaling is needed
         standard_deviation = train_minmax_scaled[:, index].std()
         scaled_morris_index = mu_star * standard_deviation
 
-        print(f'Feature {feature}, mu_star {mu_star:0.5g}, sensitivity {scaled_morris_index:0.5g}')
+        print(f'Feature {feature}, prediction change {prediction_change:0.5g}, mu_star {mu_star:0.5g}, \
+              sensitivity {scaled_morris_index:0.5g}')
 
         results['Delta'].append(delta)
         results['Feature'].append(feature)
         results['Mu_star'].append(mu_star)
+        results['Prediction_change'].append(prediction_change)
         results['Morris_sensitivity'].append(scaled_morris_index)
+
+        abs_prediction_change = np.sum([
+            abs(new_predictions[target_index] - train_predictions[target_index])
+                for target_index in range(len(targets)) 
+        ])
+        absolute_mu_star = abs_prediction_change  / (len(new_predictions[0])*delta)
+        results['Absolute_prediction_change'].append(abs_prediction_change)
+        results['Absolute_mu_star'].append(absolute_mu_star)
+        results['Absolute_morris_sensitivity'].append(absolute_mu_star * standard_deviation)
     print()
-    # break
 
 # %% [markdown]
 # ## Dump
@@ -312,7 +315,7 @@ from Class.PlotConfig import *
 # %%
 for delta in delta_values:
     print(delta)
-    fig = plt.figure(figsize = (20, 10))
+    fig = plt.figure(figsize = (12, 8))
     plt.bar(features, result_df[result_df['Delta']==delta]['Morris_sensitivity'])
     
     plt.ylabel("Scaled Morris Index")

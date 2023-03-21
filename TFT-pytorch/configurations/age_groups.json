@@ -40,8 +40,8 @@
             "validation_start": "2021-11-28",
             "test_start": "2021-12-13",
             "test_end": "2021-12-27",
-            "first_date":"2020-02-29",
-            "last_date": "2022-05-17"
+            "first_date":"2020-03-01",
+            "last_date": "2021-12-27"
         }
     },
     "preprocess": {

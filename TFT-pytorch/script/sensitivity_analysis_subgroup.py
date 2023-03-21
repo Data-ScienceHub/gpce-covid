@@ -2,7 +2,7 @@
 # # Imports
 
 # %%
-# python .\sensitivity_analysis_subgroups.py --config=age_groups.json --output=../scratch/top_100 --show-progress=True
+# python .\sensitivity_analysis_subgroup.py --config=age_groups_old.json --input-file=../2022_May_age_groups_old/Top_100.csv --output=../results/age_subgroup/AGE019 --show-progress=True
 import os, gc
 import torch
 from datetime import datetime
@@ -53,7 +53,7 @@ parser.add_argument(
    default='../2022_May_age_groups/Top_100.csv'
 )
 parser.add_argument(
-   '--output', default='../scratch/age_groups',
+   '--output', default='../scratch/age_groups/AGE019',
    help='output result folder. Anything written in the scratch folder will be ignored by Git.'
 )
 parser.add_argument(
@@ -65,7 +65,7 @@ arguments = parser.parse_args()
 @dataclass
 class args:
     result_folder = arguments.output
-    figPath = os.path.join(result_folder, 'figures_morris')
+    figPath = os.path.join(result_folder, 'figures_morris_')
     checkpoint_folder = os.path.join(result_folder, 'checkpoints')
     input_filePath = arguments.input_file
 
@@ -84,7 +84,15 @@ print(f'Started at {start}')
 
 total_data = pd.read_csv(args.input_filePath)
 print(total_data.shape)
-total_data.head()
+print(total_data.head())
+
+# %% [markdown]
+# # Model
+
+# %%
+tft = TemporalFusionTransformer.load_from_checkpoint(args.model_path)
+
+print(f"Number of parameters in network: {tft.size()/1e3:.1f}k")
 
 # %% [markdown]
 # # Config
@@ -94,6 +102,9 @@ with open(args.configPath, 'r') as input_file:
   config = json.load(input_file)
 
 parameters = Parameters(config, **config)
+
+# this is only because the subgroups were trained using individual static features
+parameters.data.static_features = tft.static_variables
 
 # %%
 targets = parameters.data.targets
@@ -130,7 +141,8 @@ train_data, validation_data, test_data = train_validation_test_split(
 )
 
 # %%
-train_scaled, validation_scaled, test_scaled, target_scaler = scale_data(
+# sensitivity analysis is only done on the train period
+train_scaled, _, _, target_scaler = scale_data(
     train_data, validation_data, test_data, parameters
 )
 
@@ -164,19 +176,7 @@ def prepare_data(data: pd.DataFrame, pm: Parameters, train=False):
 
 # %%
 train_dataloader = prepare_data(train_scaled, parameters)
-validation_dataloader = prepare_data(validation_scaled, parameters)
-test_dataloader = prepare_data(test_scaled, parameters)
-
-# del validation_scaled, test_scaled
 gc.collect()
-
-# %% [markdown]
-# # Model
-
-# %%
-tft = TemporalFusionTransformer.load_from_checkpoint(args.model_path)
-
-print(f"Number of parameters in network: {tft.size()/1e3:.1f}k")
 
 # %% [markdown]
 # # Prediction Processor and PlotResults
@@ -195,24 +195,18 @@ from Class.Plotter import *
 plotter = PlotResults(args.figPath, targets, show=args.show_progress_bar)
 
 # %% [markdown]
-# # Evaluate
-
-# %% [markdown]
-# ## Train results
-
-# %% [markdown]
-# ### Average
+# # Train results
 
 # %%
-print(f'\n---Training results--\n')
+print(f'\n---Training Prediction--\n')
 
-# [number of targets (2), number of examples, prediction length (15)]
-train_raw_predictions, train_index = tft.predict(
-    train_dataloader, return_index=True, show_progress_bar=args.show_progress_bar
+# [number of targets, number of examples, prediction length (15)]
+train_predictions = tft.predict(
+    train_dataloader, show_progress_bar=args.show_progress_bar
 )
 
 train_predictions = upscale_prediction(
-    targets, train_raw_predictions, target_scaler, max_prediction_length
+    targets, train_predictions, target_scaler, max_prediction_length
 )
 gc.collect()
 
@@ -227,15 +221,12 @@ from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
 # note that for subgroups, training was done using each subgroup as static feature
 # the config.json might have all static variables
-features = tft.static_variables + parameters.data.dynamic_features
+features = parameters.data.static_features + parameters.data.dynamic_features
 
 minmax_scaler = MinMaxScaler()
 train_minmax_scaled = minmax_scaler.fit_transform(train_data[features])
 
-target_minmax_scaler = MinMaxScaler().fit(train_data[targets])
-
-standard_scaler = StandardScaler()
-standard_scaler.fit(train_data[features])
+standard_scaler = StandardScaler().fit(train_data[features])
 
 # %% [markdown]
 # ## Calculate
@@ -243,12 +234,16 @@ standard_scaler.fit(train_data[features])
 # %%
 # delta_values = [1e-2, 1e-3, 5e-3, 9e-3, 5e-4, 1e-4, 5e-5, 1e-5]
 # delta_values = [0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009]
-delta_values = [-0.001, -0.0001, 0.0001, 0.001]
+delta_values = [0.001]
 results = {
     'Delta': [],
     'Feature': [],
     'Mu_star':[],
-    'Morris_sensitivity':[] 
+    'Prediction_change':[],
+    'Morris_sensitivity':[],
+    'Absolute_mu_star': [],
+    'Absolute_prediction_change':[],
+    'Absolute_morris_sensitivity':[],
 }
 
 # %%
@@ -274,22 +269,34 @@ for delta in delta_values:
             targets, new_predictions, target_scaler, max_prediction_length
         )
 
+        # sum up the change in prediction
         prediction_change = np.sum([
-            (new_predictions[target_index] - train_predictions[target_index])
+            new_predictions[target_index] - train_predictions[target_index]
                 for target_index in range(len(targets)) 
         ])
-        mu_star = prediction_change / (data.shape[0]*delta)
+        mu_star = prediction_change / (len(new_predictions[0])*delta)
 
         # since delta is added to min max normalized value, std from same scaling is needed
         standard_deviation = train_minmax_scaled[:, index].std()
         scaled_morris_index = mu_star * standard_deviation
 
-        print(f'Feature {feature}, mu_star {mu_star:0.5g}, sensitivity {scaled_morris_index:0.5g}')
+        print(f'Feature {feature}, prediction change {prediction_change:0.5g}, mu_star {mu_star:0.5g}, \
+              sensitivity {scaled_morris_index:0.5g}')
 
         results['Delta'].append(delta)
         results['Feature'].append(feature)
         results['Mu_star'].append(mu_star)
+        results['Prediction_change'].append(prediction_change)
         results['Morris_sensitivity'].append(scaled_morris_index)
+
+        abs_prediction_change = np.sum([
+            abs(new_predictions[target_index] - train_predictions[target_index])
+                for target_index in range(len(targets)) 
+        ])
+        absolute_mu_star = abs_prediction_change  / (len(new_predictions[0])*delta)
+        results['Absolute_prediction_change'].append(abs_prediction_change)
+        results['Absolute_mu_star'].append(absolute_mu_star)
+        results['Absolute_morris_sensitivity'].append(absolute_mu_star * standard_deviation)
     print()
     # break
 
@@ -297,7 +304,6 @@ for delta in delta_values:
 # ## Dump
 
 # %%
-import pandas as pd
 result_df = pd.DataFrame(results)
 result_df.to_csv(os.path.join(args.figPath, 'Morris.csv'), index=False)
 result_df
@@ -311,13 +317,16 @@ from Class.PlotConfig import *
 # %%
 for delta in delta_values:
     print(delta)
-    fig = plt.figure(figsize = (20, 10))
+    fig = plt.figure(figsize = (8, 6))
     plt.bar(features, result_df[result_df['Delta']==delta]['Morris_sensitivity'])
     
     plt.ylabel("Scaled Morris Index")
     plt.tight_layout()
     plt.savefig(os.path.join(args.figPath, f'delta_{delta}.jpg'), dpi=200)
-    plt.show()
+    
+    # showing plot
+    if args.show_progress_bar:
+       plt.show()
     # break
 
 # %% [markdown]
