@@ -84,7 +84,7 @@ print(f'Started at {start}')
 
 total_data = pd.read_csv(args.input_filePath)
 print(total_data.shape)
-print(total_data.head())
+print(total_data.head(3))
 
 # %% [markdown]
 # # Model
@@ -297,6 +297,7 @@ for delta in delta_values:
         results['Absolute_prediction_change'].append(abs_prediction_change)
         results['Absolute_mu_star'].append(absolute_mu_star)
         results['Absolute_morris_sensitivity'].append(absolute_mu_star * standard_deviation)
+        print()
     print()
     # break
 

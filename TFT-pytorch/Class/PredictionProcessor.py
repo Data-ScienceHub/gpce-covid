@@ -19,10 +19,13 @@ class PredictionProcessor:
         self.train_start = train_start
         self.max_encoder_length = max_encoder_length
 
-    def convert_prediction_to_dict(self, predictions, index, target_time_step:int=None):
+    def convert_prediction_to_dict(
+            self, raw_predictions, index, target_time_step:int=None
+        ):
         time_index = index[self.time_idx].values
         fips = index[self.group_id].values
 
+        predictions = raw_predictions.copy()
         # set negative predictions to zero
         predictions[predictions<0] = 0
 

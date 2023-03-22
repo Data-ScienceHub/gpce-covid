@@ -2,6 +2,7 @@
 # # Imports
 
 # %%
+# python .\sensitivity_analysis.py --config=age_groups_old.json --input-file=../2022_May_age_groups_old/Top_100.csv --output=../results/age_subgroup/AGE019 --show-progress=True
 import os, gc
 import torch
 from datetime import datetime
@@ -45,18 +46,18 @@ parser = ArgumentParser(description='Sensitivity analysis using Morris method')
 
 parser.add_argument(
    '--config', help='config filename in the configurations folder',
-   default='baseline.json'
+   default='age_groups.json'
 )
 parser.add_argument(
-   '--input_file', help='path of the input feature file',
-   default='../2022_May_cleaned/Total.csv'
+   '--input-file', help='path of the input feature file',
+   default='../2022_May_age_groups/Total.csv'
 )
 parser.add_argument(
-   '--output', default='../results/TFT_baseline',
+   '--output', default='../results/age_subgroup/AGE019',
    help='output result folder. Anything written in the scratch folder will be ignored by Git.'
 )
 parser.add_argument(
-   '--show_progress', help='show the progress bar.',
+   '--show-progress', help='show the progress bar.',
    default=False, type=bool
 )
 arguments = parser.parse_args()
@@ -83,7 +84,15 @@ print(f'Started at {start}')
 
 total_data = pd.read_csv(args.input_filePath)
 print(total_data.shape)
-print(total_data.head())
+print(total_data.head(3))
+
+# %% [markdown]
+# # Model
+
+# %%
+tft = TemporalFusionTransformer.load_from_checkpoint(args.model_path)
+
+print(f"Number of parameters in network: {tft.size()/1e3:.1f}k")
 
 # %% [markdown]
 # # Config
@@ -93,6 +102,9 @@ with open(args.configPath, 'r') as input_file:
   config = json.load(input_file)
 
 parameters = Parameters(config, **config)
+
+# this is only because the subgroups were trained using individual static features
+parameters.data.static_features = tft.static_variables
 
 # %%
 targets = parameters.data.targets
@@ -166,14 +178,6 @@ train_dataloader = prepare_data(train_scaled, parameters)
 gc.collect()
 
 # %% [markdown]
-# # Model
-
-# %%
-tft = TemporalFusionTransformer.load_from_checkpoint(args.model_path)
-
-print(f"Number of parameters in network: {tft.size()/1e3:.1f}k")
-
-# %% [markdown]
 # # Prediction Processor and PlotResults
 
 # %%
@@ -190,16 +194,10 @@ from Class.Plotter import *
 plotter = PlotResults(args.figPath, targets, show=args.show_progress_bar)
 
 # %% [markdown]
-# # Evaluate
-
-# %% [markdown]
-# ## Train results
-
-# %% [markdown]
-# ### Average
+# # Train results
 
 # %%
-print(f'\n---Training results--\n')
+print(f'\n---Training prediction--\n')
 
 # [number of targets, number of examples, prediction length (15)]
 train_predictions = tft.predict(
@@ -231,8 +229,8 @@ standard_scaler = StandardScaler().fit(train_data[features])
 # ## Calculate
 
 # %%
-# delta_values = [1e-2, 1e-3, 5e-3, 9e-3, 5e-4, 1e-4, 5e-5, 1e-5]
-delta_values = [0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009]
+# delta_values = [0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009]
+delta_values = [0.0001, 0.001, 0.01, 0.1, 0.3, 0.5]
 results = {
     'Delta': [],
     'Feature': [],
@@ -246,62 +244,71 @@ results = {
 
 # %%
 for delta in delta_values:
-    print(f'Delta {delta}.')
+    print(f'---Delta {delta}---\n')
     for index, feature in enumerate(features):
-        # this mimics how TF1 did it
+        print(f'Feature {feature}')
+        # add delta at min max scale
         data = train_minmax_scaled.copy()
         data[index] += delta
         data = minmax_scaler.inverse_transform(data) # return to original scale
 
-        # replace the value in normalized data
+        # replace the value in the standard normalized data
         data = standard_scaler.transform(data)
         train_scaled_copy = train_scaled.copy()
         train_scaled_copy[feature] = data[:, index]
 
-        # inference on delta changed data
+        # infer on the changed data
         dataloader = prepare_data(train_scaled_copy, parameters)
         new_predictions = tft.predict(
             dataloader, show_progress_bar=args.show_progress_bar
         )
+        # scale back to original
         new_predictions = upscale_prediction(
             targets, new_predictions, target_scaler, max_prediction_length
         )
 
         # sum up the change in prediction
-        prediction_change = np.sum([
-            new_predictions[target_index] - train_predictions[target_index]
-                for target_index in range(len(targets)) 
-        ])
-        mu_star = prediction_change / (len(new_predictions[0])*delta)
+        delta_prediction, abs_delta_prediction, N = 0, 0, 0
+        for target_index in range(len(targets)):
+            diff = new_predictions[target_index] - train_predictions[target_index]
+            
+            delta_prediction += np.sum(diff)
+            abs_delta_prediction += np.sum(abs(diff))
 
+            N += len(new_predictions[target_index]) * max_prediction_length
+        
+        mu_star = delta_prediction / (N*delta)
         # since delta is added to min max normalized value, std from same scaling is needed
         standard_deviation = train_minmax_scaled[:, index].std()
-        scaled_morris_index = mu_star * standard_deviation
+        morris = mu_star * standard_deviation
 
-        print(f'Feature {feature}, prediction change {prediction_change:0.5g}, mu_star {mu_star:0.5g}, \
-              sensitivity {scaled_morris_index:0.5g}')
+        print(f'Prediction change {delta_prediction:.5g}, mu_star {mu_star:.5g}, \
+              sensitivity {morris:.5g}')
 
         results['Delta'].append(delta)
         results['Feature'].append(feature)
-        results['Mu_star'].append(mu_star)
-        results['Prediction_change'].append(prediction_change)
-        results['Morris_sensitivity'].append(scaled_morris_index)
 
-        abs_prediction_change = np.sum([
-            abs(new_predictions[target_index] - train_predictions[target_index])
-                for target_index in range(len(targets)) 
-        ])
-        absolute_mu_star = abs_prediction_change  / (len(new_predictions[0])*delta)
-        results['Absolute_prediction_change'].append(abs_prediction_change)
-        results['Absolute_mu_star'].append(absolute_mu_star)
-        results['Absolute_morris_sensitivity'].append(absolute_mu_star * standard_deviation)
+        results['Prediction_change'].append(delta_prediction)
+        results['Mu_star'].append(mu_star)
+        results['Morris_sensitivity'].append(morris)
+
+        abs_mu_star = abs_delta_prediction / (N*delta)
+        abs_morris = abs_mu_star * standard_deviation
+        print(f'Absolute prediction change {abs_delta_prediction:.5g}, \
+              mu {abs_mu_star:.5g}, morris {abs_morris:.5g}')
+        
+        results['Absolute_prediction_change'].append(abs_delta_prediction)
+        results['Absolute_mu_star'].append(abs_mu_star)
+        results['Absolute_morris_sensitivity'].append(abs_morris)
+        print()
+    #     break
+    # break
     print()
 
 # %% [markdown]
 # ## Dump
 
 # %%
-import pandas as pd
 result_df = pd.DataFrame(results)
 result_df.to_csv(os.path.join(args.figPath, 'Morris.csv'), index=False)
 result_df
