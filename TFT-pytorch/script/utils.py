@@ -3,7 +3,7 @@ from pandas import DataFrame, to_datetime, to_timedelta
 import numpy as np
 from typing import List
 import os, gc
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
 
 import sys
 sys.path.append( '..' )

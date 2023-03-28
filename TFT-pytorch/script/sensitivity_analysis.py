@@ -53,7 +53,7 @@ parser.add_argument(
    default='../2022_May_age_groups/Total.csv'
 )
 parser.add_argument(
-   '--output', default='../results/age_subgroup/AGE019',
+   '--output', default='../results/age_subgroup/AGE1829',
    help='output result folder. Anything written in the scratch folder will be ignored by Git.'
 )
 parser.add_argument(
@@ -318,18 +318,22 @@ result_df
 
 # %%
 from Class.PlotConfig import *
+from matplotlib.ticker import ScalarFormatter
+
+formatter = ScalarFormatter(useOffset=True)
+formatter.set_powerlimits((-3, 3))
 
 # %%
 for delta in delta_values:
     print(delta)
-    fig = plt.figure(figsize = (12, 8))
-    plt.bar(features, result_df[result_df['Delta']==delta]['Morris_sensitivity'])
+    fig, ax = plt.subplots(figsize=(10, 7))
+    ax.bar(features, result_df[result_df['Delta']==delta]['Morris_sensitivity'])
     
-    plt.ylabel("Scaled Morris Index")
-    plt.tight_layout()
-    plt.savefig(os.path.join(args.figPath, f'delta_{delta}.jpg'), dpi=200)
+    ax.yaxis.set_major_formatter(formatter)
+    ax.set_ylabel("Scaled Morris Index")
+    fig.tight_layout()
+    fig.savefig(os.path.join(args.figPath, f'delta_{delta}.jpg'), dpi=200)
     plt.show()
-    # break
 
 # %% [markdown]
 # # End

@@ -5,7 +5,8 @@
 # # Imports
 
 # %%
-# python .\train_subgroups.py --config=age_groups.json --feature=UNDER5 --output=../scratch/top_100 --show-progress=True
+# python .\train_subgroup.py --config=age_groups.json --feature=UNDER5 --input_file=../2022_May_age_groups/Top_100.csv --output=../scratch/top_100 --show-progress=True
+# python .\train_subgroup.py --config=age_groups.json --feature=AGE1829 --input_file=../2022_May_age_groups/Top_100.csv --output=../scratch/top_100 --show-progress=True
 import os, gc
 import torch
 

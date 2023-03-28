@@ -98,7 +98,7 @@ class PlotResults:
 
     def summed_plot(
         self, merged_df:DataFrame, type:str='', save:bool=True, 
-        base:int=None, plot_error:bool=False
+        base:int=None, plot_error:bool=False, legend_loc='best'
     ):
         """
         Plots summation of prediction and observation from all counties
@@ -125,7 +125,8 @@ class PlotResults:
             if save: target_figure_name = f'Summed_plot_{target}_{type}.jpg'
 
             fig = self.plot(
-                summed_df, target, title, scale, base, target_figure_name, plot_error
+                summed_df, target, title, scale, base, target_figure_name, 
+                plot_error, legend_loc
             )
             figures.append(fig)
         
