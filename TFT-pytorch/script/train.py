@@ -458,10 +458,10 @@ print(f"Variables:\nStatic {tft.static_variables} \nEncoder {tft.encoder_variabl
 # %%
 if args.interpret_train:
     print("Interpreting train predictions")
-    interpretation = tft.interpret_output(train_raw_predictions, reduction="mean")
+    interpretation = tft.interpret_output(train_raw_predictions, reduction="sum")
 else:
     print("Interpreting test predictions")
-    interpretation = tft.interpret_output(test_raw_predictions, reduction="mean")
+    interpretation = tft.interpret_output(test_raw_predictions, reduction="sum")
 
 for key in interpretation.keys():
     print(key, interpretation[key]/torch.sum(interpretation[key]))
