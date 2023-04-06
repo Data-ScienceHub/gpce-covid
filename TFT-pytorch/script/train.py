@@ -422,6 +422,19 @@ for index, fips in enumerate(fips_codes):
 del train_result_merged, validation_result_merged, test_result_merged, df
 
 # %% [markdown]
+# # Interpret
+
+# %%
+if args.interpret_train:
+    raw_predictions = train_raw_predictions
+    data = train_data
+    index = train_index
+else:
+    raw_predictions = test_raw_predictions
+    data = test_data
+    index = test_index
+
+# %% [markdown]
 # ## Attention weights
 
 # %%
@@ -429,43 +442,51 @@ plotWeights = PlotWeights(
     args.figPath, max_encoder_length, tft, show=args.show_progress_bar
 )
 
-# %% [markdown]
-# ### Train
-
 # %%
-if args.interpret_train:
-    attention_mean, attention = processor.get_mean_attention(
-        tft.interpret_output(train_raw_predictions), 
-        train_index, return_attention=True
-    )
-    plotWeights.plot_attention(
-        attention_mean, figure_name='Train_daily_attention', 
-        limit=0, enable_markers=False, title='Attention with dates'
-    )
-    gc.collect()
-    attention_weekly = processor.get_attention_by_weekday(attention_mean)
-    plotWeights.plot_weekly_attention(attention_weekly, figure_name='Train_weekly_attention')
+attention_mean, attention = processor.get_mean_attention(
+    tft.interpret_output(raw_predictions), 
+    index, return_attention=True
+)
+plotWeights.plot_attention(
+    attention_mean, figure_name='Daily_attention', 
+    limit=0, enable_markers=False, title='Attention with dates'
+)
+gc.collect()
+attention_weekly = processor.get_attention_by_weekday(attention_mean)
+plotWeights.plot_weekly_attention(attention_weekly, figure_name='Weekly_attention')
 
-    attention_mean.round(3).to_csv(os.path.join(plotWeights.figPath, 'attention_mean.csv'), index=False)
-    attention.round(3).to_csv(os.path.join(plotWeights.figPath, 'attention.csv'), index=False)
+attention_mean.round(3).to_csv(os.path.join(plotWeights.figPath, 'attention_mean.csv'), index=False)
+attention.round(3).to_csv(os.path.join(plotWeights.figPath, 'attention.csv'), index=False)
 
 # %% [markdown]
 # ## Variable importance and mean attention
 
 # %%
-print(f"Variables:\nStatic {tft.static_variables} \nEncoder {tft.encoder_variables} \nDecoder {tft.decoder_variables}.")
+interpretation = tft.interpret_output(
+    raw_predictions, reduction="sum"
+)
+print(f'Interpretation:\n{interpretation}')
 
 # %%
-if args.interpret_train:
-    print("Interpreting train predictions")
-    interpretation = tft.interpret_output(train_raw_predictions, reduction="sum")
-else:
-    print("Interpreting test predictions")
-    interpretation = tft.interpret_output(test_raw_predictions, reduction="sum")
+results = pd.DataFrame(columns=['Feature', 'Importance', 'Normalized', 'Type'])
 
 for key in interpretation.keys():
-    print(key, interpretation[key]/torch.sum(interpretation[key]))
+    if '_variables' not in key: continue
 
+    features = tft.__getattribute__(key)
+    importance = interpretation[key]
+    normalized = importance*100/torch.sum(importance)
+
+    for index in range(len(features)):
+        results.loc[len(results.index)] =  [
+            features[index], importance[index].item(), normalized[index].item(), key
+        ]
+
+    print(f'{key}: {features}')
+    print(f'Importance: {importance}')
+    print(f'Normalized: {normalized}\n')
+
+# %%
 figures = plotWeights.plot_interpretation(interpretation)
 for key in figures.keys():
     figure = figures[key]
@@ -473,6 +494,12 @@ for key in figures.keys():
         figure.savefig(os.path.join(plotter.figPath, f'Train_{key}.jpg'), dpi=DPI) 
     else:
         figure.savefig(os.path.join(plotter.figPath, f'Test_{key}.jpg'), dpi=DPI)
+
+# %%
+results.round(3).to_csv(
+    os.path.join(args.figPath, 'importance.csv'), 
+    index=False
+)
 
 # %% [markdown]
 # # End
