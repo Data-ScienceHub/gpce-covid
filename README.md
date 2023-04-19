@@ -4,6 +4,7 @@
 This work combines sensitivity analysis with heterogeneous time-series deep learning model prediction, which corresponds to the interpretations of Spatio-temporal features from what the model has actually learned. We forecast county-level COVID-19 infection using the Temporal Fusion Transformer (TFT). We then use the sensitivity analysis extending Morris Method to see how sensitive the outputs are with respect to perturbation to our static and dynamic input features. We have collected more than 2.5 years of socioeconomic and health features over 3142 US counties. Using the proposed framework, we conduct extensive experiments and show our model can learn complex interactions and perform predictions for daily infection at the county level. 
 
 ## Folder Structure
+
 * **dataset_raw**: Contains the collected raw dataset and the supporting files. To update use the [Update dynamic dataset](/dataset_raw/Update%20dynamic%20features.ipynb) notebook. Static dataset is already update till the onset of COVID-19 using [Update static dataset](/dataset_raw/Update%20static%20features.ipynb) notebook.
 * **TFT-PyTorch**: Contains all codes and merged feature files used during the TFT experimentation setup and interpretation. For more details, check the [README.md](/TFT-PyTorch/README.md) file inside it. The primary results are highlighted in [results.md](/TFT-PyTorch/results.md). 
 
@@ -68,10 +69,11 @@ If you want to run the data preparation notebook, upload the [CovidMay17-2022](.
 
 Note that, past values of target and known futures are also used as observed inputs by TFT.
 
-<h2>Details of Features </h2>
 <div align="center">
+
 <table border="1">
-<thead style="border:1.5px solid">
+<caption> <h2>Details of Features </h2> </caption>
+<thead style="border:2px solid">
 <tr>
 <th>Feature</th>
 <th>Type</th>
