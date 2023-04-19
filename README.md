@@ -71,11 +71,11 @@ Note that, past values of target and known futures are also used as observed inp
 <h2>Details of Features </h2>
 <div align="center">
 <table border="1">
-<thead style="background-color:olive">
+<thead style="border:1.5px">
 <tr>
 <th>Feature</th>
 <th>Type</th>
-<th colspan="2">Update Frequency</th>
+<th>Update Frequency</th>
 <th>Description/Rationale</th>
 <th>Source(s)</th>
 </tr>
@@ -86,7 +86,6 @@ Note that, past values of target and known futures are also used as observed inp
 <td><strong>Age Distribution</strong> <br> (% age 65 and over)</td>
 <td rowspan="2">Static</td>
 <td rowspan="2">Once</td>
-<td rowspan="2" style="background: lightblue;"></td>
 <td><em>Aged 65 or Older from 2016-2020 American Community Survey (ACS)</em>. Older ages have been associated with more severe outcomes from COVID-19 infection.</td>
 <td><span><a href="https://svi.cdc.gov/data-and-tools-download.html" target="_blank">2020 SVI</a></span></td>
 </tr>
@@ -101,7 +100,6 @@ Note that, past values of target and known futures are also used as observed inp
 <td><strong>Transmissible Cases</strong></td>
 <td rowspan="4">Observed</td>
 <td rowspan="7">Daily</td>
-<td rowspan="4" style="background: maroon;"></td>
 <td><em>Cases from the last 14 days per 100k population</em>. Because of the 14-day incubation period, the cases identified in that time period are the most likely to be transmissible. This metric is the number of such "contagious" individuals relative to the population, so a greater number indicates more likely continued spread of disease.</td>
 <td><span><span><a href="https://usafacts.org/issues/coronavirus/" target="_blank">USA Facts</a> , <a href="https://svi.cdc.gov/data-and-tools-download.html" target="_blank">2020 SVI</a> (for population estimate)</span></span></td>
 </tr>
@@ -127,7 +125,6 @@ Note that, past values of target and known futures are also used as observed inp
 <tr>
 <td><strong>SinWeekly</strong></td>
 <td rowspan="2">Known Future</td>
-<td rowspan="2" style="background: gray;"></td>
 <td> Sin (day of the week / 7).</td>
 <td rowspan="2">Date</td>
 </tr>
@@ -140,7 +137,6 @@ Note that, past values of target and known futures are also used as observed inp
 <tr>
 <td><strong>Case</strong></td>
 <td>Target</td>
-<td style="background: orange;"></td>
 <td> COVID-19 infection at county level.</td>
 <td><span><a href="https://usafacts.org/visualizations/coronavirus-covid-19-spread-map/" target="_blank">USA Facts</a></span></td>
 </tr>
