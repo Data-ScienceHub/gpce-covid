@@ -71,7 +71,7 @@ Note that, past values of target and known futures are also used as observed inp
 <h2>Details of Features </h2>
 <div align="center">
 <table border="1">
-<thead style="border:1.5px">
+<thead style="border:1.5px solid">
 <tr>
 <th>Feature</th>
 <th>Type</th>
@@ -142,6 +142,8 @@ Note that, past values of target and known futures are also used as observed inp
 </tr>
 </tbody>
 </table>
+
+</div>
 
 ## Usage guideline
 
