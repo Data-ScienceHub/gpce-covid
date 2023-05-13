@@ -52,7 +52,7 @@ parser.add_argument(
    help='output result folder. Anything written in the scratch folder will be ignored by Git.'
 )
 parser.add_argument(
-   '--show-progress', default=False, type=bool,
+   '--show-progress', action='store_true',
    help='show the progress bar.'
 )
 arguments = parser.parse_args()

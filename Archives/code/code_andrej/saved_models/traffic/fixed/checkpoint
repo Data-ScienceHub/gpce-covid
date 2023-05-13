@@ -1,2 +1,0 @@
-model_checkpoint_path: "/mnt/data/datasets/TFT/saved_models/traffic/fixed/TemporalFusionTransformer.ckpt"
-all_model_checkpoint_paths: "/mnt/data/datasets/TFT/saved_models/traffic/fixed/TemporalFusionTransformer.ckpt"
