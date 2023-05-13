@@ -5,33 +5,83 @@ This work combines sensitivity analysis with heterogeneous time-series deep lear
 
 ## Folder Structure
 
+* **Archives**: Unused codes.
 * **dataset_raw**: Contains the collected raw dataset and the supporting files. To update use the [Update dynamic dataset](/dataset_raw/Update%20dynamic%20features.ipynb) notebook. Static dataset is already update till the onset of COVID-19 using [Update static dataset](/dataset_raw/Update%20static%20features.ipynb) notebook.
+* **papers**: Related papers. 
+* **Related Works**: Contains the models and results used to compare the TFT performance with related works. 
 * **TFT-PyTorch**: Contains all codes and merged feature files used during the TFT experimentation setup and interpretation. For more details, check the [README.md](/TFT-PyTorch/README.md) file inside it. The primary results are highlighted in [results.md](/TFT-PyTorch/results.md). 
 
 
-## How to Reproduce
+## Reproduce
 
-### Virtual Environment
+### Create Virtual Environment
+First create a virtual environment with the required libraries. For example, to create an venv named `ml`, you can either use the `Anaconda` library or your locally installed `python`.
 
-To create the virtual environment
-* By pip, use the [requirement.txt](/requirements.txt).
-* By anaconda, use the [environment.yml](/environment.yml).
+#### Option A: Anaconda
+If you have `Anaconda` installed locally, follow the instructions [here](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html). An example code,
 
-You can directly create a python virtual environment using the [environment.yml](environment.yml) file and Anaconda. Copy this file to your home directory and run the following command,
+```
+conda create -n ml python=3.10
+conda activate ml
+```
+This will activate the venv `ml`.
+
+
+#### Option B: Python
+
+If you only have `python` installed but no `pip`, installed pip and activate a virtual env using the following commands from [here](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/),
+
+On linux/macOS :
 
 ```bash
-conda create --name <env> --file <this file>
-
-# for example
-conda create --name ml --file environment.yml
-
-# then activate the environment with
-conda activate ml
-# now you should be able to run the files from your cmd line without error
-# if you are on notebook select this environment as your kernel
+python3 -m pip install --user --upgrade pip
+python3 -m pip install --user virtualenv
+python3 -m venv ml
+source ml/bin/activate
+python3 -m pip install -r requirements.txt
 ```
 
-You can also create the environment in this current directory, then the virtual environment will be saved in this folder instead, not in the home directory.
+On windows :
+```bash
+py -m pip install --upgrade pip
+py -m pip install --user virtualenv
+py -m venv ml
+.\env\Scripts\activate
+py -m pip install -r requirements.txt
+```
+
+Follow the instructions [here](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/) to make sure you have the `pip` and `virtualenv` installed and working. Then create a virtual environement (e.g. name ml) or install required libraries in the default env, using the 
+
+### Install Libraries
+Once you have the virtual environment created and running, you can download the libraries using, the [requirement.txt](/requirements.txt) file. 
+
+On linux/macOS :
+
+```bash
+python3 -m pip install -r requirements.txt
+```
+
+On windows :
+```bash
+py -m pip install -r requirements.txt
+```
+
+You can test whether the environment has been installed properly using a small dataset in the [`train.py`](/TFT-pytorch/script/train_simple.py) file.
+
+### Installing CUDA
+The default versions installed with `pytorch-forecasting` might not work and print cpu instead for the following code. Since it doesn't install CUDA with pytorch.
+
+```python
+import torch
+
+device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+print(f'Using {device} backend')
+```
+
+In such case, replace existing CUDA with the folowing version. Anything newer didn't work for now.
+```bash
+pip install torch==1.11.0+cu113 torchvision==0.12.0+cu113 torchaudio==0.11.0+cu113 -f https://download.pytorch.org/whl/torch_stable.html
+```
 
 ### Singularity
 
@@ -54,16 +104,14 @@ singularity run --nv ../../tft_pytorch.sif python train.py --config=baseline.jso
 
 ### Google Colab
 
-A training notebook run on colab is shared [here](https://colab.research.google.com/drive/1yhI1PesOXYlB6iYXHre9zXMks1a4P6U2?usp=sharing). Feel free to copy and run on your colab and let me know if there are any issues.
-
-If you are running on **Google colab**, most libraries are already installed there. You'll only have to install the pytorch forecasting and lightning module. Uncomment the installation commands in the code or set `running_on_colab` to `True` in the code. Upload the TFT-pytorch folder in your drive and set that path in the notebook colab section.
+If you are running on **Google colab**, most libraries are already installed there. You'll only have to install the pytorch forecasting and lightning module. Add the following installation commands in the code. Upload the TFT-pytorch folder in your drive and set that filepaths accordingly.
 
 ```python
 !pip install pytorch_lightning
 !pip install pytorch_forecasting
 ```
 
-If you want to run the data preparation notebook, upload the [CovidMay17-2022](../dataset_raw/CovidMay17-2022/) folder too. Modify the path accordingly in the notebook.
+If you want to run the data preparation notebook, upload the [CovidMay17-2022](../dataset_raw/CovidMay17-2022/) folder too. Modify the paths accordingly in the notebook.
 
 ## Features
 
@@ -127,13 +175,13 @@ Note that, past values of target and known futures are also used as observed inp
 <tr>
 <td><strong>SinWeekly</strong></td>
 <td rowspan="2">Known Future</td>
-<td> Sin (day of the week / 7).</td>
+<td> <em>Sin (day of the week / 7) </em>.</td>
 <td rowspan="2">Date</td>
 </tr>
 
 <tr>
 <td><strong>CosWeekly</strong></td>
-<td> Cos (day of the week / 7).</td>
+<td> <em>Cos (day of the week / 7) </em>.</td>
 </tr>
 
 <tr>
@@ -152,5 +200,5 @@ Note that, past values of target and known futures are also used as observed inp
 * Please do not add temporarily generated files in this repository.
 * Make sure to clean your tmp files before pushing any commits.
 * In the .gitignore file you will find some paths in this directory are excluded from git tracking. So if you create anything in those folders, they won't be tracked by git.
-  * To check which files git says untracked `git status -u`. 
-  * If you have folders you want to exclude add the path in `.gitignore`, then `git add .gitignore`. Check again with `git status -u` if it is still being tracked.
+  * To check which files git says untracked: `git status -u`. 
+  * If you have folders you want to exclude, add the path in `.gitignore`, then `git add .gitignore`. Check again with `git status -u` if it is still being tracked.
