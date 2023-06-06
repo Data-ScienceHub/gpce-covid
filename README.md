@@ -12,106 +12,49 @@ This work combines sensitivity analysis with heterogeneous time-series deep lear
 * **TFT-PyTorch**: Contains all codes and merged feature files used during the TFT experimentation setup and interpretation. For more details, check the [README.md](/TFT-PyTorch/README.md) file inside it. The primary results are highlighted in [results.md](/TFT-PyTorch/results.md). 
 
 
-## Reproduce
+## How to Reproduce
 
-### Create Virtual Environment
-First create a virtual environment with the required libraries. For example, to create an venv named `ml`, you can either use the `Anaconda` library or your locally installed `python`.
+For detailed instructions on how to reproduce, follow the [Reproduce.md](/Reproduce.md) file. In summary, it includes the following steps:
 
-#### Option A: Anaconda
-If you have `Anaconda` installed locally, follow the instructions [here](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html). An example code,
+* Getting the env ready
+  * From scratch using anaconda or pip and installing libraries using [requirements.txt](/requirements.txt).
+  * Creating the containers (`Singularity` or `Docker`). Definitions are given in [singularity.def](/singularity.def) and [Dockerfile](/Dockerfile). An alread created `Singularity` container is hosted [here](library://khairulislam/collection/tft_pytorch:latest).
+* To reproduce tft experiments run the [scripts](/TFT-pytorch/script/) in the [TFT-pytorch](/TFT-pytorch) folder.
+* For the related works comparison run the scripts from [Related Works](/Related%20Works/) folder.
+* Note that, for python path management, the scripts have to be run from their corresponding folder (not from this root).
+* The are some notebooks available for most scripts too for easier debugging.
 
-```
-conda create -n ml python=3.10
-conda activate ml
-```
-This will activate the venv `ml`.
+## Results
+Results on all 3,142 US counties are listed bellow.
 
+### Ground Truth
+![](/TFT-pytorch/results/combined_ground_truth.jpg)
 
-#### Option B: Python
+### Benchmark
 
-If you only have `python` installed but no `pip`, installed pip and activate a virtual env using the following commands from [here](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/),
+Test result comparison of TFT with five other deep learning models.
+![](/TFT-pytorch/results/TFT_baseline/figures/Test_comparison.jpg)
 
-On linux/macOS :
+### Temporal Patterns
 
-```bash
-python3 -m pip install --user --upgrade pip
-python3 -m pip install --user virtualenv
-python3 -m venv ml
-source ml/bin/activate
-python3 -m pip install -r requirements.txt
-```
+Time series data typically exhibit various temporal patterns,
+such as trend, seasonal, and cyclic patterns. Here we investigate how well our TFT model can learn and interpret these patterns by conducting
+experiments on data with these patterns.
 
-On windows :
-```bash
-py -m pip install --upgrade pip
-py -m pip install --user virtualenv
-py -m venv ml
-.\env\Scripts\activate
-py -m pip install -r requirements.txt
-```
+1. Attention weights aggregated by past time index showing high importance in the `same day the previous week` (position index -7). ![Train_attention.jpg](/TFT-pytorch/results/TFT_baseline/figures/Train_attention.jpg)
+2. Weekly `seasonality` due to reporting calculated using auto-correlation at different lag days $k \in [1, 21]$. Our analysis shows a clear weekly periodicity, where the correlation peaks at lag day k = 7.  This is attributed to weekly reporting style from hospitals, leading to less reported cases on weekends.
+![seasonal_pattern.jpg](/TFT-pytorch/results/TFT_baseline/figures/seasonal_pattern.jpg)
+3. `Cyclic` holiday patterns (Thanksgiving, Christmas). During holidays, hospitals and COVID-19 test centers often have reduced staffing and operating hours, leading to fewer tests and reported case. Leading to a drop in attention for those days. ![holiday_pattern.jpg](/TFT-pytorch/results/TFT_baseline/figures/holiday_pattern.jpg)
+4. `Trend`: TFT model's test performance on all US counties for additional data splits learning different infection trends ![Test_splits.jpg](/TFT-pytorch/results/TFT_split_3/figures/Test_splits.jpg)
 
-Follow the instructions [here](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/) to make sure you have the `pip` and `virtualenv` installed and working. Then create a virtual environement (e.g. name ml) or install required libraries in the default env, using the 
+### Spatial Patterns
 
-### Install Libraries
-Once you have the virtual environment created and running, you can download the libraries using, the [requirement.txt](/requirements.txt) file. 
+Spatial distribution of COVID-19 cases in US counties and corresponding attention weights from TFT.
 
-On linux/macOS :
-
-```bash
-python3 -m pip install -r requirements.txt
-```
-
-On windows :
-```bash
-py -m pip install -r requirements.txt
-```
-
-You can test whether the environment has been installed properly using a small dataset in the [`train.py`](/TFT-pytorch/script/train_simple.py) file.
-
-### Installing CUDA
-The default versions installed with `pytorch-forecasting` might not work and print cpu instead for the following code. Since it doesn't install CUDA with pytorch.
-
-```python
-import torch
-
-device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
-print(f'Using {device} backend')
-```
-
-In such case, replace existing CUDA with the folowing version. Anything newer didn't work for now.
-```bash
-pip install torch==1.11.0+cu113 torchvision==0.12.0+cu113 torchaudio==0.11.0+cu113 -f https://download.pytorch.org/whl/torch_stable.html
-```
-
-### Singularity
-
-You can either pull the singularity container from the remote library,
-```bash
-singularity pull tft_pytorch.sif library://khairulislam/collection/tft_pytorch:latest
-```
-Or create the container locally using the [singularity.def](/TFT-pytorch/singularity.def) file. Executeg the following command. This uses the definition file to create the container from scratch. Note that is uses `sudo` and requires root privilege. After compilation, you'll get a container named `tft_pytorch.sif`. 
-
-```bash
-sudo singularity build tft_pytorch.sif singularity.def
-```
-
-Then you can use the container to run the scripts. For example, 
-```bash
-cd original-TFT-baseline/script/
-
-singularity run --nv ../../tft_pytorch.sif python train.py --config=baseline.json --output=../scratch/TFT_baseline
-```
-
-### Google Colab
-
-If you are running on **Google colab**, most libraries are already installed there. You'll only have to install the pytorch forecasting and lightning module. Add the following installation commands in the code. Upload the TFT-pytorch folder in your drive and set that filepaths accordingly.
-
-```python
-!pip install pytorch_lightning
-!pip install pytorch_forecasting
-```
-
-If you want to run the data preparation notebook, upload the [CovidMay17-2022](../dataset_raw/CovidMay17-2022/) folder too. Modify the paths accordingly in the notebook.
+1.  Cumulative COVID-19 cases across US counties 
+![](/TFT-pytorch/results/TFT_baseline/figures/maps/cases_quantiles.jpg)
+2. Avg. attention weights across US counties from TFT 
+![](/TFT-pytorch/results/TFT_baseline/figures/maps/attention_quantiles.jpg)
 
 ## Features
 
@@ -195,10 +138,22 @@ Note that, past values of target and known futures are also used as observed inp
 
 </div>
 
-## Usage guideline
+## Contribute
 
 * Please do not add temporarily generated files in this repository.
 * Make sure to clean your tmp files before pushing any commits.
 * In the .gitignore file you will find some paths in this directory are excluded from git tracking. So if you create anything in those folders, they won't be tracked by git.
   * To check which files git says untracked: `git status -u`. 
   * If you have folders you want to exclude, add the path in `.gitignore`, then `git add .gitignore`. Check again with `git status -u` if it is still being tracked.
+
+## Citation
+`Note:` The paper is to be presented in ICDH 2023. Conference citation will be updated once available.
+
+```
+@article{islam2022interpreting,
+  title={Interpreting County Level COVID-19 Infection and Feature Sensitivity using Deep Learning Time Series Models},
+  author={Islam, Md Khairul and Zhu, Di and Liu, Yingzheng and Erkelens, Andrej and Daniello, Nick and Fox, Judy},
+  journal={arXiv preprint arXiv:2210.03258},
+  year={2022}
+}
+```
