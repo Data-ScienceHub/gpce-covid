@@ -7,11 +7,11 @@ This folder contains the `Temporal Fushion Transformer` implemented in [`Pytorch
   * `Total.csv`: All 3,142 counties.
   * `Top_N.csv`: Subset of the features that use top N counties by population.
 * `Class`
-  * DataMerger
-  * Parameters
-  * PlotConfig
-  * Plotter
-  * PredictionProcessor
+  * `DataMerger`: Merges raw data files into a single csv file for model training.
+  * `Parameters`: Handles training, data and experiment parameters.
+  * `PlotConfig`: Basic matplotlib plot configurations.
+  * `Plotter`: Plot model output, attention and others.
+  * `PredictionProcessor`: Process multi-horizon output from the models.
 
 * `configurations`: Folder to save some common configurations.
 * `notebooks`: Notebook version of the scripts. Use these for debugging or new implementation purpose.
@@ -31,7 +31,7 @@ This folder contains the `Temporal Fushion Transformer` implemented in [`Pytorch
   * `train.py`: Train model on merged data, then interpret using the best model by validation loss.
   * `inference.py`: Inference from a saved checkpoint.
   * `utils.py`: Contains utility methods.
-* `config_2022_May.json`: Configuration file to reproduce the experiments using the raw dataset from [CovidMay17-2022](../dataset_raw/CovidMay17-2022/). This is new dataset that will be used in the experiment.
+* `config_2022_May.json`: Configuration file to reproduce the experiments using the raw dataset from [CovidMay17-2022](../dataset_raw/CovidMay17-2022/). This is dataset that will be used in the experiment.
 
 ## Configuration
 
