@@ -110,6 +110,16 @@ If you are running on **Google colab**, most libraries are already installed the
 
 If you want to run the data preparation notebook, upload the [CovidMay17-2022](../dataset_raw/CovidMay17-2022/) folder too. Modify the paths accordingly in the notebook.
 
+## Troubleshooting Tips for Reproducing Locally
+
+If you are running [train.py](/TFT-pytorch/script/train.py) run this from the `script` folder. If you run into ModuleNotFoundError after [installing the required libraries](#12-install-required-libraries) try installing each line of `requirements.txt` manually, as in the example below. 
+
+```python
+pip install pytorch-lightning==1.8.6
+```
+
+The input .csv file can be found on line 58 of [train.py](/TFT-pytorch/script/train.py) and you may want to change this to `Top_100.csv` to use a smaller dataset when running locally.
+
 # How to Reproduce
 
 Given you have the environment ready, you can use the [Related Works](/Related%20Works/) folder to reproduce the baseline models we compared our TFT-model performance with. Use the [TFT-pytorch](/TFT-pytorch/) folder to reproduce the TFT-model training and interpretation.
