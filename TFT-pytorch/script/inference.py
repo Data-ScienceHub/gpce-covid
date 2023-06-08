@@ -34,9 +34,12 @@ from pytorch_forecasting.data import GroupNormalizer, MultiNormalizer
 
 # %%
 from dataclasses import dataclass
-from argparse import ArgumentParser
+from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 
-parser = ArgumentParser(description='Inference using a trained TFT model')
+parser = ArgumentParser(
+   description='Inference using a trained TFT model',
+   formatter_class=ArgumentDefaultsHelpFormatter
+)
 
 parser.add_argument(
    '--config', default='baseline.json',
