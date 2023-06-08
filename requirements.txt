@@ -1,4 +1,4 @@
-pip==23.0
+# pip==23.0
 torch==1.11.0
 pytorch-lightning==1.8.6
 pytorch-forecasting==0.10.3

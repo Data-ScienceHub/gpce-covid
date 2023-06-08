@@ -44,9 +44,12 @@ from pytorch_forecasting.metrics import RMSE, MultiLoss
 
 # %%
 from dataclasses import dataclass
-from argparse import ArgumentParser
+from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 
-parser = ArgumentParser(description='Train TFT model')
+parser = ArgumentParser(
+    description='Train TFT model',
+    formatter_class=ArgumentDefaultsHelpFormatter
+)
 
 parser.add_argument(
    '--config', default='baseline.json',
@@ -55,7 +58,7 @@ parser.add_argument(
 
 parser.add_argument(
    '--input_file', help='path of the input feature file',
-   default='../2022_May_cleaned/Total.csv'
+   default='../2022_May_cleaned/Top_100.csv'
 )
 parser.add_argument(
    '--output', default='../scratch/TFT_baseline',

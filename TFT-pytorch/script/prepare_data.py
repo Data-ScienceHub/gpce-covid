@@ -14,9 +14,12 @@ sys.path.append( '..' )
 
 # %%
 from Class.DataMerger import *
-from argparse import ArgumentParser
+from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 
-parser = ArgumentParser(description='Prepare Dataset')
+parser = ArgumentParser(
+    description='Prepare Dataset',
+    formatter_class=ArgumentDefaultsHelpFormatter
+)
 
 parser.add_argument(
    '--config', default='../configurations/baseline.json',

@@ -1,5 +1,7 @@
 # Interpreting County Level COVID-19 Infection and Feature Sensitivity using Deep Learning Time Series Models
 
+The website is live at https://data-sciencehub.github.io/gpce-covid.
+
 ## Introduction
 This work combines sensitivity analysis with heterogeneous time-series deep learning model prediction, which corresponds to the interpretations of Spatio-temporal features from what the model has actually learned. We forecast county-level COVID-19 infection using the Temporal Fusion Transformer (TFT). We then use the sensitivity analysis extending Morris Method to see how sensitive the outputs are with respect to perturbation to our static and dynamic input features. We have collected more than 2.5 years of socioeconomic and health features over 3142 US counties. Using the proposed framework, we conduct extensive experiments and show our model can learn complex interactions and perform predictions for daily infection at the county level. 
 
