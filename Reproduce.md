@@ -8,7 +8,7 @@ First create a virtual environment with the required libraries. For example, to 
 If you have `Anaconda` installed locally, follow the instructions [here](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html). An example code,
 
 ```
-conda create -n ml python=3.10
+conda create -n ml python=3.10 pip
 conda activate ml
 ```
 This will activate the venv `ml`.
@@ -25,7 +25,6 @@ python3 -m pip install --user --upgrade pip
 python3 -m pip install --user virtualenv
 python3 -m venv ml
 source ml/bin/activate
-python3 -m pip install -r requirements.txt
 ```
 
 On windows :
@@ -34,40 +33,92 @@ py -m pip install --upgrade pip
 py -m pip install --user virtualenv
 py -m venv ml
 .\env\Scripts\activate
-py -m pip install -r requirements.txt
 ```
 
-Follow the instructions [here](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/) to make sure you have the `pip` and `virtualenv` installed and working. Then create a virtual environement (e.g. name ml) or install required libraries in the default env, using the 
+Follow the instructions [here](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/) to make sure you have the `pip` and `virtualenv` installed and working. Then create a virtual environement (e.g. name ml) or install required libraries in the default env. 
 
 ## 1.2 Install Required Libraries
-Once you have the virtual environment created and running, you can download the libraries using, the [requirement.txt](/requirements.txt) file. 
+Once you have the virtual environment created and running, you can download the libraries using, the [requirement.txt](/requirements.txt) file. If you have trouble installing from the file, try installing each of them manually.
 
-On linux/macOS :
-
-```bash
-python3 -m pip install -r requirements.txt
-```
-
-On windows :
-```bash
-py -m pip install -r requirements.txt
-```
-
-You can test whether the environment has been installed properly using a small dataset in the [`train.py`](/TFT-pytorch/script/train_simple.py) file.
-
-## 1.3 Installing CUDA
+### 1.2.1 PyTorch with CUDA
 The default versions installed with `pytorch-forecasting` might not work and print cpu instead for the following code. Since it doesn't install CUDA with pytorch.
 
-```python
-import torch
+1. Check if PyTorch is properly installed with CUDA or not. Running the following from the command like should show True.
 
-device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
-print(f'Using {device} backend')
+  ```bash
+  python -c "import torch;print(torch.cuda.is_available())"
+  ```
+  You can also check using the following python code,
+  
+  ```python
+  import torch
+  torch.cuda.is_available()
+  ```
+2. If the previous step returns False, install the following version. Anything [newer](https://pytorch.org/get-started/locally) doesn't work with the `pytorch_forecasting` framework for now.
+
+```bash
+# source https://pytorch.org/get-started/previous-versions/#v1131
+# option 1. using anaconda
+conda install pytorch==1.13.1 pytorch-cuda=11.7 -c pytorch -c nvidia
+
+# option 2. using pip
+pip install torch==1.13.1+cu117 -f https://download.pytorch.org/whl/torch_stable.html
+```
+3. Recheck whether PyTorch and CUDA are properly installed using the step 1.
+
+### 1.2.2 CuDNN
+
+This library is required for tensorflow to run on GPU. It can be manually installed following the instructions [here](https://docs.nvidia.com/deeplearning/cudnn/install-guide/index.html). But not using `pip`. A more convenient way is to use anaconda:
+
+```
+conda install -c conda-forge cudnn=8.1.0
 ```
 
-In such case, replace existing CUDA with the folowing version. Anything newer didn't work for now.
+### 1.2.3 Tensorflow 
+
+The detailed instructions for all OS and versions are [here](https://www.tensorflow.org/install/pip).For me a windows user, `Tensorflow` 2.10.0 is the last version installable by `windows native`. Later versions have to be installed by `wsl`. On `linux`, there is no major change. The following is for windows.
+
 ```bash
-pip install torch==1.11.0+cu113 torchvision==0.12.0+cu113 torchaudio==0.11.0+cu113 -f https://download.pytorch.org/whl/torch_stable.html
+pip install tensorflow==2.10.*
+```
+
+If you are running on `CPU`, move onto the next section. If using `GPU`, check if the `CuDNN` is properly installed. Tensorflow GPU is used in the related work benchmarking with LSTM and BiLSTM only. It isn't required for the TFT. You can check using python,
+
+```{code-block} python
+import tensorflow as tf
+tf.config.list_physical_devices('GPU')
+```
+
+Or using command line,
+```bash
+python -c "import tensorflow as tf; print(tf.config.list_physical_devices('GPU'))"
+```
+
+If this returns an empty list or 0, you need to install it. Installing `cudnn` doesn't work with pip, but `anaconda` works. It can also be manually installed following the instructions [here](https://docs.nvidia.com/deeplearning/cudnn/install-guide/index.html).
+
+```
+conda install -c conda-forge cudnn=8.1.0
+set CUDA_VISIBLE_DEVICES=1
+```
+
+Recheck again if `tf.config.list_physical_devices('GPU')` returns a list of GPU devices.
+
+### 1.2.4 Other libraries
+
+Install the rest of the libraries using `pip` and [requirements.txt](/requirements.txt) file. The requirement file has been updated to support the latest versions. The versions used during the study in the paper is in [requirements_old.txt](/requirements_old.txt) file.
+
+```{warning}
+Using `pip` inside conda virtual environment actually installs the libraries on the global pip. Check this blog for more info https://www.anaconda.com/blog/using-pip-in-a-conda-environment. This can be unintended. But conda install fails to resolve the dependency conflicts. Hence couldn't be used. 
+```
+
+To install the other libraries from `pip` run the following commands. You can test whether the environment has been installed properly using a small dataset in the [`train.py`](/TFT-pytorch/script/train.py) file. The default configuration runs the training on top 100 US counties by population.
+
+```bash
+# On linux/macOS
+python3 -m pip install -r requirements.txt
+
+# On windows
+py -m pip install -r requirements.txt
 ```
 
 ## 2. Containers
@@ -101,10 +152,14 @@ This creates a container with name tag tft_pytorch. The run our scripts inside t
 
 ## Google Colab
 
+```{note}
+Recent trials (June, 23) with colab has shown it keeps failing with the version changes. And doesn't install the pytorch_forecasting properly.
+```
+
 If you are running on **Google colab**, most libraries are already installed there. You'll only have to install the pytorch forecasting and lightning module. Add the following installation commands in the code. Upload the `TFT-pytorch` folder in your drive and set that filepaths accordingly.
 
 ```python
-!pip install pytorch_lightning==1.8.1
+!pip install pytorch_lightning==1.8.6
 !pip install pytorch_forecasting==0.10.3
 ```
 
@@ -120,9 +175,13 @@ drive.mount('/content/drive')
 
 # How to Reproduce
 
-Given you have the environment ready, you can use the [Related Works](/Related%20Works/) folder to reproduce the baseline models we compared our TFT-model performance with. Use the [TFT-pytorch](/TFT-pytorch/) folder to reproduce the TFT-model training and interpretation.
+If the environment is ready, you can use the [Related Works](/Related%20Works/) folder to reproduce the baseline models we compared our TFT-model performance with. And the [TFT-pytorch](/TFT-pytorch/) folder to reproduce the TFT-model training and interpretation.
 
-**Note: For scripts, run them from the same directory they are in.** This is due to using relative imports for the other modules in the project. Notebooks are run from the same folder anyway, so this won't be an issue for them.
+```{note}
+In case of scripts, run them from the same directory they are in. This is due to using relative imports for the other modules in the project.
+```
+
+Running from the same directory helps python finding the modules paths in parent folders. Notebooks are run from the same folder anyway, so this won't be an issue for them.
 
 ## Data Collection
 
