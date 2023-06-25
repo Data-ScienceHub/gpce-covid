@@ -57,7 +57,7 @@ parser.add_argument(
 
 parser.add_argument(
    '--input_file', help='path of the input feature file',
-   default='../2022_May_cleaned/Total.csv'
+   default='../2022_May_cleaned/Top_100.csv'
 )
 parser.add_argument(
    '--output', default='../scratch/TFT_baseline',
@@ -226,7 +226,7 @@ latest_checkpoint = pl.callbacks.ModelCheckpoint(
     dirpath=args.checkpoint_folder, every_n_epochs=1, filename="latest-{epoch}"
 )
 
-logger = TensorBoardLogger(args.outputPath)  # logging results to a tensorboard
+logger = TensorBoardLogger(args.result_folder)  # logging results to a tensorboard
 
 # https://pytorch-lightning.readthedocs.io/en/stable/common/trainer.html#trainer-class-api
 trainer = pl.Trainer(
