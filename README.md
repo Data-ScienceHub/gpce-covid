@@ -1,4 +1,4 @@
-# Interpreting County Level COVID-19 Infection and Feature Sensitivity using Deep Learning Time Series Models
+# Interpreting County-Level COVID-19 Infections using Transformer and Deep Learning Time Series Models
 
 The website is live at https://data-sciencehub.github.io/gpce-covid.
 
@@ -149,13 +149,13 @@ Note that, past values of target and known futures are also used as observed inp
   * If you have folders you want to exclude, add the path in `.gitignore`, then `git add .gitignore`. Check again with `git status -u` if it is still being tracked.
 
 ## Citation
-`Note:` The paper is to be presented in ICDH 2023. Conference citation will be updated once available.
+`Note:` The paper is to be presented in *IEEE INTERNATIONAL CONFERENCE ON DIGITAL HEALTH 2023*. Conference citation will be updated once available.
 
 ```
-@article{islam2022interpreting,
-  title={Interpreting County Level COVID-19 Infection and Feature Sensitivity using Deep Learning Time Series Models},
-  author={Islam, Md Khairul and Zhu, Di and Liu, Yingzheng and Erkelens, Andrej and Daniello, Nick and Fox, Judy},
-  journal={arXiv preprint arXiv:2210.03258},
-  year={2022}
+@article{islam2023interpreting,
+  title={Interpreting County-Level COVID-19 Infections using Transformer and Deep Learning Time Series Models},
+  author={Md Khairul Islam, Di Zhu, Yingzheng Liu, Andrej Erkelen, Nick Daniello, Aparna Marathe, and Judy Fox.},
+  journal={INTERNATIONAL CONFERENCE ON DIGITAL HEALTH},
+  year={2023}
 }
 ```
