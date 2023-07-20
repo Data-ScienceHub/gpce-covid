@@ -5,4 +5,10 @@ format: jb-book
 root: pages/introduction
 chapters:
 - file: pages/data-and-features
+- file: pages/problem
+- file: pages/tft
+- file: pages/experiments
+- file: pages/results
+- file: pages/FeatureImportance
+- file: pages/Related-Work-Conclusion
 - file: pages/references

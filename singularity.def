@@ -12,7 +12,8 @@ From: python:3.9
         jupyter_client>=7.3.5 \
         notebook>=6.5.2 \
         numpy<1.24 \
-        setuptools>=67.8
+        setuptools>=67.8 \
+        darts >= 0.22
 
 %labels
     Author Khairul

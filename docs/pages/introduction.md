@@ -1,26 +1,2 @@
 # Introduction
-Deep Learning for Time-series plays a key role in
-AI for healthcare. To predict the progress of infectious disease
-outbreaks and demonstrate clear population-level impact, more
-granular analyses are urgently needed that control for important
-and potentially confounding county-level socioeconomic and
-health factors. We forecast US county-level COVID-19 infections
-using the Temporal Fusion Transformer (TFT). We focus on
-heterogeneous time-series deep learning model prediction while
-interpreting the complex spatiotemporal features learned from
-the data. The significance of the work is grounded in a real-world
-COVID-19 infection prediction with highly non-stationary, finely
-granular, and heterogeneous data. 1) Our model can capture the
-detailed daily changes of temporal and spatial model behaviors
-and achieves better prediction performance compared to other
-time-series models. 2) We analyzed the attention patterns from
-TFT to interpret the temporal and spatial patterns learned by the
-model. 3) We collected around 2.5 years of socioeconomic and
-health features for 3142 US counties, such as observed cases,
-and a number of static (age distribution and health disparity)
-and dynamic features (vaccination, disease spread, transmissible
-cases, and social distancing). Using the proposed framework,
-we have shown that our model can learn complex interactions.
-Interpreting different impacts at the county level would be crucial
-for understanding the infection process that can help effective
-public health decision-making.
+This work combines sensitivity analysis with heterogeneous time-series deep learning model prediction, which corresponds to the interpretations of Spatio-temporal features from what the model has actually learned. We forecast county-level COVID-19 infection using the Temporal Fusion Transformer (TFT) {cite}`lim2021temporal`. We then use the sensitivity analysis extending Morris Method to see how sensitive the outputs are with respect to perturbation to our static and dynamic input features. We have collected more than 2.5 years of socioeconomic and health features over 3142 US counties. Using the proposed framework, we conduct extensive experiments and show our model can learn complex interactions and perform predictions for daily infection at the county level. 
