@@ -50,7 +50,8 @@ experiments on data with these patterns.
 3. `Cyclic` holiday patterns (Thanksgiving, Christmas). During holidays, hospitals and COVID-19 test centers often have reduced staffing and operating hours, leading to fewer tests and reported cases. Leading to a drop in attention for those days. 
 ![holiday_pattern.jpg](./TFT-pytorch/results/TFT_baseline/figures/holiday_pattern.jpg)
 4. `Trend`: TFT model's test performance on all US counties for additional data splits learning different infection trends. 
-![Test_splits.jpg](./TFT-pytorch/results/TFT_split_3/figures/Test_splits.jpg)
+
+![](/TFT-pytorch/results/TFT_split_3/figures/Test_splits.jpg)
 
 ### Spatial Patterns
 
