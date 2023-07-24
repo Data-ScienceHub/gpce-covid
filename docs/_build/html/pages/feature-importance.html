@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Related Work and Conclusions &#8212; Interpreting County-Level COVID-19 Infections</title>
+    <title>Feature Importance &#8212; Interpreting County-Level COVID-19 Infections</title>
   
   
   
@@ -61,11 +61,11 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="../_static/sphinx-thebe.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'pages/Related-Work-Conclusion';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'pages/feature-importance';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="References" href="references.html" />
-    <link rel="prev" title="Feature Importance" href="FeatureImportance.html" />
+    <link rel="next" title="Related Works" href="related-works.html" />
+    <link rel="prev" title="Results" href="results.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -162,8 +162,9 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="tft.html">Temporal Fusion Transformer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="experiments.html">Experiments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="results.html">Results</a></li>
-<li class="toctree-l1"><a class="reference internal" href="FeatureImportance.html">Feature Importance</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Related Work and Conclusions</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Feature Importance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="related-works.html">Related Works</a></li>
+<li class="toctree-l1"><a class="reference internal" href="acknowledgement-conclusion.html">Conclusions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
 </ul>
 
@@ -236,7 +237,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="https://github.com/Data-ScienceHub/gpce-covid/issues/new?title=Issue%20on%20page%20%2Fpages/Related-Work-Conclusion.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/Data-ScienceHub/gpce-covid/issues/new?title=Issue%20on%20page%20%2Fpages/feature-importance.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -266,7 +267,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="../_sources/pages/Related-Work-Conclusion.md" target="_blank"
+      <li><a href="../_sources/pages/feature-importance.md" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -335,9 +336,7 @@ document.write(`
   </button>
 `);
 </script>
-<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="fa-solid fa-list"></span>
-</label>
+
 </div></div>
       
     </div>
@@ -348,21 +347,11 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Related Work and Conclusions</h1>
+    <h1>Feature Importance</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
             
-            <div>
-                <h2> Contents </h2>
-            </div>
-            <nav aria-label="Page">
-                <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#statistical-and-machine-learning-models">Statistical and Machine Learning Models</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deep-learing-models">Deep Learing Models</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conclusions">Conclusions</a></li>
-</ul>
-            </nav>
         </div>
     </div>
 </div>
@@ -372,21 +361,65 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="related-work-and-conclusions">
-<h1>Related Work and Conclusions<a class="headerlink" href="#related-work-and-conclusions" title="Permalink to this heading">#</a></h1>
-<section id="statistical-and-machine-learning-models">
-<h2>Statistical and Machine Learning Models<a class="headerlink" href="#statistical-and-machine-learning-models" title="Permalink to this heading">#</a></h2>
-<p>Many statistical methods including Susceptible Infectious Recovery and Auto-Regressive Integrated Moving Acerage model have been used to sumulate and forecast COVID-19 spread, yet they fall short of dealing with high-dimensional and temporal data. While they are easier to interpret comparing to Deep Learning Models due to DL’s black-box nature, deep learning models excel them in terms of performance accuracy and the ability to captue non-linear complex relationships across variables.</p>
-</section>
-<section id="deep-learing-models">
-<h2>Deep Learing Models<a class="headerlink" href="#deep-learing-models" title="Permalink to this heading">#</a></h2>
-<p>Previously LSTM and Bi-LSTM models have demonstarted their remarkable performance because of RNN’s ability to learn from sequential data. Later on the Variational Auto Encoder has outperfoms RNN-based model. However, desptite Deep Learning Model’s outstanding performance, there are concerns about interpretability and their inability to capture socioeconomical factors.</p>
-</section>
-<section id="conclusions">
-<h2>Conclusions<a class="headerlink" href="#conclusions" title="Permalink to this heading">#</a></h2>
-<p>Our proposed TFT model has achieved state-of-the-art performance while enabling new forms of interpretability through analyzing complex spatiotermporal patterns. Our model has 4 main achievements: (1) outperforms other models in all evaluation metrics (2) exhibits robust performance dealing with non-stionary data (3) interprets termporal patterns (4) interprets spatial patterns. <br>
-Our model has creatively incorporated spatial factors at county level, and such methodology can be easily extended to other datasets at community level (e.g population, socioeconomic factors). Future work could focus on analyzing the sensitivity of input features and adaptively optimizing the model for dynamic data.</p>
-</section>
+  <section class="tex2jax_ignore mathjax_ignore" id="feature-importance">
+<h1>Feature Importance<a class="headerlink" href="#feature-importance" title="Permalink to this heading">#</a></h1>
+<table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Feature</p></th>
+<th class="head"><p>Static</p></th>
+<th class="head"><p>Observed</p></th>
+<th class="head"><p>Known</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Cases</p></td>
+<td><p></p></td>
+<td><p><strong>38.26%</strong></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>Age Distribution</p></td>
+<td><p><strong>54.45%</strong></p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>Health Disparities</p></td>
+<td><p>45.55%</p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>Vaccination</p></td>
+<td><p></p></td>
+<td><p>11.28%</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>Disease Spread</p></td>
+<td><p></p></td>
+<td><p>16.32%</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>Transmissble Cases</p></td>
+<td><p></p></td>
+<td><p>3.26%</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>Social Distancing</p></td>
+<td><p></p></td>
+<td><p>3.35%</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>SinWeekly</p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p><strong>72.85%</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>CosWeekly</p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p>27.15%</p></td>
+</tr>
+</tbody>
+</table>
+<p>The above table is calculated from Variable Selection Network across the training set. We first computed the sum of weights assigned to each variable and then normalized the weights of each feature. According to the table, we found that Age Distribution has the highest weights among Static featuers and Cases among Observed features.</p>
 </section>
 
     <script type="text/x-thebe-config">
@@ -421,20 +454,20 @@ Our model has creatively incorporated spatial factors at county level, and such 
     <div class="footer-article-item"><!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
-       href="FeatureImportance.html"
+       href="results.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Feature Importance</p>
+        <p class="prev-next-title">Results</p>
       </div>
     </a>
     <a class="right-next"
-       href="references.html"
+       href="related-works.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">References</p>
+        <p class="prev-next-title">Related Works</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -447,22 +480,6 @@ Our model has creatively incorporated spatial factors at county level, and such 
             </div>
             
             
-              
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
-
-  <div class="sidebar-secondary-item">
-  <div class="page-toc tocsection onthispage">
-    <i class="fa-solid fa-list"></i> Contents
-  </div>
-  <nav class="bd-toc-nav page-toc">
-    <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#statistical-and-machine-learning-models">Statistical and Machine Learning Models</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deep-learing-models">Deep Learing Models</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conclusions">Conclusions</a></li>
-</ul>
-  </nav></div>
-
-</div></div>
               
             
           </div>

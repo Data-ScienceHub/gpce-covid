@@ -6,7 +6,7 @@ spatiotemporal patterns of COVID-19 infection.
 
 ![](../images/TFT_architecture.jpg)
 
-TFT architecture [14]. TFT effectively builds feature
+The above figure shows the TFT architecture {cite}`lim2021temporal`. TFT effectively builds feature
 representation from static covariates, observed inputs, and
 known future events. The transformer adopts four key layers
 from the bottom: (L1) Embedding & Input Transformation,

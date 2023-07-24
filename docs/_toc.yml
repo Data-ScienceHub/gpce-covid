@@ -9,6 +9,7 @@ chapters:
 - file: pages/tft
 - file: pages/experiments
 - file: pages/results
-- file: pages/FeatureImportance
-- file: pages/Related-Work-Conclusion
+- file: pages/feature-importance
+- file: pages/related-works
+- file: pages/acknowledgement-conclusion
 - file: pages/references

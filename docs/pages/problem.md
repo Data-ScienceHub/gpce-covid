@@ -12,12 +12,13 @@ $\hat y_i(t, \tau) $ represents the predicted number of cases in a day at a give
 
 Fig. 1 provides a high-level overview of our experiment framework:
 
-<img src="../images/framework_overview.jpg" alt="framework overview" width="550px"/>
+![](../images/framework_overview.jpg)
+<!-- <img src="../images/framework_overview.jpg" alt="framework overview" width="550px"/> -->
 
 As shown in the image above, we feed three types of covariates at inputs into the time series model, using the past 13 days to predict the next 15 days of time series data. 
 
 These three types of inputs are:
 
 1. **Static Inputs** : Each county *i* is associated with a set of static inputs $s_i$, which do not vary over time and are specific to that county's demographics.
-2. **Observed or Past Inputs** : Observed inputs are time-varying features known at each timestamp $t \in [0, T_i]$ (e.g., Vacciation, Disease Spread, Social Distancing, Transmissible Cases), but their future values are unknown. We incorporate all past information within a lookback window of *k* (the past 13 days), using target (cases) and observed inputs upto the forecast start time *t*:      $\space y_{i,t-k:t} = {y_{i,t-k}, ..., y_{i, t} }$ and $z_{i, t-k:t} = {z_{i,t-k}, ..., z{i, t}}$.
+2. **Observed or Past Inputs** : Observed inputs are time-varying features known at each timestamp $t \in [0, T_i]$ (e.g., Vacciation, Disease Spread, Social Distancing, Transmissible Cases), but their future values are unknown. We incorporate all past information within a lookback window of *k* (the past 13 days), using target (cases) and observed inputs upto the forecast start time *t*:      $\space y_{i,t-k:t} = {y_{i,t-k}, ..., y_{i, t} }$ and $z_{i, t-k:t} = {z_{i,t-k}, ..., z_{i, t}}$.
 3. **Known Future Inputs**: These inputs $x_{i, t} can be measured beforehand, which in our case are the sine and cosine of the day of a week at a given date, and are known at the time of prediction. We also add known future inputs across the entire range for the TFT.
