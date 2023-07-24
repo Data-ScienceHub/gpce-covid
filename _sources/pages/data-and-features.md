@@ -4,7 +4,12 @@ Past values of target and known futures are also used as observed inputs by TFT.
 ```
 
 ## Design
-<img src="../images/input_data_structure.jpg" alt="drawing" width="450px"/>
+
+![](../images/input_data_structure.jpg)
+<!-- <img src="../images/input_data_structure.jpg" alt="drawing" width="450px"/> -->
+
+
+## Feature Description
 
 <div align="center">
 

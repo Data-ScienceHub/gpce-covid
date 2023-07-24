@@ -3,7 +3,9 @@
 After introducing our principal TFT model, we describe our experiments desing in this chapter. 
 
 ## Data Splits
-<img src="../images/Data-Split.jpg" alt="Data-Split.jpg" width="450px"/>
+
+![](../images/Data-Split.jpg)
+<!-- <img src="../images/Data-Split.jpg" alt="Data-Split.jpg" width="450px"/> -->
 
 Unless otherwise mentioned, we use the Primary Split to conudct experiments. Validation set comprises the next 15 days after the training period, and the test set comprises the following 15 days after the validation set. 
 
@@ -36,5 +38,6 @@ Our TFT model excels all other models in terms of all 5 evaluation metrics.
 
 Our line graph comparing prediction performances also reinforces our conclusions from the evaluation metrics.
 
-<img src="../images/Prediction-Performance.jpg" alt="Prediction-Performance.jpg" width="450px"/>
+![Prediction-Performance.jpg](../images/Prediction-Performance.jpg)
+<!-- <img src="../images/Prediction-Performance.jpg" alt="Prediction-Performance.jpg" width="450px"/> -->
 
