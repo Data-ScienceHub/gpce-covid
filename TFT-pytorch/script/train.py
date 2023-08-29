@@ -182,7 +182,7 @@ def prepare_data(data: pd.DataFrame, pm: Parameters, train=False):
     time_varying_known_reals = pm.data.time_varying_known_features,
     time_varying_unknown_reals = pm.data.time_varying_unknown_features,
     target_normalizer = MultiNormalizer(
-      [GroupNormalizer(groups=pm.data.id) for _ in range(len(targets))]
+      [GroupNormalizer(groups=pm.data.id) for _ in targets]
     )
   )
 

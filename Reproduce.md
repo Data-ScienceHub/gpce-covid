@@ -150,7 +150,7 @@ docker build -t tft_pytorch
 ```
 This creates a container with name tag tft_pytorch. The run our scripts inside the container.
 
-## Google Colab
+## 2.3 Google Colab
 
 ```{note}
 Recent trials (June, 23) with colab has shown it keeps failing with the version changes. And doesn't install the pytorch_forecasting properly.
