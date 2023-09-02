@@ -159,13 +159,14 @@ Note that, past values of the target and known futures are also used as observed
   * If you have folders you want to exclude, add the path in `.gitignore`, then `git add .gitignore`. Check again with `git status -u` if it is still being tracked.
 
 ## Citation
-`Note:` The paper is to be presented at *IEEE INTERNATIONAL CONFERENCE ON DIGITAL HEALTH 2023*. Citation will be updated once available.
-
 ```
-@article{islam2023interpreting,
-  title={Interpreting County-Level COVID-19 Infections using Transformer and Deep Learning Time Series Models},
-  author={Md Khairul Islam, Di Zhu, Yingzheng Liu, Andrej Erkelen, Nick Daniello, Aparna Marathe, and Judy Fox.},
-  journal={INTERNATIONAL CONFERENCE ON DIGITAL HEALTH},
-  year={2023}
-}
+@INPROCEEDINGS{islam2023interpreting,
+  author={Islam, Md Khairul and Liu, Yingzheng and Erkelens, Andrej and Daniello, Nick and Marathe, Aparna and Fox, Judy},
+  booktitle={2023 IEEE International Conference on Digital Health (ICDH)}, 
+  title={Interpreting County-Level COVID-19 Infections using Transformer and Deep Learning Time Series Models}, 
+  year={2023},
+  volume={},
+  number={},
+  pages={266-277},
+  doi={10.1109/ICDH60066.2023.00046}}
 ```
