@@ -1,4 +1,8 @@
+# This project has been moved to [here](https://github.com/UVA-MLSys/gpce-covid). This repository will not be maintained anymore.
+
 # Interpreting County-Level COVID-19 Infections using Transformer and Deep Learning Time Series Models
+
+## Live at https://data-sciencehub.github.io/gpce-covid/
 
 ## Introduction
 In this work, we utilize the Temporal Fusion Transformer (TFT) to achieve state-of-the-art performance in forecasting US county-level infections while enabling new forms of interpretability through analyzing complex spatiotemporal patterns. The proposed model (1) outperforms other popular deep learning models in all evaluation metrics for multivariate multi-horizon forecasting, (2) exhibits robust performance in predicting non-stationary trends of the infections at different waves of the COVID-19 pandemic, (3) interprets temporal patterns, such as weekly and holiday seasonality in reported cases, through multi-head attention weights, and (4) reveals spatial patterns using attention weights that are correlated to the infection spread. The model performs consistently across different counties, despite the large variation in infection rates, and can be easily extended to other datasets at the community level, as exemplified in the characteristics (e.g. population, health status, and socioeconomic factors).
