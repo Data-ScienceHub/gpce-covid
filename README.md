@@ -1,13 +1,10 @@
 # Interpreting County-Level COVID-19 Infections using Transformer and Deep Learning Time Series Models
 
-The website is live at https://data-sciencehub.github.io/gpce-covid.
-
 ## Introduction
-This work combines sensitivity analysis with heterogeneous time-series deep learning model prediction, which corresponds to the interpretations of Spatiotemporal features from what the model has actually learned. We forecast county-level COVID-19 infection using the Temporal Fusion Transformer (TFT). We then use the sensitivity analysis extending Morris Method to see how sensitive the outputs are with respect to perturbation to our static and dynamic input features. We have collected more than 2.5 years of socioeconomic and health features over 3142 US counties. Using the proposed framework, we conduct extensive experiments and show our model can learn complex interactions and perform predictions for daily infection at the county level. 
+In this work, we utilize the Temporal Fusion Transformer (TFT) to achieve state-of-the-art performance in forecasting US county-level infections while enabling new forms of interpretability through analyzing complex spatiotemporal patterns. The proposed model (1) outperforms other popular deep learning models in all evaluation metrics for multivariate multi-horizon forecasting, (2) exhibits robust performance in predicting non-stationary trends of the infections at different waves of the COVID-19 pandemic, (3) interprets temporal patterns, such as weekly and holiday seasonality in reported cases, through multi-head attention weights, and (4) reveals spatial patterns using attention weights that are correlated to the infection spread. The model performs consistently across different counties, despite the large variation in infection rates, and can be easily extended to other datasets at the community level, as exemplified in the characteristics (e.g. population, health status, and socioeconomic factors).
 
 ## Folder Structure
 
-* **Archives**: Unused codes.
 * **dataset_raw**: Contains the collected raw dataset and the supporting files. To update use the [Update dynamic dataset](/dataset_raw/Update%20dynamic%20features.ipynb) notebook. The static dataset is already updated till the onset of COVID-19 using [Update static dataset](/dataset_raw/Update%20static%20features.ipynb) notebook.
 * **papers**: Related papers. 
 * **Related Works**: Contains the models and results used to compare the TFT performance with related works. 
